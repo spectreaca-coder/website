@@ -1,0 +1,45 @@
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  z-index: 1000;
+}
+
+.header {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 1rem;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+  text-align: center;
+  border-bottom: 2px solid white; /* Add a white border to match the reference image */
+}
+
+.header.visible {
+  transform: translateY(0);
+}
+
+.header nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.header nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+  text-transform: uppercase; /* Match the uppercase style of the reference */
+}
+
+.header nav ul li a:hover {
+  color: #aaa;
+}
