@@ -32,3 +32,26 @@ body {
   margin: 2rem auto;
   padding: 0 2rem; /* Horizontal padding */
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .page-container {
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+
+  .app-main {
+    padding-top: 90px; /* Increased offset for wrapped header on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    margin: 0.5rem auto;
+    padding: 0 0.75rem;
+  }
+
+  .app-main {
+    padding-top: 120px; /* Further increased for very small screens */
+  }
+}

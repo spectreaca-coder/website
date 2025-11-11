@@ -93,3 +93,54 @@
 .instructor-career p {
     margin: 0.25rem 0;
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .instructor-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .instructor-photo {
+    height: 200px;
+  }
+
+  .instructor-info {
+    padding: 1rem;
+  }
+
+  .instructor-name {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .instructor-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .instructor-photo {
+    height: 250px;
+  }
+
+  .instructor-info {
+    padding: 1rem;
+  }
+
+  .instructor-name {
+    font-size: 1.2rem;
+  }
+
+  .instructor-subject {
+    font-size: 0.9rem;
+  }
+
+  .instructor-comment {
+    font-size: 0.85rem;
+  }
+
+  .instructor-career {
+    font-size: 0.85rem;
+  }
+}
