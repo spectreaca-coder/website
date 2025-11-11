@@ -7,7 +7,7 @@ const initialInstructors = [
     id: 1, name: '김현빈', subject: '수학',
     comment: '최고가 최고를 만듭니다.',
     career: '전) 메가스터디 수학 강사\n현) 스펙터학원 대표 강사',
-    photo: 'https://via.placeholder.com/300x300.png/ddd/888?text=Instructor'
+    photo: ''
   },
   {
     id: 2, name: '이수진', subject: '과학',
@@ -115,7 +115,7 @@ const Instructors = () => {
                 </>
               )}
             </div>
-            {inst.photo && <img src={inst.photo} alt={inst.name} className="instructor-photo" />}
+            {inst.photo && inst.photo.trim() !== '' && <img src={inst.photo} alt={inst.name} className="instructor-photo" />}
             <div className="instructor-info">
               <h3 className="instructor-name">{inst.name}</h3>
               <p className="instructor-subject">{inst.subject}</p>
