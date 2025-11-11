@@ -221,8 +221,8 @@
 @media (max-width: 480px) {
   .app-header {
     padding: 8px 10px;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row; /* Keep horizontal layout */
+    align-items: center;
     gap: 0.5rem;
   }
 
@@ -230,28 +230,39 @@
     height: 25px;
   }
 
+  .main-nav {
+    flex: 1;
+  }
+
   .main-nav > ul {
     flex-wrap: wrap;
-    gap: 0.25rem;
+    gap: 0.15rem;
+    justify-content: center;
   }
 
   .main-nav li {
-    margin: 0 5px;
+    margin: 0 3px;
   }
 
   .main-nav a,
   .dropdown-title {
-    font-size: 12px;
+    font-size: 11px;
+    padding: 0.2rem 0.4rem;
   }
 
   .user-auth {
-    width: 100%;
     display: flex;
     justify-content: flex-end;
   }
 
   .logout-button {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .secret-login-trigger {
+    width: 40px;
+    height: 25px;
   }
 }

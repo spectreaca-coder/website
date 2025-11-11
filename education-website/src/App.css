@@ -52,6 +52,6 @@ body {
   }
 
   .app-main {
-    padding-top: 120px; /* Further increased for very small screens */
+    padding-top: 70px; /* Reduced since header stays horizontal */
   }
 }
