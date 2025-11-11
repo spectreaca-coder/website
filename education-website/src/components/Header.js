@@ -68,7 +68,7 @@ const Header = () => {
           <li><Link to="/instructors">강사진</Link></li>
           <li><Link to="/my-classes">강좌소개</Link></li>
           <li><Link to="/register">수강신청</Link></li>
-          <li><Link to="/notices">공지/문의</Link></li>
+          <li><Link to="/notices">공지</Link></li>
           <li><Link to="/location">오시는 길</Link></li>
         </ul>
       </nav>
