@@ -1,12 +1,8 @@
-.homepage {
-  position: relative;
-  height: 100vh;
+.homepage-container {
   width: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  height: calc(100vh - 70px); /* Full height minus header */
+  position: relative;
+  overflow: hidden; /* Hide overflow from background video */
 }
 
 .background-video {
@@ -19,26 +15,82 @@
   height: auto;
   z-index: -1;
   transform: translateX(-50%) translateY(-50%);
-  background-size: cover;
-  filter: brightness(0.5); /* Darken the video to make the text stand out */
+  filter: brightness(0.5);
 }
 
-.content {
+.video-wrapper {
+  position: absolute;
+  top: 20%;
+  right: 10%;
+  width: 42vw; 
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.video-container iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.edit-video-btn-container {
+  margin-top: 1rem;
+}
+
+.edit-video-btn {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Styles for the form inside the modal */
+.admin-video-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.admin-video-form h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.admin-video-form input {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.admin-video-form button {
+  padding: 0.8rem;
+  border: none;
+  background-color: #005aab;
   color: white;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.3); /* Slightly more subtle background */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
 }
 
-.content h1 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-}
-
-.content p {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
+.video-placeholder {
+    position: absolute;
+    top: 20%;
+    right: 10%;
+    color: white;
 }

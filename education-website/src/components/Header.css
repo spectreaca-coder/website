@@ -1,45 +1,168 @@
-.header-container {
+/* Default Header for all pages (non-home) */
+.app-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
   z-index: 1000;
+  transition: background-color 0.4s ease, border-bottom 0.4s ease;
+  box-sizing: border-box;
 }
 
-.header {
-  background-color: #1a1a1a;
-  color: white;
-  padding: 1rem;
-  transform: translateY(-100%);
-  transition: transform 0.3s ease-in-out;
-  text-align: center;
-  border-bottom: 2px solid white; /* Add a white border to match the reference image */
+/* Style for links in the default header */
+.app-header .main-nav a {
+  color: #333;
 }
 
-.header.visible {
-  transform: translateY(0);
+/* Header style specifically for the Homepage */
+.app-header.home-header {
+  background-color: transparent;
+  border-bottom: 1px solid transparent;
+  color: #fff;
 }
 
-.header nav ul {
+/* Links in the Homepage header */
+.app-header.home-header .main-nav a,
+.app-header.home-header .dropdown-title {
+  color: #fff;
+}
+
+/* Scrolled state for ANY header */
+.app-header.scrolled {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  color: #333;
+}
+
+.app-header.scrolled .main-nav a,
+.app-header.scrolled .dropdown-title {
+  color: #333;
+}
+
+.app-header.scrolled .main-nav a:hover {
+  color: #005aab;
+}
+
+.logo a {
+  display: block;
+  text-decoration: none;
+}
+
+.logo img {
+  height: 40px;
+}
+
+.main-nav > ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: center;
-  gap: 2rem;
+  align-items: center; /* Align items vertically */
 }
 
-.header nav ul li a {
-  color: white;
+.main-nav li {
+  margin: 0 20px;
+  position: relative; /* For dropdown positioning */
+}
+
+.main-nav a,
+.dropdown-title {
   text-decoration: none;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: bold;
-  font-size: 1.2rem;
-  transition: color 0.3s;
-  text-transform: uppercase; /* Match the uppercase style of the reference */
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s ease;
+  cursor: default; /* For the non-link title */
 }
 
-.header nav ul li a:hover {
-  color: #aaa;
+.main-nav a:hover {
+  color: #005aab;
+}
+
+/* Specific hover for transparent home-header */
+.app-header.home-header:not(.scrolled) .main-nav a:hover,
+.app-header.home-header:not(.scrolled) .dropdown:hover .dropdown-title {
+    color: #ddd;
+}
+
+/* Dropdown specific styles */
+.dropdown-menu {
+  visibility: hidden; /* Changed from display: none */
+  opacity: 0; /* Changed for fade effect */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 0.5rem 0;
+  margin-top: 10px; /* Space between title and menu */
+  min-width: 140px;
+  z-index: 1001;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.dropdown:hover .dropdown-menu {
+  visibility: visible; /* Changed from display: block */
+  opacity: 1;
+}
+
+.dropdown-menu li {
+  margin: 0;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.75rem 1.5rem;
+  color: #333 !important; /* Ensure text is always dark */
+  white-space: nowrap;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f8f9fa;
+  color: #005aab;
+}
+
+
+/* Login link styling */
+.user-auth a {
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+/* Color for home-header (transparent) */
+.app-header.home-header .user-auth a {
+  color: #fff;
+}
+
+/* Color for default or scrolled header */
+.app-header:not(.home-header) .user-auth a,
+.app-header.scrolled .user-auth a {
+  color: #333;
+}
+
+.user-auth a:hover {
+  color: #005aab;
+}
+
+/* Specific hover for transparent home-header */
+.app-header.home-header:not(.scrolled) .user-auth a:hover {
+    color: #ddd;
+}
+
+.secret-login-trigger {
+    width: 60px; /* Same rough size as a login button */
+    height: 30px;
+    cursor: pointer;
+    /* This element is intentionally left transparent */
 }
