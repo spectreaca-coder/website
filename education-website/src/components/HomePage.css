@@ -2,20 +2,8 @@
   width: 100%;
   height: calc(100vh - 70px); /* Full height minus header */
   position: relative;
-  overflow: hidden; /* Hide overflow from background video */
-}
-
-.background-video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  z-index: -1;
-  transform: translateX(-50%) translateY(-50%);
-  filter: brightness(0.5);
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .video-wrapper {

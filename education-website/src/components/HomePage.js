@@ -37,12 +37,6 @@ const HomePage = () => {
 
   return (
     <div className="homepage-container">
-      {/* Fullscreen Background Video */}
-      <video autoPlay loop muted className="background-video">
-        <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
       {/* Foreground YouTube Video */}
       {embedUrl ? (
         <div className="video-wrapper">
