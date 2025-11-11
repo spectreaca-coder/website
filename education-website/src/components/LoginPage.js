@@ -9,7 +9,11 @@ const LoginPage = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (id === 'specter123' && password === 'admin1031!') {
+    // Use environment variables for credentials
+    const adminUsername = process.env.REACT_APP_ADMIN_USERNAME;
+    const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD;
+
+    if (id === adminUsername && password === adminPassword) {
       // In a real app, you'd get a token from a server.
       // For this mockup, we'll use sessionStorage to simulate being logged in.
       sessionStorage.setItem('isAdmin', 'true');

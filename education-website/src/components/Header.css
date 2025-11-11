@@ -166,3 +166,131 @@
     cursor: pointer;
     /* This element is intentionally left transparent */
 }
+
+/* Logout button styling */
+.logout-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 10px 12px;
+  }
+
+  .logo img {
+    height: 28px;
+  }
+
+  .main-nav > ul {
+    flex-wrap: nowrap; /* Prevent wrapping on tablet */
+    gap: 0.3rem;
+  }
+
+  .main-nav li {
+    margin: 0 6px;
+  }
+
+  .main-nav a,
+  .dropdown-title {
+    font-size: 13px;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .dropdown-menu {
+    min-width: 120px;
+  }
+
+  .logout-button {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 8px 6px;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .logo img {
+    height: 22px;
+  }
+
+  .main-nav {
+    flex: 1;
+    overflow-x: auto; /* Allow horizontal scroll if needed */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .main-nav > ul {
+    flex-wrap: nowrap; /* Force single row */
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  .main-nav li {
+    margin: 0 2px;
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+
+  .main-nav a,
+  .dropdown-title {
+    font-size: 12px;
+    padding: 0.3rem 0.35rem;
+    white-space: nowrap;
+  }
+
+  .user-auth {
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+
+  .logout-button {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .secret-login-trigger {
+    width: 35px;
+    height: 25px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 375px) {
+  .app-header {
+    padding: 6px 4px;
+  }
+
+  .logo img {
+    height: 20px;
+  }
+
+  .main-nav a,
+  .dropdown-title {
+    font-size: 11px;
+    padding: 0.25rem 0.3rem;
+  }
+
+  .logout-button {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.65rem;
+  }
+}

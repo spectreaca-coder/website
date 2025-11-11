@@ -138,3 +138,91 @@
 .quill-container .ql-editor {
     min-height: 180px;
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .accordion-header {
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  .accordion-controls {
+    gap: 0.5rem;
+  }
+
+  .accordion-admin-actions button {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .accordion-content {
+    padding: 1rem;
+  }
+
+  .admin-actions {
+    padding: 1rem;
+  }
+
+  .admin-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .accordion-header {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+  }
+
+  .accordion-title {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .accordion-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .accordion-admin-actions {
+    gap: 0.25rem;
+  }
+
+  .accordion-admin-actions button {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .accordion-content {
+    padding: 0.75rem;
+  }
+
+  .accordion-content .ql-editor {
+    font-size: 0.9rem;
+  }
+
+  .admin-actions {
+    padding: 1rem;
+  }
+
+  .admin-actions h2 {
+    font-size: 1.3rem;
+  }
+
+  .admin-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .create-course-form input {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+
+  .create-course-form button {
+    padding: 0.7rem;
+    font-size: 1rem;
+  }
+}

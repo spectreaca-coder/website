@@ -57,3 +57,75 @@
   line-height: 1.6;
   min-height: 200px; /* Ensure some space for content */
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    max-width: 600px;
+    padding: 1.5rem;
+    max-height: 85vh;
+  }
+
+  .modal-close-btn {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1.3rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.5rem;
+    padding-right: 2rem;
+  }
+
+  .modal-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  .modal-body {
+    font-size: 0.95rem;
+    min-height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    width: 98%;
+    padding: 1rem;
+    max-height: 90vh;
+    border-radius: 6px;
+  }
+
+  .modal-close-btn {
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .modal-header {
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.2rem;
+    padding-right: 2rem;
+    word-break: keep-all;
+  }
+
+  .modal-meta {
+    font-size: 0.8rem;
+  }
+
+  .modal-body {
+    font-size: 0.9rem;
+    min-height: 100px;
+  }
+
+  .modal-photo {
+    margin-bottom: 0.75rem;
+  }
+}

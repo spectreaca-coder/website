@@ -4,6 +4,7 @@ import Modal from './Modal';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize-module-react';
+import DOMPurify from 'dompurify';
 
 Quill.register('modules/imageResize', ImageResize);
 
@@ -123,7 +124,7 @@ const MyClasses = () => {
             {openLectureId === lec.id && (
               <div className="accordion-content">
                 <div className="ql-snow">
-                  <div className="ql-editor" dangerouslySetInnerHTML={{ __html: lec.content }}></div>
+                  <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lec.content) }}></div>
                 </div>
               </div>
             )}
