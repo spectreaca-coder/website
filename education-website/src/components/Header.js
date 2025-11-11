@@ -74,7 +74,7 @@ const Header = () => {
       </nav>
       <div className="user-auth">
         {isAdmin ? (
-          <a href="#" onClick={handleLogout}>로그아웃</a>
+          <button type="button" onClick={handleLogout} className="logout-button">로그아웃</button>
         ) : (
           <div className="secret-login-trigger" onClick={handleSecretLoginClick}></div>
         )}

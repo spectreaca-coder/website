@@ -129,13 +129,18 @@
     text-align: left;
 }
 
-.inquiry-list .col-title a {
+.inquiry-list .col-title .title-button {
+  background: none;
+  border: none;
   color: inherit;
   text-decoration: none;
-  transition: color 0.2s ease;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  text-align: left;
 }
 
-.inquiry-list .col-title a:hover {
+.inquiry-list .col-title .title-button:hover {
   color: #005aab;
   text-decoration: underline;
 }

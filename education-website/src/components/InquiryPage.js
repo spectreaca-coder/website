@@ -144,7 +144,7 @@ const InquiryPage = () => {
             {inquiries.map((item, index) => (
               <tr key={item.id}>
                 <td className="col-index">{inquiries.length - index}</td>
-                <td className="col-title"><a href="#" onClick={(e) => { e.preventDefault(); handleViewInquiry(item.id); }}>{item.title}</a></td>
+                <td className="col-title"><button type="button" className="title-button" onClick={(e) => { e.preventDefault(); handleViewInquiry(item.id); }}>{item.title}</button></td>
                 <td className="col-author">{item.author}</td>
                 <td className="col-date">{item.createdAt}</td>
                 <td className="col-views">{item.views}</td>
