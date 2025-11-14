@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './InquiryPage.css';
 import Modal from './Modal';
+import ReactQuill, { Quill } from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import ImageResize from 'quill-image-resize-module-react';
+import DOMPurify from 'dompurify';
+
+Quill.register('modules/imageResize', ImageResize);
 
 const InquiryPage = () => {
   const [inquiries, setInquiries] = useState(() => {
@@ -17,7 +23,6 @@ const InquiryPage = () => {
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [newPhoto, setNewPhoto] = useState(null);
 
   useEffect(() => {
     const adminFlag = sessionStorage.getItem('isAdmin') === 'true';
@@ -32,7 +37,6 @@ const InquiryPage = () => {
     setAuthor('');
     setTitle('');
     setContent('');
-    setNewPhoto(null);
     setEditingInquiry(null);
     setIsFormVisible(false);
   };
@@ -42,24 +46,12 @@ const InquiryPage = () => {
     setAuthor(inquiry.author);
     setTitle(inquiry.title);
     setContent(inquiry.content);
-    setNewPhoto(inquiry.photo);
     setIsFormVisible(true);
   };
 
   const handleDeleteInquiry = (id) => {
     if (window.confirm('정말로 이 글을 삭제하시겠습니까?')) {
       setInquiries(inquiries.filter(inq => inq.id !== id));
-    }
-  };
-
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewPhoto(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -72,21 +64,36 @@ const InquiryPage = () => {
 
     if (editingInquiry) {
       // Update existing inquiry
-      const updatedInquiries = inquiries.map(inq => 
-        inq.id === editingInquiry.id 
-          ? { ...inq, author, title, content, photo: newPhoto }
+      const updatedInquiries = inquiries.map(inq =>
+        inq.id === editingInquiry.id
+          ? { ...inq, author, title, content }
           : inq
       );
       setInquiries(updatedInquiries);
     } else {
       // Create new inquiry
       const newInquiry = {
-        id: Date.now(), author, title, content, photo: newPhoto,
+        id: Date.now(), author, title, content,
         createdAt: new Date().toLocaleDateString(), views: 0,
       };
       setInquiries([newInquiry, ...inquiries]);
     }
     clearForm();
+  };
+
+  const quillModules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, false] }, { 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline','strike', 'blockquote'],
+      [{ 'align': [] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['link', 'image', 'video'],
+      ['clean']
+    ],
+    imageResize: {
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize']
+    }
   };
 
   const handleViewInquiry = (id) => {
@@ -119,9 +126,9 @@ const InquiryPage = () => {
             <input type="text" placeholder="이름" value={author} onChange={(e) => setAuthor(e.target.value)} required />
           </div>
           <input type="text" placeholder="제목" value={title} onChange={(e) => setTitle(e.target.value)} required />
-          <textarea placeholder="내용을 입력하세요..." value={content} onChange={(e) => setContent(e.target.value)} required></textarea>
-          <label>사진 파일 (선택):</label>
-          <input type="file" accept="image/*" onChange={handlePhotoChange} />
+          <div className="quill-container">
+            <ReactQuill theme="snow" value={content} onChange={setContent} modules={quillModules} />
+          </div>
           <div className="form-actions">
             <button type="button" onClick={clearForm} className="cancel-btn">취소</button>
             <button type="submit">{editingInquiry ? '수정 완료' : '작성하기'}</button>
@@ -163,8 +170,7 @@ const InquiryPage = () => {
         <Modal onClose={handleCloseModal}>
           <div className="modal-header"><h2>{selectedInquiry.title}</h2><div className="modal-meta"><span>작성자: {selectedInquiry.author}</span><span>작성일: {selectedInquiry.createdAt}</span></div></div>
           <div className="modal-body">
-            {selectedInquiry.photo && <img src={selectedInquiry.photo} alt="첨부된 이미지" className="modal-photo" />}
-            {selectedInquiry.content}
+            <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedInquiry.content) }} />
           </div>
         </Modal>
       )}

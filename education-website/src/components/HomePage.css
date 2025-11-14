@@ -445,7 +445,7 @@ section {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 999;
+  z-index: 1003;
   text-decoration: none;
   animation: pulse 2s infinite;
 }
