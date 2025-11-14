@@ -9,9 +9,9 @@ const LoginPage = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Use environment variables for credentials
-    const adminUsername = process.env.REACT_APP_ADMIN_USERNAME;
-    const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD;
+    // Use environment variables for credentials with fallback
+    const adminUsername = process.env.REACT_APP_ADMIN_USERNAME || 'specter123';
+    const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD || 'admin1031!';
 
     if (id === adminUsername && password === adminPassword) {
       // In a real app, you'd get a token from a server.
