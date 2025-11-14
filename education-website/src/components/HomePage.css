@@ -210,53 +210,282 @@ section {
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Video Section */
-.video-section {
+/* Reviews Section */
+.reviews-section {
+  background: white;
+  color: #333;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.review-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out both;
+  border: 1px solid #e9ecef;
+}
+
+.review-card:nth-child(1) { animation-delay: 0.1s; }
+.review-card:nth-child(2) { animation-delay: 0.2s; }
+.review-card:nth-child(3) { animation-delay: 0.3s; }
+
+.review-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.review-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 0.3rem 0;
+}
+
+.review-course {
+  font-size: 0.95rem;
+  color: #667eea;
+  margin: 0;
+  font-weight: 500;
+}
+
+.review-rating {
+  font-size: 1.2rem;
+  color: #ffc107;
+}
+
+.review-comment {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+
+.review-date {
+  font-size: 0.85rem;
+  color: #999;
+  text-align: right;
+  margin: 0;
+}
+
+/* FAQ Section */
+.faq-section {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
 }
 
-.video-wrapper {
+.faq-container {
   max-width: 900px;
   margin: 0 auto;
-  animation: fadeInUp 0.8s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.video-container {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 20px;
+.faq-item {
+  background: white;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out both;
 }
 
-.video-container iframe {
+.faq-item:nth-child(1) { animation-delay: 0.1s; }
+.faq-item:nth-child(2) { animation-delay: 0.15s; }
+.faq-item:nth-child(3) { animation-delay: 0.2s; }
+.faq-item:nth-child(4) { animation-delay: 0.25s; }
+.faq-item:nth-child(5) { animation-delay: 0.3s; }
+
+.faq-item:hover {
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+}
+
+.faq-question {
   width: 100%;
-  height: 100%;
+  padding: 1.5rem 2rem;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  font-family: inherit;
 }
 
-.edit-video-btn-container {
-  margin-top: 1.5rem;
+.faq-question:hover {
+  color: #667eea;
+}
+
+.faq-icon {
+  font-size: 1.5rem;
+  color: #667eea;
+  font-weight: 400;
+  transition: transform 0.3s ease;
+}
+
+.faq-item.expanded .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  background: #f8f9fa;
+}
+
+.faq-item.expanded .faq-answer {
+  max-height: 500px;
+  padding: 1.5rem 2rem;
+}
+
+.faq-answer p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #555;
+}
+
+/* Gallery Section */
+.gallery-section {
+  background: white;
+  color: #333;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.gallery-item {
+  background: #f8f9fa;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.6s ease-out both;
+}
+
+.gallery-item:nth-child(1) { animation-delay: 0.1s; }
+.gallery-item:nth-child(2) { animation-delay: 0.15s; }
+.gallery-item:nth-child(3) { animation-delay: 0.2s; }
+.gallery-item:nth-child(4) { animation-delay: 0.25s; }
+
+.gallery-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+}
+
+.gallery-placeholder {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-icon {
+  font-size: 4rem;
+  opacity: 0.7;
+}
+
+.gallery-info {
+  padding: 1.5rem;
   text-align: center;
 }
 
-.edit-video-btn {
-  padding: 0.8rem 2rem;
-  font-size: 1rem;
-  border: 2px solid white;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+.gallery-info h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin: 0 0 0.5rem 0;
 }
 
-.edit-video-btn:hover {
-  background: white;
-  color: #667eea;
-  transform: translateY(-2px);
+.gallery-info p {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Floating KakaoTalk Button */
+.floating-kakao-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: #FEE500;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 999;
+  text-decoration: none;
+  animation: pulse 2s infinite;
+}
+
+.floating-kakao-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+}
+
+.kakao-icon {
+  font-size: 2rem;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(254, 229, 0, 0.5);
+  }
+}
+
+/* CTA Buttons Group */
+.cta-buttons-group {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.secondary-cta {
+  background: #FEE500;
+  color: #000;
+}
+
+.secondary-cta:hover {
+  background: #FDD835;
+  color: #000;
 }
 
 /* Notices Section */
@@ -356,51 +585,6 @@ section {
   margin-bottom: 2.5rem;
 }
 
-/* Admin Modal Form */
-.admin-video-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem;
-}
-
-.admin-video-form h2 {
-  margin-top: 0;
-  text-align: center;
-  color: #333;
-}
-
-.admin-video-form input {
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.admin-video-form input:focus {
-  outline: none;
-  border-color: #667eea;
-}
-
-.admin-video-form button {
-  padding: 1rem;
-  border: none;
-  background-color: #667eea;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.admin-video-form button:hover {
-  background-color: #764ba2;
-  transform: translateY(-2px);
-}
 
 /* Animations */
 @keyframes fadeIn {
@@ -535,6 +719,76 @@ section {
     font-size: 1.05rem;
   }
 
+  /* Reviews Section */
+  .reviews-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .review-card {
+    padding: 1.8rem;
+  }
+
+  .review-name {
+    font-size: 1.15rem;
+  }
+
+  .review-comment {
+    font-size: 0.95rem;
+  }
+
+  /* FAQ Section */
+  .faq-question {
+    padding: 1.2rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .faq-item.expanded .faq-answer {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .faq-answer p {
+    font-size: 0.95rem;
+  }
+
+  /* Gallery Section */
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .gallery-placeholder {
+    height: 160px;
+  }
+
+  .gallery-icon {
+    font-size: 3rem;
+  }
+
+  .gallery-info {
+    padding: 1.2rem;
+  }
+
+  .gallery-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .gallery-info p {
+    font-size: 0.9rem;
+  }
+
+  /* Floating Button */
+  .floating-kakao-btn {
+    width: 55px;
+    height: 55px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .kakao-icon {
+    font-size: 1.8rem;
+  }
+
   .section-header {
     flex-direction: row;
     gap: 1rem;
@@ -566,9 +820,16 @@ section {
     font-size: 1.1rem;
   }
 
+  .cta-buttons-group {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
   .cta-button.large {
     padding: 1.1rem 2.5rem;
     font-size: 1.15rem;
+    width: 100%;
+    max-width: 280px;
   }
 }
 
@@ -654,17 +915,81 @@ section {
     font-size: 1rem;
   }
 
-  .video-container {
-    border-radius: 12px;
+  /* Reviews Section */
+  .review-card {
+    padding: 1.5rem;
   }
 
-  .edit-video-btn-container {
-    margin-top: 1.2rem;
+  .review-name {
+    font-size: 1.08rem;
   }
 
-  .edit-video-btn {
-    padding: 0.7rem 1.8rem;
+  .review-course {
+    font-size: 0.9rem;
+  }
+
+  .review-comment {
+    font-size: 0.92rem;
+  }
+
+  .review-rating {
+    font-size: 1.1rem;
+  }
+
+  /* FAQ Section */
+  .faq-question {
+    padding: 1rem 1.2rem;
     font-size: 0.95rem;
+  }
+
+  .faq-icon {
+    font-size: 1.3rem;
+  }
+
+  .faq-item.expanded .faq-answer {
+    padding: 1rem 1.2rem;
+  }
+
+  .faq-answer p {
+    font-size: 0.92rem;
+  }
+
+  /* Gallery Section */
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .gallery-placeholder {
+    height: 180px;
+  }
+
+  .gallery-icon {
+    font-size: 3.5rem;
+  }
+
+  .gallery-info {
+    padding: 1rem;
+  }
+
+  .gallery-info h3 {
+    font-size: 1.05rem;
+  }
+
+  .gallery-info p {
+    font-size: 0.88rem;
+  }
+
+  /* Floating Button */
+  .floating-kakao-btn {
+    width: 50px;
+    height: 50px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .kakao-icon {
+    font-size: 1.6rem;
   }
 
   .section-header {
@@ -702,13 +1027,21 @@ section {
     margin-bottom: 2rem;
   }
 
+  .cta-buttons-group {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
   .cta-button.large {
-    padding: 1rem 2.2rem;
-    font-size: 1.05rem;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 100%;
   }
 
   /* Improve touch interaction */
-  .cta-button:active {
+  .cta-button:active,
+  .faq-question:active,
+  .floating-kakao-btn:active {
     transform: scale(0.98);
   }
 }
