@@ -434,7 +434,7 @@ section {
 .floating-kakao-btn {
   position: fixed;
   bottom: 30px;
-  right: 30px;
+  left: 30px;
   width: 60px;
   height: 60px;
   background: #FEE500;
@@ -831,6 +831,24 @@ section {
     width: 100%;
     max-width: 280px;
   }
+
+  /* Mobile Kakao Button */
+  .floating-kakao-btn {
+    width: 55px;
+    height: 55px;
+    left: 20px;
+    bottom: 20px;
+  }
+
+  .kakao-icon {
+    font-size: 1.8rem;
+  }
+
+  /* Image optimization for mobile */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 @media (max-width: 480px) {
@@ -985,11 +1003,17 @@ section {
     width: 50px;
     height: 50px;
     bottom: 15px;
-    right: 15px;
+    left: 15px;
   }
 
   .kakao-icon {
     font-size: 1.6rem;
+  }
+
+  /* Image optimization for mobile */
+  img {
+    max-width: 100%;
+    height: auto;
   }
 
   .section-header {
@@ -1070,5 +1094,17 @@ section {
 
   .stat-number {
     font-size: 2.2rem;
+  }
+
+  /* Extra small Kakao Button */
+  .floating-kakao-btn {
+    width: 48px;
+    height: 48px;
+    bottom: 12px;
+    left: 12px;
+  }
+
+  .kakao-icon {
+    font-size: 1.5rem;
   }
 }
