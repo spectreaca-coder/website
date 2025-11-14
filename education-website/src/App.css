@@ -41,7 +41,7 @@ body {
   }
 
   .app-main {
-    padding-top: 90px; /* Increased offset for wrapped header on mobile */
+    padding-top: 56px; /* Adjusted for mobile header with hamburger menu */
   }
 }
 
@@ -52,6 +52,6 @@ body {
   }
 
   .app-main {
-    padding-top: 70px; /* Reduced since header stays horizontal */
+    padding-top: 54px; /* Adjusted for smaller mobile header */
   }
 }

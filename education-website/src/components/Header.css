@@ -184,113 +184,216 @@
   background-color: #c9302c;
 }
 
+/* Header Right Container */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Mobile Menu Button (Hamburger) */
+.mobile-menu-button {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1002;
+}
+
+.mobile-menu-button span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: #333;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.app-header.home-header .mobile-menu-button span {
+  background-color: #fff;
+}
+
+.app-header.scrolled .mobile-menu-button span {
+  background-color: #333;
+}
+
+/* Hamburger animation when active */
+.mobile-menu-button.active span:nth-child(1) {
+  transform: translateY(10.5px) rotate(45deg);
+}
+
+.mobile-menu-button.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-button.active span:nth-child(3) {
+  transform: translateY(-10.5px) rotate(-45deg);
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-menu-overlay.active {
+  opacity: 1;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 80%;
+  max-width: 320px;
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding-top: 80px;
+}
+
+.mobile-nav.active {
+  right: 0;
+}
+
+.mobile-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-nav li {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-nav a,
+.mobile-nav button {
+  display: block;
+  width: 100%;
+  padding: 1.2rem 2rem;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mobile-nav a:active,
+.mobile-nav button:active {
+  background-color: #f8f9fa;
+  color: #667eea;
+}
+
+/* Improved touch targets for mobile */
+@media (hover: hover) {
+  .mobile-nav a:hover,
+  .mobile-nav button:hover {
+    background-color: #f8f9fa;
+    color: #667eea;
+    padding-left: 2.5rem;
+  }
+}
+
+.mobile-nav .mobile-logout button {
+  color: #d9534f;
+  font-weight: 600;
+}
+
 /* Mobile Responsive Design */
 @media (max-width: 768px) {
   .app-header {
-    padding: 10px 12px;
+    padding: 12px 20px;
+  }
+
+  .logo img {
+    height: 32px;
+  }
+
+  /* Hide desktop navigation on tablets and below */
+  .desktop-nav {
+    display: none;
+  }
+
+  /* Show mobile menu button */
+  .mobile-menu-button {
+    display: flex;
+  }
+
+  /* Show mobile navigation and overlay */
+  .mobile-nav,
+  .mobile-menu-overlay {
+    display: block;
+  }
+
+  .user-auth {
+    display: none; /* Hide desktop auth in mobile, show in mobile menu */
+  }
+
+  .logout-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 10px 15px;
   }
 
   .logo img {
     height: 28px;
   }
 
-  .main-nav > ul {
-    flex-wrap: nowrap; /* Prevent wrapping on tablet */
-    gap: 0.3rem;
+  .mobile-nav {
+    width: 85%;
   }
 
-  .main-nav li {
-    margin: 0 6px;
-  }
-
-  .main-nav a,
-  .dropdown-title {
-    font-size: 13px;
-    padding: 0.3rem 0.5rem;
-  }
-
-  .dropdown-menu {
-    min-width: 120px;
-  }
-
-  .logout-button {
-    padding: 0.4rem 0.7rem;
-    font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .app-header {
-    padding: 8px 6px;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .logo img {
-    height: 22px;
-  }
-
-  .main-nav {
-    flex: 1;
-    overflow-x: auto; /* Allow horizontal scroll if needed */
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .main-nav > ul {
-    flex-wrap: nowrap; /* Force single row */
-    gap: 0;
-    justify-content: space-between;
-  }
-
-  .main-nav li {
-    margin: 0 2px;
-    flex-shrink: 0; /* Prevent shrinking */
-  }
-
-  .main-nav a,
-  .dropdown-title {
-    font-size: 12px;
-    padding: 0.3rem 0.35rem;
-    white-space: nowrap;
-  }
-
-  .user-auth {
-    display: flex;
-    justify-content: flex-end;
-    flex-shrink: 0;
-  }
-
-  .logout-button {
-    padding: 0.3rem 0.5rem;
-    font-size: 0.7rem;
-    white-space: nowrap;
-  }
-
-  .secret-login-trigger {
-    width: 35px;
-    height: 25px;
+  .mobile-nav a,
+  .mobile-nav button {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
   }
 }
 
 /* Very small screens */
 @media (max-width: 375px) {
   .app-header {
-    padding: 6px 4px;
+    padding: 8px 12px;
   }
 
   .logo img {
-    height: 20px;
+    height: 26px;
   }
 
-  .main-nav a,
-  .dropdown-title {
-    font-size: 11px;
-    padding: 0.25rem 0.3rem;
+  .mobile-menu-button {
+    width: 28px;
+    height: 22px;
   }
 
-  .logout-button {
-    padding: 0.25rem 0.4rem;
-    font-size: 0.65rem;
+  .mobile-menu-button span {
+    height: 2.5px;
   }
 }

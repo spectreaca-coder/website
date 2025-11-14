@@ -49,3 +49,68 @@
   border: 1px solid #ddd;
   border-radius: 8px;
 }
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .location-page-container {
+    flex-direction: column;
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+    gap: 1.5rem;
+  }
+
+  .info-panel {
+    min-width: 100%;
+  }
+
+  .info-panel h1 {
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .info-panel .info-item {
+    font-size: 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .info-panel .info-label {
+    width: 70px;
+  }
+
+  .map-panel {
+    min-width: 100%;
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-page-container {
+    padding: 1.2rem;
+    margin: 1rem;
+    gap: 1.2rem;
+  }
+
+  .info-panel h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-panel .info-item {
+    flex-direction: column;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-panel .info-label {
+    width: 100%;
+    margin-bottom: 0.3rem;
+  }
+
+  .info-panel .info-data {
+    padding-left: 0;
+  }
+
+  .map-panel {
+    min-height: 300px;
+  }
+}
