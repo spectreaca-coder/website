@@ -31,7 +31,7 @@
 /* Links in the Homepage header */
 .app-header.home-header .main-nav a,
 .app-header.home-header .dropdown-title {
-  color: #fff;
+  color: #333;
 }
 
 /* Scrolled state for ANY header */
@@ -88,7 +88,7 @@
 /* Specific hover for transparent home-header */
 .app-header.home-header:not(.scrolled) .main-nav a:hover,
 .app-header.home-header:not(.scrolled) .dropdown:hover .dropdown-title {
-    color: #ddd;
+    color: #667eea;
 }
 
 /* Dropdown specific styles */
@@ -142,7 +142,7 @@
 
 /* Color for home-header (transparent) */
 .app-header.home-header .user-auth a {
-  color: #fff;
+  color: #333;
 }
 
 /* Color for default or scrolled header */
@@ -157,7 +157,7 @@
 
 /* Specific hover for transparent home-header */
 .app-header.home-header:not(.scrolled) .user-auth a:hover {
-    color: #ddd;
+    color: #667eea;
 }
 
 .secret-login-trigger {
@@ -215,7 +215,7 @@
 }
 
 .app-header.home-header .mobile-menu-button span {
-  background-color: #fff;
+  background-color: #333;
 }
 
 .app-header.scrolled .mobile-menu-button span {

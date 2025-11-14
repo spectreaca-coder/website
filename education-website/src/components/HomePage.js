@@ -102,33 +102,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="features-section">
-        <h2 className="section-title">왜 스펙터 아카데미인가?</h2>
-        <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon">📚</div>
-            <h3>체계적인 커리큘럼</h3>
-            <p>학생 개개인의 수준에 맞춘 맞춤형 학습 계획</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">👨‍🏫</div>
-            <h3>최고의 강사진</h3>
-            <p>풍부한 경험과 노하우를 갖춘 전문 강사진</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">📈</div>
-            <h3>높은 합격률</h3>
-            <p>검증된 교육 방식으로 목표 달성 보장</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">💬</div>
-            <h3>1:1 맞춤 관리</h3>
-            <p>학생 한 명 한 명을 세심하게 케어하는 시스템</p>
-          </div>
-        </div>
-      </section>
-
       {/* Statistics Section */}
       <section className="stats-section">
         <div className="stats-grid">
@@ -191,24 +164,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Gallery Section */}
-      <section className="gallery-section">
-        <h2 className="section-title">학원 갤러리</h2>
-        <div className="gallery-grid">
-          {galleryImages.map((image) => (
-            <div key={image.id} className="gallery-item">
-              <div className="gallery-placeholder">
-                <div className="gallery-icon">📷</div>
-              </div>
-              <div className="gallery-info">
-                <h3>{image.title}</h3>
-                <p>{image.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Recent Notices Section */}
       {recentNotices.length > 0 && (
         <section className="notices-section">
@@ -229,18 +184,6 @@ const HomePage = () => {
           </div>
         </section>
       )}
-
-      {/* Final CTA Section */}
-      <section className="final-cta-section">
-        <h2>지금 바로 시작하세요</h2>
-        <p>당신의 목표를 향한 첫 걸음, 스펙터 아카데미와 함께하세요</p>
-        <div className="cta-buttons-group">
-          <Link to="/register" className="cta-button large">수강신청 하러가기</Link>
-          <a href="https://pf.kakao.com/" target="_blank" rel="noopener noreferrer" className="cta-button large secondary-cta">
-            카카오톡 상담
-          </a>
-        </div>
-      </section>
 
       {/* Floating KakaoTalk Button */}
       <a
