@@ -102,28 +102,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="stats-section">
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-number">95%</div>
-            <div className="stat-label">목표 달성률</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">500+</div>
-            <div className="stat-label">누적 수강생</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">15년</div>
-            <div className="stat-label">교육 경력</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-number">4.9/5</div>
-            <div className="stat-label">만족도</div>
-          </div>
-        </div>
-      </section>
-
       {/* Reviews Section */}
       <section className="reviews-section">
         <h2 className="section-title">수강생 후기</h2>
