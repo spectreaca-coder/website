@@ -124,7 +124,10 @@ const MyClasses = () => {
             {openLectureId === lec.id && (
               <div className="accordion-content">
                 <div className="ql-snow">
-                  <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lec.content) }}></div>
+                  <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(lec.content, {
+                    ADD_TAGS: ['iframe'],
+                    ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'class', 'src']
+                  }) }}></div>
                 </div>
               </div>
             )}

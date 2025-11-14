@@ -170,7 +170,10 @@ const InquiryPage = () => {
         <Modal onClose={handleCloseModal}>
           <div className="modal-header"><h2>{selectedInquiry.title}</h2><div className="modal-meta"><span>작성자: {selectedInquiry.author}</span><span>작성일: {selectedInquiry.createdAt}</span></div></div>
           <div className="modal-body">
-            <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedInquiry.content) }} />
+            <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedInquiry.content, {
+              ADD_TAGS: ['iframe'],
+              ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'class', 'src']
+            }) }} />
           </div>
         </Modal>
       )}

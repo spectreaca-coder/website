@@ -39,7 +39,12 @@ const Instructors = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('instructors', JSON.stringify(instructors));
+    try {
+      localStorage.setItem('instructors', JSON.stringify(instructors));
+    } catch (error) {
+      console.error('localStorage 저장 실패:', error);
+      alert('데이터 저장에 실패했습니다. 브라우저의 저장 공간이 부족할 수 있습니다.');
+    }
   }, [instructors]);
 
   const clearForm = () => {
@@ -67,9 +72,57 @@ const Instructors = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('이미지 파일 크기는 2MB 이하여야 합니다.');
+        e.target.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setNewPhoto(reader.result);
+        const img = new Image();
+        img.onload = () => {
+          // Create canvas to resize image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Set max dimensions
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to base64 with compression
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          setNewPhoto(compressedDataUrl);
+        };
+        img.onerror = () => {
+          alert('이미지 로딩에 실패했습니다.');
+          e.target.value = '';
+        };
+        img.src = reader.result;
+      };
+      reader.onerror = () => {
+        alert('파일 읽기에 실패했습니다.');
+        e.target.value = '';
       };
       reader.readAsDataURL(file);
     }
@@ -79,20 +132,25 @@ const Instructors = () => {
     e.preventDefault();
     if (!newName || !newSubject || !newComment) { alert('모든 항목을 입력해주세요.'); return; }
 
-    if (editingInstructor) {
-      // Update
-      const updatedInstructors = instructors.map(inst => 
-        inst.id === editingInstructor.id 
-          ? { ...inst, name: newName, subject: newSubject, comment: newComment, career: newCareer, photo: newPhoto }
-          : inst
-      );
-      setInstructors(updatedInstructors);
-    } else {
-      // Create
-      const newInstructor = { id: Date.now(), name: newName, subject: newSubject, comment: newComment, career: newCareer, photo: newPhoto || '' };
-      setInstructors([newInstructor, ...instructors]);
+    try {
+      if (editingInstructor) {
+        // Update
+        const updatedInstructors = instructors.map(inst =>
+          inst.id === editingInstructor.id
+            ? { ...inst, name: newName, subject: newSubject, comment: newComment, career: newCareer, photo: newPhoto }
+            : inst
+        );
+        setInstructors(updatedInstructors);
+      } else {
+        // Create
+        const newInstructor = { id: Date.now(), name: newName, subject: newSubject, comment: newComment, career: newCareer, photo: newPhoto || '' };
+        setInstructors([newInstructor, ...instructors]);
+      }
+      clearForm();
+    } catch (error) {
+      console.error('저장 중 오류 발생:', error);
+      alert('저장에 실패했습니다. 이미지 파일이 너무 클 수 있습니다. 더 작은 이미지를 사용해주세요.');
     }
-    clearForm();
   };
 
   return (
