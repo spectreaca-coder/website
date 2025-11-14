@@ -2,7 +2,7 @@
   width: 100%;
   min-height: 100vh;
   overflow-x: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
 }
 
 /* Hero Section */
@@ -14,6 +14,7 @@
   padding: 4rem 2rem;
   text-align: center;
   position: relative;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
 .hero-content {
@@ -31,21 +32,20 @@
 .hero-title-main {
   font-size: 4rem;
   font-weight: 800;
-  color: white;
-  text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.2);
+  color: #2c3e50;
   animation: slideInDown 0.8s ease-out;
 }
 
 .hero-title-sub {
   font-size: 1.8rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.95);
+  color: #667eea;
   animation: slideInUp 0.8s ease-out 0.2s both;
 }
 
 .hero-description {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #555;
   line-height: 1.8;
   margin-bottom: 3rem;
   animation: fadeIn 1s ease-out 0.4s both;
@@ -67,31 +67,32 @@
   border-radius: 50px;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   display: inline-block;
 }
 
 .cta-button.primary {
-  background: white;
-  color: #667eea;
+  background: #667eea;
+  color: white;
 }
 
 .cta-button.primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  background: #f0f0f0;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  background: #5568d3;
 }
 
 .cta-button.secondary {
-  background: transparent;
-  color: white;
-  border: 2px solid white;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
 }
 
 .cta-button.secondary:hover {
   transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  background: #667eea;
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
 }
 
 .cta-button.large {
@@ -109,13 +110,12 @@ section {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 3rem;
-  color: white;
+  color: #2c3e50;
 }
 
 /* Features Section */
 .features-section {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  background: #ffffff;
 }
 
 .features-grid {
@@ -165,8 +165,7 @@ section {
 
 /* Statistics Section */
 .stats-section {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .stats-grid {
@@ -180,10 +179,10 @@ section {
 .stat-card {
   text-align: center;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 15px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   animation: scaleIn 0.6s ease-out both;
 }
@@ -286,8 +285,7 @@ section {
 
 /* FAQ Section */
 .faq-section {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  background: #f8f9fa;
 }
 
 .faq-container {
@@ -479,13 +477,16 @@ section {
 }
 
 .secondary-cta {
-  background: #FEE500;
-  color: #000;
+  background: white;
+  color: #667eea;
+  border: 2px solid white;
 }
 
 .secondary-cta:hover {
-  background: #FDD835;
-  color: #000;
+  background: rgba(255, 255, 255, 0.9);
+  color: #667eea;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
 /* Notices Section */
@@ -567,8 +568,7 @@ section {
 
 /* Final CTA Section */
 .final-cta-section {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   text-align: center;
   padding: 6rem 2rem;
 }
@@ -581,7 +581,7 @@ section {
 
 .final-cta-section p {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   margin-bottom: 2.5rem;
 }
 
