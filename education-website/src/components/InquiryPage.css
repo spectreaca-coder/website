@@ -203,6 +203,16 @@
     padding: 0;
 }
 
+/* Images in modal - auto-fit without cropping */
+.modal-body .ql-editor img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
 .modal-body .ql-editor iframe,
 .modal-body .ql-editor .ql-video {
     max-width: 100%;

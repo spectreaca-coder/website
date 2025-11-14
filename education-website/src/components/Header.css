@@ -31,7 +31,7 @@
 /* Links in the Homepage header */
 .app-header.home-header .main-nav a,
 .app-header.home-header .dropdown-title {
-  color: #333;
+  color: #003366;
 }
 
 /* Scrolled state for ANY header */
@@ -215,7 +215,7 @@
 }
 
 .app-header.home-header .mobile-menu-button span {
-  background-color: #333;
+  background-color: #003366;
 }
 
 .app-header.scrolled .mobile-menu-button span {

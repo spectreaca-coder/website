@@ -68,6 +68,16 @@
     padding: 0; /* Remove default padding to blend in */
 }
 
+/* Images in accordion - auto-fit without cropping */
+.accordion-content .ql-editor img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
 .accordion-content .ql-editor iframe,
 .accordion-content .ql-editor .ql-video {
     max-width: 100%;
