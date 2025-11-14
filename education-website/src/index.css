@@ -63,16 +63,39 @@ html {
 img {
   max-width: 100%;
   height: auto;
-  display: block;
 }
 
 /* Ensure images in flex/grid containers don't overflow */
 .review-card img,
 .instructor-card img,
+.instructor-photo,
 .gallery-item img,
 .course-card img,
-.modal-body img {
-  max-width: 100%;
-  height: auto;
+.modal-body img,
+.ql-editor img {
+  max-width: 100% !important;
+  height: auto !important;
   object-fit: contain;
+  display: block;
+}
+
+/* Mobile specific image fixes */
+@media (max-width: 768px) {
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .instructor-photo {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 200px;
+    object-fit: contain !important;
+  }
+
+  .ql-editor img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 400px;
+  }
 }
