@@ -71,7 +71,9 @@ const Header = () => {
     navigate('/');
   };
 
-  const toggleMobileMenu = () => {
+  const toggleMobileMenu = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
