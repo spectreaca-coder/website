@@ -309,10 +309,12 @@
   z-index: 999;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .mobile-menu-overlay.active {
   opacity: 1;
+  pointer-events: auto;
 }
 
 /* Mobile Navigation */
@@ -413,10 +415,18 @@
     display: flex;
   }
 
-  /* Show mobile navigation and overlay */
-  .mobile-nav,
+  /* Show mobile navigation structure (but not visible until active) */
+  .mobile-nav {
+    display: block;
+  }
+
   .mobile-menu-overlay {
     display: block;
+    pointer-events: none;
+  }
+
+  .mobile-menu-overlay.active {
+    pointer-events: auto;
   }
 
   .user-auth {
