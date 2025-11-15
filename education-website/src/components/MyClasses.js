@@ -5,26 +5,14 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize-module-react';
 import DOMPurify from 'dompurify';
+import { db } from '../firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 Quill.register('modules/imageResize', ImageResize);
 
-const initialLectures = [
-  {
-    id: 1, name: '미적분 1강 - 함수의 극한', instructor: '김현빈',
-    content: '<p>함수의 극한 개념을 정복합니다.</p><p><br></p><iframe class="ql-video" frameborder="0" allowfullscreen="true" src="https://www.youtube.com/embed/P_s_8X6sN8s"></iframe><p><br></p>'
-  },
-  {
-    id: 2, name: '확률과 통계 1강 - 순열과 조합', instructor: '이수진',
-    content: '<p>경우의 수를 세는 기본 원리를 배웁니다.</p>'
-  },
-];
-
 const MyClasses = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [lectures, setLectures] = useState(() => {
-    const savedLectures = localStorage.getItem('videoLectures');
-    return savedLectures ? JSON.parse(savedLectures) : initialLectures;
-  });
+  const [lectures, setLectures] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingLecture, setEditingLecture] = useState(null);
   const [openLectureId, setOpenLectureId] = useState(null);
@@ -38,9 +26,21 @@ const MyClasses = () => {
     setIsAdmin(sessionStorage.getItem('isAdmin') === 'true');
   }, []);
 
+  // Firestore에서 강의 목록 실시간 가져오기
   useEffect(() => {
-    localStorage.setItem('videoLectures', JSON.stringify(lectures));
-  }, [lectures]);
+    const q = query(collection(db, 'lectures'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const lecturesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setLectures(lecturesData);
+    }, (error) => {
+      console.error('강의 목록 가져오기 실패:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const clearForm = () => {
     setName(''); setInstructor(''); setContent('');
@@ -56,26 +56,48 @@ const MyClasses = () => {
     setIsModalVisible(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('정말로 이 강의를 삭제하시겠습니까?')) {
-      setLectures(lectures.filter(lec => lec.id !== id));
+      try {
+        await deleteDoc(doc(db, 'lectures', id));
+        alert('강의가 삭제되었습니다.');
+      } catch (error) {
+        console.error('강의 삭제 실패:', error);
+        alert('강의 삭제에 실패했습니다.');
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !instructor) { alert('강의 이름과 강사명은 필수입니다.'); return; }
 
-    if (editingLecture) {
-      const updatedLectures = lectures.map(lec => 
-        lec.id === editingLecture.id ? { ...lec, name, instructor, content } : lec
-      );
-      setLectures(updatedLectures);
-    } else {
-      const newLecture = { id: Date.now(), name, instructor, content };
-      setLectures([newLecture, ...lectures]);
+    try {
+      if (editingLecture) {
+        // Update - Firestore
+        await updateDoc(doc(db, 'lectures', editingLecture.id), {
+          name,
+          instructor,
+          content,
+          updatedAt: new Date().toISOString()
+        });
+        alert('강의가 수정되었습니다.');
+      } else {
+        // Create - Firestore
+        await addDoc(collection(db, 'lectures'), {
+          name,
+          instructor,
+          content,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        alert('새 강의가 추가되었습니다.');
+      }
+      clearForm();
+    } catch (error) {
+      console.error('강의 저장 실패:', error);
+      alert('강의 저장에 실패했습니다.');
     }
-    clearForm();
   };
 
   const handleToggleAccordion = (id) => {

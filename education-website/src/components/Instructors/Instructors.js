@@ -1,28 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './Instructors.css';
 import Modal from '../Modal';
-
-const initialInstructors = [
-  {
-    id: 1, name: '김현빈', subject: '수학',
-    comment: '최고가 최고를 만듭니다.',
-    career: '전) 메가스터디 수학 강사\n현) 스펙터학원 대표 강사',
-    photo: ''
-  },
-  {
-    id: 2, name: '이수진', subject: '과학',
-    comment: '기본에 충실한 강의를 약속합니다.',
-    career: '서울대학교 화학과 졸업\n현) 스펙터학원 과학 대표 강사',
-    photo: ''
-  },
-];
+import { db } from '../../firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 const Instructors = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [instructors, setInstructors] = useState(() => {
-    const savedInstructors = localStorage.getItem('instructors');
-    return savedInstructors ? JSON.parse(savedInstructors) : initialInstructors;
-  });
+  const [instructors, setInstructors] = useState([]);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [editingInstructor, setEditingInstructor] = useState(null);
 
@@ -38,14 +22,21 @@ const Instructors = () => {
     setIsAdmin(adminFlag);
   }, []);
 
+  // Firestore에서 강사 목록 실시간 가져오기
   useEffect(() => {
-    try {
-      localStorage.setItem('instructors', JSON.stringify(instructors));
-    } catch (error) {
-      console.error('localStorage 저장 실패:', error);
-      alert('데이터 저장에 실패했습니다. 브라우저의 저장 공간이 부족할 수 있습니다.');
-    }
-  }, [instructors]);
+    const q = query(collection(db, 'instructors'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const instructorsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setInstructors(instructorsData);
+    }, (error) => {
+      console.error('강사 목록 가져오기 실패:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const clearForm = () => {
     setNewName(''); setNewSubject(''); setNewComment(''); setNewCareer(''); setNewPhoto('');
@@ -63,9 +54,15 @@ const Instructors = () => {
     setIsCreateModalVisible(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('정말로 이 강사 정보를 삭제하시겠습니까?')) {
-      setInstructors(instructors.filter(inst => inst.id !== id));
+      try {
+        await deleteDoc(doc(db, 'instructors', id));
+        alert('강사 정보가 삭제되었습니다.');
+      } catch (error) {
+        console.error('강사 삭제 실패:', error);
+        alert('강사 삭제에 실패했습니다.');
+      }
     }
   };
 
@@ -128,23 +125,34 @@ const Instructors = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newName || !newSubject || !newComment) { alert('모든 항목을 입력해주세요.'); return; }
 
     try {
       if (editingInstructor) {
-        // Update
-        const updatedInstructors = instructors.map(inst =>
-          inst.id === editingInstructor.id
-            ? { ...inst, name: newName, subject: newSubject, comment: newComment, career: newCareer, photo: newPhoto }
-            : inst
-        );
-        setInstructors(updatedInstructors);
+        // Update - Firestore
+        await updateDoc(doc(db, 'instructors', editingInstructor.id), {
+          name: newName,
+          subject: newSubject,
+          comment: newComment,
+          career: newCareer,
+          photo: newPhoto,
+          updatedAt: new Date().toISOString()
+        });
+        alert('강사 정보가 수정되었습니다.');
       } else {
-        // Create
-        const newInstructor = { id: Date.now(), name: newName, subject: newSubject, comment: newComment, career: newCareer, photo: newPhoto || '' };
-        setInstructors([newInstructor, ...instructors]);
+        // Create - Firestore
+        await addDoc(collection(db, 'instructors'), {
+          name: newName,
+          subject: newSubject,
+          comment: newComment,
+          career: newCareer,
+          photo: newPhoto || '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        alert('새 강사가 추가되었습니다.');
       }
       clearForm();
     } catch (error) {

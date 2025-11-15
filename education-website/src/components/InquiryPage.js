@@ -5,14 +5,13 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ImageResize from 'quill-image-resize-module-react';
 import DOMPurify from 'dompurify';
+import { db } from '../firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 Quill.register('modules/imageResize', ImageResize);
 
 const InquiryPage = () => {
-  const [inquiries, setInquiries] = useState(() => {
-    const savedInquiries = localStorage.getItem('inquiries');
-    return savedInquiries ? JSON.parse(savedInquiries) : [];
-  });
+  const [inquiries, setInquiries] = useState([]);
 
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
@@ -29,9 +28,21 @@ const InquiryPage = () => {
     setIsAdmin(adminFlag);
   }, []);
 
+  // Firestore에서 공지사항 목록 실시간 가져오기
   useEffect(() => {
-    localStorage.setItem('inquiries', JSON.stringify(inquiries));
-  }, [inquiries]);
+    const q = query(collection(db, 'notices'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const noticesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setInquiries(noticesData);
+    }, (error) => {
+      console.error('공지사항 목록 가져오기 실패:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const clearForm = () => {
     setAuthor('');
@@ -49,36 +60,53 @@ const InquiryPage = () => {
     setIsFormVisible(true);
   };
 
-  const handleDeleteInquiry = (id) => {
+  const handleDeleteInquiry = async (id) => {
     if (window.confirm('정말로 이 글을 삭제하시겠습니까?')) {
-      setInquiries(inquiries.filter(inq => inq.id !== id));
+      try {
+        await deleteDoc(doc(db, 'notices', id));
+        alert('공지가 삭제되었습니다.');
+      } catch (error) {
+        console.error('공지 삭제 실패:', error);
+        alert('공지 삭제에 실패했습니다.');
+      }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!author || !title || !content) {
       alert('이름, 제목, 내용을 모두 입력해주세요.');
       return;
     }
 
-    if (editingInquiry) {
-      // Update existing inquiry
-      const updatedInquiries = inquiries.map(inq =>
-        inq.id === editingInquiry.id
-          ? { ...inq, author, title, content }
-          : inq
-      );
-      setInquiries(updatedInquiries);
-    } else {
-      // Create new inquiry
-      const newInquiry = {
-        id: Date.now(), author, title, content,
-        createdAt: new Date().toLocaleDateString(), views: 0,
-      };
-      setInquiries([newInquiry, ...inquiries]);
+    try {
+      if (editingInquiry) {
+        // Update existing inquiry
+        await updateDoc(doc(db, 'notices', editingInquiry.id), {
+          author,
+          title,
+          content,
+          updatedAt: new Date().toISOString()
+        });
+        alert('공지가 수정되었습니다.');
+      } else {
+        // Create new inquiry
+        await addDoc(collection(db, 'notices'), {
+          author,
+          title,
+          content,
+          createdAt: new Date().toISOString(),
+          createdAtDisplay: new Date().toLocaleDateString(),
+          views: 0,
+          updatedAt: new Date().toISOString()
+        });
+        alert('새 공지가 작성되었습니다.');
+      }
+      clearForm();
+    } catch (error) {
+      console.error('공지 저장 실패:', error);
+      alert('공지 저장에 실패했습니다.');
     }
-    clearForm();
   };
 
   const quillModules = {
@@ -96,15 +124,20 @@ const InquiryPage = () => {
     }
   };
 
-  const handleViewInquiry = (id) => {
-    const updatedInquiries = inquiries.map(inq => {
-      if (inq.id === id && !isAdmin) { // Views don't increase for admin
-        return { ...inq, views: inq.views + 1 };
+  const handleViewInquiry = async (id) => {
+    const inquiry = inquiries.find(inq => inq.id === id);
+    setSelectedInquiry(inquiry);
+
+    // 관리자가 아닐 때만 조회수 증가
+    if (!isAdmin && inquiry) {
+      try {
+        await updateDoc(doc(db, 'notices', id), {
+          views: (inquiry.views || 0) + 1
+        });
+      } catch (error) {
+        console.error('조회수 업데이트 실패:', error);
       }
-      return inq;
-    });
-    setInquiries(updatedInquiries);
-    setSelectedInquiry(updatedInquiries.find(inq => inq.id === id));
+    }
   };
 
   const handleCloseModal = () => {
@@ -153,8 +186,8 @@ const InquiryPage = () => {
                 <td className="col-index">{inquiries.length - index}</td>
                 <td className="col-title"><button type="button" className="title-button" onClick={(e) => { e.preventDefault(); handleViewInquiry(item.id); }}>{item.title}</button></td>
                 <td className="col-author">{item.author}</td>
-                <td className="col-date">{item.createdAt}</td>
-                <td className="col-views">{item.views}</td>
+                <td className="col-date">{item.createdAtDisplay || new Date(item.createdAt).toLocaleDateString()}</td>
+                <td className="col-views">{item.views || 0}</td>
                 {isAdmin && (
                   <td className="col-manage">
                     <button onClick={() => handleEditClick(item)} className="edit-btn">수정</button>
@@ -168,7 +201,7 @@ const InquiryPage = () => {
       </div>
       {selectedInquiry && (
         <Modal onClose={handleCloseModal}>
-          <div className="modal-header"><h2>{selectedInquiry.title}</h2><div className="modal-meta"><span>작성자: {selectedInquiry.author}</span><span>작성일: {selectedInquiry.createdAt}</span></div></div>
+          <div className="modal-header"><h2>{selectedInquiry.title}</h2><div className="modal-meta"><span>작성자: {selectedInquiry.author}</span><span>작성일: {selectedInquiry.createdAtDisplay || new Date(selectedInquiry.createdAt).toLocaleDateString()}</span></div></div>
           <div className="modal-body">
             <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedInquiry.content, {
               ADD_TAGS: ['iframe'],

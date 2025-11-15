@@ -1,24 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './CourseRegistration.css';
 import Modal from './Modal';
-
-const initialCourses = [
-  {
-    id: 1, title: '2025학년도 6월 모의평가 대비', description: '수학 정규반 (미적분/기하/확통)',
-    teacher: '김현빈', day: '월, 수, 금', time: '19:00 - 22:00', capacity: 20
-  },
-  {
-    id: 2, title: '내신 대비 특별반', description: '고1·고2 수학 집중 과정',
-    teacher: '이수진', day: '화, 목', time: '18:00 - 21:00', capacity: 15
-  },
-];
+import { db } from '../firebase';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 const CourseRegistration = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [courses, setCourses] = useState(() => {
-    const savedCourses = localStorage.getItem('courses');
-    return savedCourses ? JSON.parse(savedCourses) : initialCourses;
-  });
+  const [courses, setCourses] = useState([]);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [isApplyModalVisible, setIsApplyModalVisible] = useState(false);
@@ -41,9 +29,21 @@ const CourseRegistration = () => {
     setIsAdmin(adminFlag);
   }, []);
 
+  // Firestore에서 강좌 목록 실시간 가져오기
   useEffect(() => {
-    localStorage.setItem('courses', JSON.stringify(courses));
-  }, [courses]);
+    const q = query(collection(db, 'courses'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const coursesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCourses(coursesData);
+    }, (error) => {
+      console.error('강좌 목록 가져오기 실패:', error);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Google Sheets 연동 함수
   const sendToGoogleSheets = async (applicationData) => {
@@ -86,13 +86,19 @@ const CourseRegistration = () => {
     setIsCreateModalVisible(true);
   };
 
-  const handleDeleteCourse = (id) => {
+  const handleDeleteCourse = async (id) => {
     if (window.confirm('정말로 이 수업을 삭제하시겠습니까?')) {
-      setCourses(courses.filter(course => course.id !== id));
+      try {
+        await deleteDoc(doc(db, 'courses', id));
+        alert('수업이 삭제되었습니다.');
+      } catch (error) {
+        console.error('수업 삭제 실패:', error);
+        alert('수업 삭제에 실패했습니다.');
+      }
     }
   };
 
-  const handleSubmitCourse = (e) => {
+  const handleSubmitCourse = async (e) => {
     e.preventDefault();
     if (!newTitle || !newDesc || !newTeacher || !newDay || !newTime || !newCapacity) {
       alert('모든 항목을 입력해주세요.');
@@ -105,20 +111,38 @@ const CourseRegistration = () => {
       return;
     }
 
-    if (editingCourse) {
-      // Update
-      const updatedCourses = courses.map(c =>
-        c.id === editingCourse.id
-          ? { ...c, title: newTitle, description: newDesc, teacher: newTeacher, day: newDay, time: newTime, capacity }
-          : c
-      );
-      setCourses(updatedCourses);
-    } else {
-      // Create
-      const newCourse = { id: Date.now(), title: newTitle, description: newDesc, teacher: newTeacher, day: newDay, time: newTime, capacity };
-      setCourses([newCourse, ...courses]);
+    try {
+      if (editingCourse) {
+        // Update - Firestore
+        await updateDoc(doc(db, 'courses', editingCourse.id), {
+          title: newTitle,
+          description: newDesc,
+          teacher: newTeacher,
+          day: newDay,
+          time: newTime,
+          capacity,
+          updatedAt: new Date().toISOString()
+        });
+        alert('수업 정보가 수정되었습니다.');
+      } else {
+        // Create - Firestore
+        await addDoc(collection(db, 'courses'), {
+          title: newTitle,
+          description: newDesc,
+          teacher: newTeacher,
+          day: newDay,
+          time: newTime,
+          capacity,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+        alert('새 수업이 개설되었습니다.');
+      }
+      clearForm();
+    } catch (error) {
+      console.error('수업 저장 실패:', error);
+      alert('수업 저장에 실패했습니다.');
     }
-    clearForm();
   };
 
   const handleApplyClick = (course) => {
@@ -145,69 +169,76 @@ const CourseRegistration = () => {
       return;
     }
 
-    const savedApplications = JSON.parse(localStorage.getItem('applications')) || [];
+    try {
+      // Firestore에서 신청 목록 가져오기
+      const applicationsSnapshot = await getDocs(collection(db, 'applications'));
+      const savedApplications = applicationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    // 중복 신청 체크
-    const isDuplicate = savedApplications.some(
-      app => app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
-    );
-    if (isDuplicate) {
-      alert('이미 해당 수업에 신청하셨습니다.');
-      return;
+      // 중복 신청 체크
+      const isDuplicate = savedApplications.some(
+        app => app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
+      );
+      if (isDuplicate) {
+        alert('이미 해당 수업에 신청하셨습니다.');
+        return;
+      }
+
+      // 해당 수업의 현재 신청자 수 확인 (대기자 제외)
+      const courseApplications = savedApplications.filter(
+        app => app.courseId === selectedCourse.id && app.status === 'confirmed'
+      );
+      const currentEnrollment = courseApplications.length;
+      const courseCapacity = selectedCourse.capacity || 20;
+
+      // 정원 체크
+      const isWaitlisted = currentEnrollment >= courseCapacity;
+      const status = isWaitlisted ? 'waiting' : 'confirmed';
+
+      const newApplication = {
+        studentName,
+        studentGrade,
+        studentPhone,
+        parentPhone,
+        courseId: selectedCourse.id,
+        courseTitle: selectedCourse.title,
+        courseTeacher: selectedCourse.teacher,
+        courseDay: selectedCourse.day,
+        courseTime: selectedCourse.time,
+        status,
+        appliedAt: new Date().toISOString(),
+        appliedDate: new Date().toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })
+      };
+
+      // Firestore에 저장
+      await addDoc(collection(db, 'applications'), newApplication);
+
+      // Google Sheets로 전송
+      await sendToGoogleSheets(newApplication);
+
+      // 사용자 알림
+      if (isWaitlisted) {
+        alert('현재 수강 신청자 수가 초과되어 등록 대기 상태입니다.\n공석 발생 시 바로 연락드리겠습니다.');
+      } else {
+        alert(`'${selectedCourse.title}' 수업에 대한 수강신청이 완료되었습니다.\n곧 해당 전화번호로 연락이 갈 것입니다.`);
+      }
+
+      setStudentName('');
+      setStudentGrade('');
+      setStudentPhone('');
+      setParentPhone('');
+      setIsApplyModalVisible(false);
+      setSelectedCourse(null);
+    } catch (error) {
+      console.error('수강 신청 실패:', error);
+      alert('수강 신청에 실패했습니다. 다시 시도해주세요.');
     }
-
-    // 해당 수업의 현재 신청자 수 확인 (대기자 제외)
-    const courseApplications = savedApplications.filter(
-      app => app.courseId === selectedCourse.id && app.status === 'confirmed'
-    );
-    const currentEnrollment = courseApplications.length;
-    const courseCapacity = selectedCourse.capacity || 20;
-
-    // 정원 체크
-    const isWaitlisted = currentEnrollment >= courseCapacity;
-    const status = isWaitlisted ? 'waiting' : 'confirmed';
-
-    const newApplication = {
-      studentName,
-      studentGrade,
-      studentPhone,
-      parentPhone,
-      courseId: selectedCourse.id,
-      courseTitle: selectedCourse.title,
-      courseTeacher: selectedCourse.teacher,
-      courseDay: selectedCourse.day,
-      courseTime: selectedCourse.time,
-      status,
-      appliedAt: new Date().toISOString(),
-      appliedDate: new Date().toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      })
-    };
-
-    const updatedApplications = [newApplication, ...savedApplications];
-    localStorage.setItem('applications', JSON.stringify(updatedApplications));
-
-    // Google Sheets로 전송
-    await sendToGoogleSheets(newApplication);
-
-    // 사용자 알림
-    if (isWaitlisted) {
-      alert('현재 수강 신청자 수가 초과되어 등록 대기 상태입니다.\n공석 발생 시 바로 연락드리겠습니다.');
-    } else {
-      alert(`'${selectedCourse.title}' 수업에 대한 수강신청이 완료되었습니다.\n곧 해당 전화번호로 연락이 갈 것입니다.`);
-    }
-
-    setStudentName('');
-    setStudentGrade('');
-    setStudentPhone('');
-    setParentPhone('');
-    setIsApplyModalVisible(false);
-    setSelectedCourse(null);
   };
 
   return (
