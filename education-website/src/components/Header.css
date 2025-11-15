@@ -50,13 +50,24 @@
   color: #005aab;
 }
 
+.logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .logo a {
-  display: block;
+  display: flex;
+  align-items: center;
   text-decoration: none;
 }
 
 .logo img {
-  height: 40px;
+  height: 36px;
+  max-height: 36px;
+  width: auto;
+  display: block;
+  transition: height 0.3s ease;
 }
 
 .main-nav > ul {
@@ -350,6 +361,14 @@
   font-weight: 600;
 }
 
+/* Tablet and Desktop transition */
+@media (max-width: 1200px) and (min-width: 1025px) {
+  .logo img {
+    height: 34px;
+    max-height: 34px;
+  }
+}
+
 /* Mobile Responsive Design */
 @media (max-width: 1024px) {
   .app-header {
@@ -357,7 +376,8 @@
   }
 
   .logo img {
-    height: 32px;
+    height: 30px;
+    max-height: 30px;
   }
 
   /* Hide desktop navigation on tablets and below */
@@ -406,7 +426,8 @@
   }
 
   .logo img {
-    height: 28px;
+    height: 26px;
+    max-height: 26px;
   }
 
   .mobile-nav {
@@ -441,7 +462,8 @@
   }
 
   .logo img {
-    height: 26px;
+    height: 24px;
+    max-height: 24px;
   }
 
   .mobile-menu-button {
