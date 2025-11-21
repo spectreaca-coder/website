@@ -23,6 +23,7 @@ const CourseRegistration = () => {
   const [studentGrade, setStudentGrade] = useState('');
   const [studentPhone, setStudentPhone] = useState('');
   const [parentPhone, setParentPhone] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const adminFlag = sessionStorage.getItem('isAdmin') === 'true';
@@ -48,7 +49,7 @@ const CourseRegistration = () => {
   // Google Sheets 연동 함수
   const sendToGoogleSheets = async (applicationData) => {
     const GOOGLE_SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
-    
+
     // 디버깅: 환경변수 확인
     console.log('[DEBUG] Google Script URL:', GOOGLE_SCRIPT_URL);
     console.log('[DEBUG] 전체 환경변수:', process.env);
@@ -176,6 +177,7 @@ const CourseRegistration = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       // Firestore에서 신청 목록 가져오기
       const applicationsSnapshot = await getDocs(collection(db, 'applications'));
@@ -245,6 +247,8 @@ const CourseRegistration = () => {
     } catch (error) {
       console.error('수강 신청 실패:', error);
       alert('수강 신청에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -300,8 +304,8 @@ const CourseRegistration = () => {
         <Modal onClose={() => setIsApplyModalVisible(false)}>
           <form onSubmit={handleApplicationSubmit} className="application-form">
             <h2>'{selectedCourse.title}' 수강신청</h2>
-            <input type="text" placeholder="학생 이름" value={studentName} onChange={e => setStudentName(e.target.value)} required />
-            <select value={studentGrade} onChange={e => setStudentGrade(e.target.value)} required>
+            <input type="text" placeholder="학생 이름" value={studentName} onChange={e => setStudentName(e.target.value)} required disabled={isSubmitting} />
+            <select value={studentGrade} onChange={e => setStudentGrade(e.target.value)} required disabled={isSubmitting}>
               <option value="" disabled>학년 선택</option>
               <option value="중1">중학교 1학년</option>
               <option value="중2">중학교 2학년</option>
@@ -311,10 +315,25 @@ const CourseRegistration = () => {
               <option value="고3">고등학교 3학년</option>
               <option value="N수">N수</option>
             </select>
-            <input type="tel" placeholder="학생 전화번호" value={studentPhone} onChange={e => setStudentPhone(e.target.value)} required />
-            <input type="tel" placeholder="부모님 전화번호" value={parentPhone} onChange={e => setParentPhone(e.target.value)} required />
-            <button type="submit">신청하기</button>
+            <input type="tel" placeholder="학생 전화번호" value={studentPhone} onChange={e => setStudentPhone(e.target.value)} required disabled={isSubmitting} />
+            <input type="tel" placeholder="부모님 전화번호" value={parentPhone} onChange={e => setParentPhone(e.target.value)} required disabled={isSubmitting} />
+            <button type="submit" disabled={isSubmitting} className={isSubmitting ? 'loading' : ''}>
+              {isSubmitting ? (
+                <>
+                  <span className="spinner"></span>
+                  신청 중...
+                </>
+              ) : '신청하기'}
+            </button>
           </form>
+          {isSubmitting && (
+            <div className="loading-overlay">
+              <div className="loading-content">
+                <div className="loading-spinner"></div>
+                <p>수강신청을 처리하고 있습니다...</p>
+              </div>
+            </div>
+          )}
         </Modal>
       )}
     </div>

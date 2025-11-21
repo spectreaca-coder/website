@@ -6,12 +6,13 @@
 }
 
 .course-card {
-  position: relative; /* For positioning the delete button */
+  position: relative;
+  /* For positioning the delete button */
   background-color: #fff;
   border: 1px solid #eee;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -19,7 +20,7 @@
 
 .course-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .card-admin-actions {
@@ -58,7 +59,8 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Allows the button to be pushed to the bottom */
+  flex-grow: 1;
+  /* Allows the button to be pushed to the bottom */
 }
 
 .course-title {
@@ -121,7 +123,8 @@
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background-color: #5cb85c; /* Green for create */
+  background-color: #5cb85c;
+  /* Green for create */
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -134,27 +137,29 @@
 /* Create Course & Application Modal Form */
 .create-course-form,
 .application-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .create-course-form h2,
 .application-form h2 {
-    text-align: center;
-    margin-bottom: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .create-course-form input,
 .create-course-form textarea,
 .application-form input,
 .application-form select {
-    padding: 0.8rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%; /* Ensure they take full width */
-    box-sizing: border-box; /* Consistent box model */
+  padding: 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  /* Ensure they take full width */
+  box-sizing: border-box;
+  /* Consistent box model */
 }
 
 .select-wrapper {
@@ -166,7 +171,8 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  padding-right: 2rem; /* Make space for custom arrow */
+  padding-right: 2rem;
+  /* Make space for custom arrow */
 }
 
 /* Custom Arrow */
@@ -178,25 +184,107 @@
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  pointer-events: none; /* Allows clicking through the arrow to the select */
+  pointer-events: none;
+  /* Allows clicking through the arrow to the select */
 }
 
 .create-course-form textarea {
-    min-height: 100px;
-    resize: vertical;
+  min-height: 100px;
+  resize: vertical;
 }
 
 .create-course-form button,
 .application-form button {
-    margin-top: 1rem;
-    padding: 0.8rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: #fff;
-    background-color: #005aab;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #005aab;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.create-course-form button:hover,
+.application-form button:hover {
+  background-color: #004488;
+}
+
+.application-form button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.application-form button.loading {
+  background-color: #777;
+}
+
+/* Spinner in button */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: 12px;
+}
+
+.loading-content {
+  text-align: center;
+  color: #fff;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.loading-content p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled input styles */
+.application-form input:disabled,
+.application-form select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* Mobile Responsive Design */
