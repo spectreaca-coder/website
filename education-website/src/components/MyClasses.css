@@ -1,215 +1,249 @@
-/* ========================================
-   My Classes - Minimal Design
-   ======================================== */
-
-.my-classes-page {
-  min-height: calc(100vh - 70px);
-  padding: var(--spacing-4xl) var(--spacing-lg);
-  background: var(--gray-50);
+/* Accordion List Styles */
+.accordion-list {
+  margin-top: 2rem;
+  border-top: 2px solid #333;
 }
 
-.my-classes-container {
-  max-width: 1200px;
-  margin: 0 auto;
+.accordion-item {
+  border-bottom: 1px solid #eee;
 }
 
-.my-classes-container h1 {
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-6xl);
-  font-weight: var(--font-weight-black);
-  color: var(--color-black);
-  text-align: center;
-  margin: 0 0 var(--spacing-sm) 0;
-  letter-spacing: -0.02em;
-}
-
-.my-classes-container>p {
-  font-size: var(--font-size-lg);
-  color: var(--gray-600);
-  text-align: center;
-  margin: 0 0 var(--spacing-3xl) 0;
-}
-
-/* Class Grid */
-.classes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--spacing-xl);
-}
-
-.class-card {
-  background: var(--color-white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
-  transition: all var(--transition-base);
-}
-
-.class-card:hover {
-  border-color: var(--gray-400);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.class-card h3 {
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-black);
-  margin: 0 0 var(--spacing-md) 0;
-}
-
-.class-info {
+.accordion-header {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
-}
-
-.class-info-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  font-size: var(--font-size-base);
-  color: var(--gray-700);
-}
-
-.class-info-label {
-  font-weight: var(--font-weight-semibold);
-  color: var(--gray-900);
-  min-width: 80px;
-}
-
-.class-description {
-  font-size: var(--font-size-base);
-  line-height: 1.7;
-  color: var(--gray-600);
-  margin: var(--spacing-md) 0;
-  padding: var(--spacing-md);
-  background: var(--gray-50);
-  border-radius: var(--radius-md);
-}
-
-.class-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  margin-top: var(--spacing-lg);
-}
-
-.class-actions button {
-  flex: 1;
-  padding: var(--spacing-md);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  font-family: var(--font-family-display);
-  border-radius: var(--radius-md);
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1rem;
   cursor: pointer;
-  transition: all var(--transition-base);
+  font-size: 1.1rem;
+  font-weight: 500;
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
 }
 
-.class-actions button.primary {
-  background: var(--color-black);
-  color: var(--color-white);
-  border: none;
+.accordion-title {
+    flex-grow: 1;
 }
 
-.class-actions button.primary:hover {
-  background: var(--gray-900);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+.accordion-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.class-actions button.secondary {
-  background: var(--color-white);
-  color: var(--gray-700);
-  border: 1px solid var(--gray-300);
+.accordion-admin-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 
-.class-actions button.secondary:hover {
-  border-color: var(--gray-400);
-  background: var(--gray-50);
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: var(--spacing-4xl) var(--spacing-xl);
-  background: var(--color-white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
-}
-
-.empty-state p {
-  font-size: var(--font-size-lg);
-  color: var(--gray-500);
-  margin: 0 0 var(--spacing-lg) 0;
-}
-
-.empty-state button {
-  padding: var(--spacing-md) var(--spacing-xl);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  font-family: var(--font-family-display);
-  background: var(--color-black);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--radius-lg);
+.accordion-admin-actions button {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--transition-base);
 }
 
-.empty-state button:hover {
-  background: var(--gray-900);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+.accordion-header:hover {
+  background-color: #f1f3f5;
 }
 
-/* Responsive */
+.accordion-icon {
+  transition: transform 0.3s ease;
+}
+
+.accordion-icon.open {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  padding: 1.5rem;
+  background-color: #fdfdfd;
+  border-top: 1px dashed #eee;
+}
+
+/* Quill Editor Rendered Content Styles */
+.accordion-content .ql-editor {
+    font-size: 1rem;
+    line-height: 1.6;
+    padding: 0; /* Remove default padding to blend in */
+}
+
+/* Images in accordion - auto-fit without cropping */
+.accordion-content .ql-editor img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.accordion-content .ql-editor iframe,
+.accordion-content .ql-editor .ql-video {
+    max-width: 100%;
+    width: 100%;
+    height: 400px;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+/* Make videos resizable */
+.quill-container .ql-editor iframe,
+.quill-container .ql-editor .ql-video {
+    max-width: 100%;
+    height: 400px;
+    resize: both;
+    overflow: auto;
+}
+
+/* Admin styles */
+.admin-actions {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.admin-actions h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.admin-actions button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #5cb85c;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Reusing create-course-form for the modal */
+.create-course-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.create-course-form h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.create-course-form input {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.create-course-form button {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #005aab;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Quill Editor in Modal */
+.quill-container {
+    margin: 1rem 0;
+}
+
+.quill-container .ql-editor {
+    min-height: 180px;
+}
+
+/* Mobile Responsive Design */
 @media (max-width: 768px) {
-  .my-classes-page {
-    padding: var(--spacing-3xl) var(--spacing-md);
+  .accordion-header {
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
   }
 
-  .my-classes-container h1 {
-    font-size: var(--font-size-4xl);
+  .accordion-controls {
+    gap: 0.5rem;
   }
 
-  .my-classes-container>p {
-    font-size: var(--font-size-base);
+  .accordion-admin-actions button {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
   }
 
-  .classes-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
+  .accordion-content {
+    padding: 1rem;
   }
 
-  .class-card {
-    padding: var(--spacing-lg);
+  .admin-actions {
+    padding: 1rem;
   }
 
-  .class-card h3 {
-    font-size: var(--font-size-xl);
+  .admin-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
   }
 }
 
 @media (max-width: 480px) {
-  .my-classes-page {
-    padding: var(--spacing-2xl) var(--spacing-sm);
+  .accordion-header {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
   }
 
-  .my-classes-container h1 {
-    font-size: var(--font-size-3xl);
-  }
-
-  .class-card {
-    padding: var(--spacing-md);
-  }
-
-  .class-actions {
-    flex-direction: column;
-  }
-
-  .class-actions button {
+  .accordion-title {
     width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .accordion-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .accordion-admin-actions {
+    gap: 0.25rem;
+  }
+
+  .accordion-admin-actions button {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .accordion-content {
+    padding: 0.75rem;
+  }
+
+  .accordion-content .ql-editor {
+    font-size: 0.9rem;
+  }
+
+  .admin-actions {
+    padding: 1rem;
+  }
+
+  .admin-actions h2 {
+    font-size: 1.3rem;
+  }
+
+  .admin-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .create-course-form input {
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+
+  .create-course-form button {
+    padding: 0.7rem;
+    font-size: 1rem;
   }
 }
