@@ -48,11 +48,18 @@ const CourseRegistration = () => {
   // Google Sheets 연동 함수
   const sendToGoogleSheets = async (applicationData) => {
     const GOOGLE_SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
+    
+    // 디버깅: 환경변수 확인
+    console.log('[DEBUG] Google Script URL:', GOOGLE_SCRIPT_URL);
+    console.log('[DEBUG] 전체 환경변수:', process.env);
 
     if (!GOOGLE_SCRIPT_URL) {
-      console.warn('Google Sheets URL이 설정되지 않았습니다.');
+      console.warn('⚠️ Google Sheets URL이 설정되지 않았습니다.');
+      console.warn('환경변수 REACT_APP_GOOGLE_SCRIPT_URL이 없습니다.');
       return;
     }
+
+    console.log('✅ Google Sheets로 데이터 전송 시작:', GOOGLE_SCRIPT_URL);
 
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -63,9 +70,9 @@ const CourseRegistration = () => {
         },
         body: JSON.stringify(applicationData)
       });
-      console.log('Google Sheets로 데이터 전송 완료');
+      console.log('✅ Google Sheets로 데이터 전송 완료');
     } catch (error) {
-      console.error('Google Sheets 전송 실패:', error);
+      console.error('❌ Google Sheets 전송 실패:', error);
     }
   };
 
