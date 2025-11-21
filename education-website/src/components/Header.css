@@ -1,4 +1,8 @@
-/* Default Header for all pages (non-home) */
+/* ========================================
+   Header - Minimal & Clean Design
+   ======================================== */
+
+/* Default Header (all pages except home) */
 .app-header {
   position: fixed;
   top: 0;
@@ -7,49 +11,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
+  padding: 20px var(--spacing-lg);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--gray-200);
   z-index: 1000;
-  transition: background-color 0.4s ease, border-bottom 0.4s ease;
+  transition: all var(--transition-base);
   box-sizing: border-box;
 }
 
-/* Style for links in the default header */
-.app-header .main-nav a {
-  color: #333;
-}
-
-/* Header style specifically for the Homepage */
+/* Header for Homepage (transparent until scroll) */
 .app-header.home-header {
   background-color: transparent;
   border-bottom: 1px solid transparent;
-  color: #fff;
 }
 
-/* Links in the Homepage header */
-.app-header.home-header .main-nav a,
-.app-header.home-header .dropdown-title {
-  color: #003366;
-}
-
-/* Scrolled state for ANY header */
+/* Scrolled state */
 .app-header.scrolled {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
 }
 
-.app-header.scrolled .main-nav a,
-.app-header.scrolled .dropdown-title {
-  color: #333;
-}
-
-.app-header.scrolled .main-nav a:hover {
-  color: #005aab;
-}
-
+/* ========================================
+   Logo
+   ======================================== */
 .logo {
   display: flex;
   align-items: center;
@@ -63,67 +49,83 @@
 }
 
 .logo img {
-  height: 36px;
-  max-height: 36px;
+  height: 32px;
+  max-height: 32px;
   width: auto;
   display: block;
-  transition: height 0.3s ease;
+  transition: height var(--transition-base);
 }
 
-.main-nav > ul {
+/* ========================================
+   Navigation - Desktop
+   ======================================== */
+.main-nav>ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  align-items: center; /* Align items vertically */
+  align-items: center;
+  gap: var(--spacing-xl);
 }
 
 .main-nav li {
-  margin: 0 20px;
-  position: relative; /* For dropdown positioning */
+  margin: 0;
+  position: relative;
 }
 
 .main-nav a,
 .dropdown-title {
   text-decoration: none;
-  font-weight: 500;
-  font-size: 16px;
-  transition: color 0.3s ease;
-  cursor: default; /* For the non-link title */
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-display);
+  color: var(--color-black);
+  transition: color var(--transition-base);
+  cursor: pointer;
 }
 
-.main-nav a:hover {
-  color: #005aab;
+.main-nav a:hover,
+.dropdown:hover .dropdown-title {
+  color: var(--color-accent);
 }
 
-/* Specific hover for transparent home-header */
+/* Home header specific */
+.app-header.home-header:not(.scrolled) .main-nav a,
+.app-header.home-header:not(.scrolled) .dropdown-title {
+  color: var(--gray-900);
+}
+
 .app-header.home-header:not(.scrolled) .main-nav a:hover,
 .app-header.home-header:not(.scrolled) .dropdown:hover .dropdown-title {
-    color: #667eea;
+  color: var(--color-accent);
 }
 
-/* Dropdown specific styles */
+/* ========================================
+   Dropdown Menu
+   ======================================== */
 .dropdown-menu {
-  visibility: hidden; /* Changed from display: none */
-  opacity: 0; /* Changed for fade effect */
+  visibility: hidden;
+  opacity: 0;
   position: absolute;
   top: 100%;
   left: 50%;
-  transform: translateX(-50%);
-  background-color: #fff;
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateX(-50%) translateY(-10px);
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--gray-200);
   list-style: none;
-  padding: 0.5rem 0;
-  margin-top: 10px; /* Space between title and menu */
-  min-width: 140px;
+  padding: var(--spacing-xs) 0;
+  margin-top: 12px;
+  min-width: 160px;
   z-index: 1001;
-  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  transition: all var(--transition-base);
 }
 
 .dropdown:hover .dropdown-menu {
-  visibility: visible; /* Changed from display: block */
+  visibility: visible;
   opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .dropdown-menu li {
@@ -132,54 +134,69 @@
 
 .dropdown-menu a {
   display: block;
-  padding: 0.75rem 1.5rem;
-  color: #333 !important; /* Ensure text is always dark */
+  padding: var(--spacing-sm) var(--spacing-lg);
+  color: var(--gray-700) !important;
+  font-size: var(--font-size-sm);
   white-space: nowrap;
+  transition: all var(--transition-fast);
 }
 
 .dropdown-menu a:hover {
-  background-color: #f8f9fa;
-  color: #005aab;
+  background-color: var(--gray-50);
+  color: var(--color-accent) !important;
 }
 
+/* ========================================
+   User Authentication
+   ======================================== */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-shrink: 0;
+}
 
-/* Login link styling */
 .user-auth a {
   text-decoration: none;
-  font-weight: 500;
-  font-size: 16px;
-  transition: color 0.3s ease;
-}
-
-/* Color for home-header (transparent) */
-.app-header.home-header .user-auth a {
-  color: #333;
-}
-
-/* Color for default or scrolled header */
-.app-header:not(.home-header) .user-auth a,
-.app-header.scrolled .user-auth a {
-  color: #333;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family-display);
+  color: var(--gray-700);
+  transition: color var(--transition-base);
 }
 
 .user-auth a:hover {
-  color: #005aab;
+  color: var(--color-accent);
 }
 
-/* Specific hover for transparent home-header */
-.app-header.home-header:not(.scrolled) .user-auth a:hover {
-    color: #667eea;
+.logout-button {
+  padding: 0.625rem 1.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-family-display);
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-base);
 }
 
+.logout-button:hover {
+  background-color: var(--gray-800);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Secret login trigger */
 .secret-login-trigger {
-    width: 0;
-    height: 0;
-    cursor: pointer;
-    flex-shrink: 0;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    /* This element is intentionally left transparent */
+  width: 0;
+  height: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (min-width: 1025px) {
@@ -191,75 +208,29 @@
   }
 }
 
-/* Logout button styling */
-.logout-button {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  background-color: #d9534f;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-  background-color: #c9302c;
-}
-
-/* Header Right Container */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-shrink: 0;
-}
-
-.header-right > * {
-  pointer-events: auto;
-}
-
-@media (max-width: 1024px) {
-  .header-right {
-    width: auto;
-    min-width: 40px;
-  }
-
-  .header-right .user-auth {
-    width: 0;
-    height: 0;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-/* Mobile Menu Button - Modern Icon Style */
+/* ========================================
+   Mobile Menu Button
+   ======================================== */
 .mobile-menu-button {
   display: none;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--gray-100);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   padding: 0;
   z-index: 1002;
   position: relative;
   flex-shrink: 0;
-  transition: all 0.3s ease;
-  font-size: 20px;
-  font-weight: 300;
-  color: #333;
-  pointer-events: auto !important;
+  transition: all var(--transition-base);
   touch-action: manipulation;
 }
 
 .mobile-menu-button:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--gray-200);
 }
 
 .mobile-menu-button:active {
@@ -268,28 +239,15 @@
 
 .mobile-menu-button::before {
   content: "☰";
-  font-size: 24px;
+  font-size: 22px;
+  color: var(--color-black);
   line-height: 1;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
 }
 
 .mobile-menu-button.active::before {
   content: "✕";
-  font-size: 22px;
-}
-
-.app-header.home-header .mobile-menu-button {
-  background: rgba(0, 51, 102, 0.08);
-  color: #003366;
-}
-
-.app-header.home-header .mobile-menu-button:hover {
-  background: rgba(0, 51, 102, 0.15);
-}
-
-.app-header.scrolled .mobile-menu-button {
-  background: rgba(0, 0, 0, 0.05);
-  color: #333;
+  font-size: 20px;
 }
 
 /* Hide old hamburger spans */
@@ -297,7 +255,9 @@
   display: none;
 }
 
-/* Mobile Menu Overlay */
+/* ========================================
+   Mobile Navigation
+   ======================================== */
 .mobile-menu-overlay {
   display: none;
   position: fixed;
@@ -305,11 +265,12 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.4);
   z-index: 999;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--transition-base);
   pointer-events: none;
+  backdrop-filter: blur(2px);
 }
 
 .mobile-menu-overlay.active {
@@ -317,19 +278,18 @@
   pointer-events: auto;
 }
 
-/* Mobile Navigation */
 .mobile-nav {
   display: none;
   position: fixed;
   top: 0;
   right: -100%;
-  width: 80%;
-  max-width: 320px;
+  width: 85%;
+  max-width: 360px;
   height: 100%;
-  background-color: #ffffff;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-white);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
   z-index: 1001;
-  transition: right 0.3s ease;
+  transition: right var(--transition-slow);
   overflow-y: auto;
   padding-top: 80px;
 }
@@ -345,67 +305,75 @@
 }
 
 .mobile-nav li {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--gray-100);
 }
 
 .mobile-nav a,
 .mobile-nav button {
   display: block;
   width: 100%;
-  padding: 1.2rem 2rem;
-  color: #333;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  color: var(--gray-900);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lg);
+  font-family: var(--font-family-display);
+  transition: all var(--transition-base);
   text-align: left;
   background: transparent;
   border: none;
   cursor: pointer;
-  font-family: inherit;
 }
 
 .mobile-nav a:active,
 .mobile-nav button:active {
-  background-color: #f8f9fa;
-  color: #667eea;
+  background-color: var(--gray-50);
+  color: var(--color-accent);
 }
 
-/* Improved touch targets for mobile */
 @media (hover: hover) {
+
   .mobile-nav a:hover,
   .mobile-nav button:hover {
-    background-color: #f8f9fa;
-    color: #667eea;
-    padding-left: 2.5rem;
+    background-color: var(--gray-50);
+    color: var(--color-accent);
+    padding-left: calc(var(--spacing-xl) + 0.5rem);
   }
 }
 
 .mobile-nav .mobile-logout button {
-  color: #d9534f;
-  font-weight: 600;
+  color: #DC2626;
+  font-weight: var(--font-weight-semibold);
 }
 
-/* Tablet and Desktop transition */
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+/* Tablet and Desktop */
 @media (max-width: 1200px) and (min-width: 1025px) {
-  .logo img {
-    height: 34px;
-    max-height: 34px;
-  }
-}
-
-/* Mobile Responsive Design */
-@media (max-width: 1024px) {
-  .app-header {
-    padding: 12px 20px;
-  }
-
   .logo img {
     height: 30px;
     max-height: 30px;
   }
 
-  /* Hide desktop navigation on tablets and below */
+  .main-nav>ul {
+    gap: var(--spacing-lg);
+  }
+}
+
+/* Mobile - Below 1024px */
+@media (max-width: 1024px) {
+  .app-header {
+    padding: 16px var(--spacing-md);
+  }
+
+  .logo img {
+    height: 28px;
+    max-height: 28px;
+  }
+
+  /* Hide desktop navigation */
   .desktop-nav {
     display: none;
   }
@@ -415,47 +383,30 @@
     display: flex;
   }
 
-  /* Show mobile navigation structure (but not visible until active) */
+  /* Enable mobile navigation */
   .mobile-nav {
     display: block;
   }
 
   .mobile-menu-overlay {
     display: block;
-    pointer-events: none;
   }
 
-  .mobile-menu-overlay.active {
-    pointer-events: auto;
+  /* Hide desktop user auth */
+  .header-right .user-auth {
+    display: none;
   }
 
-  .user-auth {
-    display: none; /* Hide desktop auth in mobile, show in mobile menu */
-  }
-
-  .logout-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  /* Adjust menu button size for tablet */
-  .mobile-menu-button {
-    width: 38px;
-    height: 38px;
-  }
-
-  .mobile-menu-button::before {
-    font-size: 22px;
-  }
-
-  .mobile-menu-button.active::before {
-    font-size: 20px;
+  .header-right {
+    width: auto;
+    min-width: 40px;
   }
 }
 
+/* Small Mobile */
 @media (max-width: 480px) {
   .app-header {
-    padding: 10px 15px;
+    padding: 12px var(--spacing-sm);
   }
 
   .logo img {
@@ -464,16 +415,15 @@
   }
 
   .mobile-nav {
-    width: 85%;
+    width: 90%;
   }
 
   .mobile-nav a,
   .mobile-nav button {
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-base);
   }
 
-  /* Adjust menu button size for small mobile */
   .mobile-menu-button {
     width: 36px;
     height: 36px;
@@ -488,10 +438,10 @@
   }
 }
 
-/* Very small screens */
+/* Very Small Screens */
 @media (max-width: 375px) {
   .app-header {
-    padding: 8px 12px;
+    padding: 10px var(--spacing-xs);
   }
 
   .logo img {
@@ -502,13 +452,5 @@
   .mobile-menu-button {
     width: 34px;
     height: 34px;
-  }
-
-  .mobile-menu-button::before {
-    font-size: 18px;
-  }
-
-  .mobile-menu-button.active::before {
-    font-size: 16px;
   }
 }
