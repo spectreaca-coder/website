@@ -85,214 +85,66 @@ const HomePage = () => {
   const [isThreadLoading, setIsThreadLoading] = useState(true);
 
   useEffect(() => {
-    const CACHE_KEY = 'threads_latest_post';
-    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour (increased from 30 mins)
-    const FETCH_TIMEOUT = 10000; // 10 seconds timeout
-
     const fetchLatestThread = async () => {
       try {
-        // 1. Check cache first
-        const cachedData = localStorage.getItem(CACHE_KEY);
-        let hasValidCache = false;
-
-        if (cachedData) {
-          const { data, timestamp } = JSON.parse(cachedData);
-          const now = new Date().getTime();
-
-          // If cache is valid (within duration), use it immediately
-          if (now - timestamp < CACHE_DURATION) {
-            setLatestThread(data);
-            setIsThreadLoading(false);
-            hasValidCache = true;
-            console.log('Using cached Threads data');
-            return; // Skip fetching if cache is valid
-          } else {
-            // Even if expired, show it first while fetching new data (stale-while-revalidate)
-            setLatestThread(data);
-            setIsThreadLoading(false);
-            console.log('Using expired cached Threads data while fetching new');
-          }
-        }
-
-        // Fetch with timeout and multiple proxy fallbacks
-        const PROXIES = [
-          (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-          (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-          (url) => url // Direct attempt as last resort
-        ];
-
-        const RSS_URL = 'https://rsshub.app/threads/@daechi_spectre';
-        let xmlText = null;
-        let lastError = null;
-
         setIsThreadLoading(true);
-        console.log('Fetching Threads data...');
+        console.log('Fetching Threads data from Firestore...');
 
-        // Try each proxy in order
-        for (let i = 0; i < PROXIES.length; i++) {
-          const proxyUrl = PROXIES[i](RSS_URL);
-          console.log(`Trying proxy ${i + 1}/${PROXIES.length}: ${proxyUrl}`);
+        // Import Firestore functions
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('./firebase');
 
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+        // Get latest thread from Firestore
+        const docRef = doc(db, 'threads', 'latest');
+        const docSnap = await getDoc(docRef);
 
-            const response = await fetch(proxyUrl, {
-              signal: controller.signal
-            });
-            clearTimeout(timeoutId);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log('Loaded thread from Firestore:', data);
 
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+          setLatestThread({
+            id: 1,
+            author: data.author || '신원장',
+            handle: data.handle || 'daechi_spectre',
+            avatar: data.avatar || 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
+            content: data.content || '',
+            timestamp: data.timestamp || '',
+            likes: data.likes || null,
+            replies: data.replies || null,
+          });
 
-            xmlText = await response.text();
-            console.log(`Success with proxy ${i + 1}`);
-            break; // Success, exit loop
-          } catch (error) {
-            console.warn(`Proxy ${i + 1} failed:`, error.message);
-            lastError = error;
-            // Continue to next proxy
-          }
-        }
+          setIsThreadLoading(false);
+        } else {
+          console.log('No thread data found in Firestore');
+          // Trigger sync by calling the API
+          console.log('Triggering initial sync...');
+          const response = await fetch('/api/sync-threads');
+          const result = await response.json();
 
-        if (!xmlText) {
-          throw lastError || new Error('All proxies failed');
-        }
-
-        if (xmlText) {
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-          const items = xmlDoc.querySelectorAll("item");
-
-          console.log(`Found ${items.length} thread items`);
-
-          if (items.length > 0) {
-            // Parse all items and filter out potential pinned posts
-            const allPosts = Array.from(items).map((item, index) => {
-              const title = item.querySelector("title")?.textContent || "";
-              const description = item.querySelector("description")?.textContent || "";
-              const contentEncoded = item.querySelector("content\\:encoded, encoded")?.textContent || "";
-              const pubDateText = item.querySelector("pubDate")?.textContent || "";
-              const link = item.querySelector("link")?.textContent || "";
-
-              // Use content:encoded if available (usually full content), otherwise use description
-              let rawContent = contentEncoded || description;
-
-              // More comprehensive HTML entity decoding
-              const tempDiv = document.createElement('div');
-              tempDiv.innerHTML = rawContent;
-              rawContent = tempDiv.textContent || tempDiv.innerText || rawContent;
-
-              // Additional cleanup
-              const cleanContent = rawContent
-                .replace(/<[^>]*>/gm, '')  // Remove any remaining HTML tags
-                .replace(/&nbsp;/gi, ' ')
-                .replace(/&amp;/gi, '&')
-                .replace(/&lt;/gi, '<')
-                .replace(/&gt;/gi, '>')
-                .replace(/&quot;/gi, '"')
-                .replace(/&#39;/g, "'")
-                .replace(/&apos;/g, "'")
-                .replace(/\s+/g, ' ')  // Normalize whitespace
-                .trim();
-
-              return {
-                index,
-                title,
-                content: cleanContent,
-                pubDate: pubDateText,
-                date: new Date(pubDateText),
-                link
-              };
-            });
-
-            // Debug: Log all posts
-            console.log('All posts:', allPosts.map(p => ({
-              index: p.index,
-              date: p.pubDate,
-              contentLength: p.content.length,
-              preview: p.content.substring(0, 100)
-            })));
-
-            // Sort by date descending (newest first) and take the first non-pinned post
-            allPosts.sort((a, b) => b.date - a.date);
-
-            // Use the most recent post (index 0 after sorting)
-            const latestPost = allPosts[0];
-            const cleanContent = latestPost.content;
-            const pubDate = latestPost.pubDate;
-
-            // Debug: log the selected content
-            console.log('Selected post date:', pubDate);
-            console.log('Selected content length:', cleanContent.length);
-            console.log('Full content:', cleanContent);
-
-            // Format timestamp - more accurate calculation
-            const date = new Date(pubDate);
-            const now = new Date();
-            const diffTime = now - date;
-            const diffMinutes = Math.floor(diffTime / (1000 * 60));
-            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-            let timeString;
-            if (diffMinutes < 60) {
-              timeString = diffMinutes <= 1 ? '방금 전' : `${diffMinutes}분 전`;
-            } else if (diffHours < 24) {
-              timeString = `${diffHours}시간 전`;
-            } else if (diffDays < 7) {
-              timeString = `${diffDays}일 전`;
-            } else {
-              // Show actual date if older than a week
-              timeString = date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
-            }
-
-            const newThreadData = {
+          if (result.success && result.data) {
+            setLatestThread({
               id: 1,
-              author: '신원장',
-              handle: 'daechi_spectre',
-              avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
-              content: cleanContent,
-              timestamp: timeString,
-              likes: null,
-              replies: null
-            };
-
-            setLatestThread(newThreadData);
-            setIsThreadLoading(false);
-
-            // Update cache
-            localStorage.setItem(CACHE_KEY, JSON.stringify({
-              data: newThreadData,
-              timestamp: new Date().getTime()
-            }));
+              author: result.data.author,
+              handle: result.data.handle,
+              avatar: result.data.avatar,
+              content: result.data.content,
+              timestamp: result.data.timestamp,
+              likes: result.data.likes,
+              replies: result.data.replies,
+            });
           }
+          setIsThreadLoading(false);
         }
       } catch (error) {
-        console.error("Failed to fetch Threads:", error);
+        console.error('Failed to fetch Threads from Firestore:', error);
         setIsThreadLoading(false);
 
-        // Fallback to cached data if available (even if expired), otherwise static fallback
-        const cachedData = localStorage.getItem(CACHE_KEY);
-        if (cachedData) {
-          const { data } = JSON.parse(cachedData);
-          setLatestThread(data);
-          console.log('Using cached data due to fetch error');
-        } else {
-          // Show user-friendly error message
-          const errorMessage = error.name === 'AbortError'
-            ? '쓰레드 불러오기 시간 초과\n잠시 후 다시 시도해주세요.'
-            : '쓰레드를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.';
-
-          setLatestThread(prev => ({
-            ...prev,
-            content: errorMessage,
-            timestamp: '방금 전',
-            likes: null,
-            replies: null
-          }));
-        }
+        // Show error message
+        setLatestThread(prev => ({
+          ...prev,
+          content: '쓰레드를 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.',
+          timestamp: '방금 전',
+        }));
       }
     };
 
