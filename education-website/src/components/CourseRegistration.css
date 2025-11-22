@@ -179,6 +179,73 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Skeleton Loader */
+.skeleton-card {
+  background-color: white;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 400px;
+}
+
+.skeleton-title {
+  height: 32px;
+  width: 70%;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-desc {
+  height: 20px;
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.skeleton-line {
+  height: 16px;
+  width: 50%;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-btn {
+  height: 48px;
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  margin-top: auto;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
 /* Form Styles */
 .create-course-form,
 .application-form {
