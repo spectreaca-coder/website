@@ -60,6 +60,16 @@ const HomePage = () => {
     { id: 4, title: '특강 현장', description: '전문가 초청 특강' }
   ];
 
+  // Carousel State
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentReviewIndex((prevIndex) => (prevIndex + 1) % reviews.length);
+    }, 5000); // Rotate every 5 seconds
+    return () => clearInterval(interval);
+  }, [reviews.length]);
+
   return (
     <div className="homepage-container">
       {/* Hero Section */}
@@ -84,24 +94,43 @@ const HomePage = () => {
       {/* Reviews Section */}
       <section className="reviews-section">
         <h2 className="section-title">수강생 후기</h2>
-        <div className="reviews-grid">
-          {reviews.map((review) => (
-            <div key={review.id} className="review-card">
-              <div className="review-header">
-                <div className="review-info">
-                  <h3 className="review-name">{review.name}</h3>
-                  <p className="review-course">{review.course}</p>
-                </div>
-                <div className="review-rating">
-                  {'★'.repeat(review.rating)}
+        <div className="reviews-carousel-container">
+          <div
+            className="reviews-track"
+            style={{ transform: `translateX(-${currentReviewIndex * 100}%)` }}
+          >
+            {reviews.map((review) => (
+              <div key={review.id} className="review-slide">
+                <div className="review-card">
+                  <div className="review-header">
+                    <div className="review-info">
+                      <h3 className="review-name">{review.name}</h3>
+                      <p className="review-course">{review.course}</p>
+                    </div>
+                    <div className="review-rating">
+                      {'★'.repeat(review.rating)}
+                    </div>
+                  </div>
+                  <p className="review-comment">"{review.comment}"</p>
+                  <div className="review-footer">
+                    <span className="review-tag">{review.date}</span>
+                  </div>
                 </div>
               </div>
-              <p className="review-comment">"{review.comment}"</p>
-              <div className="review-footer">
-                <span className="review-tag">{review.date}</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Carousel Indicators */}
+          <div className="carousel-indicators">
+            {reviews.map((_, index) => (
+              <button
+                key={index}
+                className={`indicator-dot ${index === currentReviewIndex ? 'active' : ''}`}
+                onClick={() => setCurrentReviewIndex(index)}
+                aria-label={`Go to review ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
