@@ -90,9 +90,11 @@ const HomePage = () => {
     const FETCH_TIMEOUT = 5000; // 5 seconds (reduced from 10)
 
     const fetchLatestThread = async () => {
+      let cachedData = null;
+
       try {
         // 1. Check cache first - show immediately if available
-        const cachedData = localStorage.getItem(CACHE_KEY);
+        cachedData = localStorage.getItem(CACHE_KEY);
         if (cachedData) {
           const { data, timestamp } = JSON.parse(cachedData);
           const now = new Date().getTime();
