@@ -114,10 +114,12 @@ const HomePage = () => {
           setIsThreadLoading(true);
         }
 
-        // 2. Fetch from RSS with fast proxy
+        // 2. Fetch from RSS with multiple proxies
         const PROXIES = [
-          'https://corsproxy.io/?',
           'https://api.allorigins.win/raw?url=',
+          'https://corsproxy.io/?',
+          'https://api.codetabs.com/v1/proxy?quest=',
+          '', // Direct attempt (no proxy)
         ];
 
         const RSS_URL = 'https://rsshub.app/threads/@daechi_spectre';
