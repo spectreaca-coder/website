@@ -76,10 +76,10 @@ const HomePage = () => {
     author: '신원장',
     handle: 'daechi_spectre',
     avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
-    content: '대치동의 기적은 계속됩니다.\n\n학생 한 명 한 명의 꿈을 소중히 여기며,\n오늘도 스펙터 학원은 불이 꺼지지 않습니다.\n\n여러분의 노력이 헛되지 않도록\n최고의 강의로 보답하겠습니다.\n\n#대치동 #스펙터학원 #수능대박',
-    timestamp: '방금 전',
-    likes: 342,
-    replies: 28
+    content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
+    timestamp: '1일 전',
+    likes: 42,
+    replies: 5
   };
 
   return (
