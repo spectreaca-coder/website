@@ -78,13 +78,39 @@ const HomePage = () => {
     avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
     content: '불러오는 중...',
     timestamp: '',
-    likes: 0,
-    replies: 0
+    likes: null,
+    replies: null
   });
 
   useEffect(() => {
+    const CACHE_KEY = 'threads_latest_post';
+    const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
     const fetchLatestThread = async () => {
       try {
+        // 1. Check cache first
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        let hasValidCache = false;
+
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const now = new Date().getTime();
+
+          // If cache is valid (within duration), use it immediately
+          if (now - timestamp < CACHE_DURATION) {
+            setLatestThread(data);
+            hasValidCache = true;
+            console.log('Using cached Threads data');
+          } else {
+            // Even if expired, show it first while fetching new data (stale-while-revalidate)
+            setLatestThread(data);
+            console.log('Using expired cached Threads data while fetching new');
+          }
+        }
+
+        // If we have valid cache, we can skip fetching or fetch in background
+        // Here we fetch in background to keep it fresh if it's expired or close to expiring
+
         // Using RSSHub to get Threads feed (via allorigins proxy to avoid CORS)
         const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'));
         const data = await response.json();
@@ -155,25 +181,43 @@ const HomePage = () => {
               timeString = date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
             }
 
-            setLatestThread(prev => ({
-              ...prev,
-              content: cleanContent || prev.content,
+            const newThreadData = {
+              id: 1,
+              author: '신원장',
+              handle: 'daechi_spectre',
+              avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
+              content: cleanContent,
               timestamp: timeString,
-              likes: null, // RSS doesn't provide this info
-              replies: null // RSS doesn't provide this info
+              likes: null,
+              replies: null
+            };
+
+            setLatestThread(newThreadData);
+
+            // Update cache
+            localStorage.setItem(CACHE_KEY, JSON.stringify({
+              data: newThreadData,
+              timestamp: new Date().getTime()
             }));
           }
         }
       } catch (error) {
         console.error("Failed to fetch Threads:", error);
-        // Fallback to static content if fetch fails
-        setLatestThread(prev => ({
-          ...prev,
-          content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
-          timestamp: '1일 전',
-          likes: null,
-          replies: null
-        }));
+        // Fallback to cached data if available (even if expired), otherwise static fallback
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          const { data } = JSON.parse(cachedData);
+          setLatestThread(data);
+          console.log('Using cached data due to fetch error');
+        } else {
+          setLatestThread(prev => ({
+            ...prev,
+            content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
+            timestamp: '1일 전',
+            likes: null,
+            replies: null
+          }));
+        }
       }
     };
 
