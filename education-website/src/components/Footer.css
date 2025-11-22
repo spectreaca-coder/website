@@ -1,11 +1,23 @@
-
 .app-footer {
-  background-color: #f8f9fa;
-  padding: 20px 30px;
-  border-top: 1px solid #e0e0e0;
-  font-size: 13px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 30px 40px;
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(90deg, #667eea, #764ba2) 1;
+  font-size: 14px;
   color: #666;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
 }
 
 .footer-content {
@@ -16,23 +28,45 @@
 .footer-links a {
   color: #555;
   text-decoration: none;
-  margin: 0 10px;
-  transition: color 0.3s ease;
+  margin: 0 15px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  position: relative;
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.footer-links a:hover::after {
+  width: 100%;
 }
 
 .footer-links a:hover {
-  color: #005aab;
+  color: #667eea;
 }
 
 .company-info {
-  margin-top: 15px;
-  line-height: 1.6;
+  margin-top: 20px;
+  line-height: 1.8;
+  color: #777;
 }
 
 .footer-brand {
-  font-weight: bold;
-  color: #444;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.75rem;
 }
 
 /* Mobile Responsive Design */
