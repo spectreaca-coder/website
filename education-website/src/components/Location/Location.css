@@ -7,7 +7,7 @@
   padding: 2rem;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .info-panel {
@@ -39,8 +39,12 @@
 
 .map-panel {
   flex: 2;
-  min-width: 400px;
-  min-height: 400px;
+  width: 100%;
+  height: 400px;
+  /* Explicit height */
+  border-radius: 8px;
+  overflow: hidden;
+  /* Ensure map stays within corners */
 }
 
 .map-panel iframe {
@@ -78,8 +82,9 @@
   }
 
   .map-panel {
-    min-width: 100%;
-    min-height: 350px;
+    width: 100%;
+    height: 350px;
+    /* Explicit height for mobile */
   }
 }
 
@@ -111,6 +116,7 @@
   }
 
   .map-panel {
-    min-height: 300px;
+    height: 300px;
+    /* Smaller height for very small screens */
   }
 }
