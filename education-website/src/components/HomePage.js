@@ -95,26 +95,72 @@ const HomePage = () => {
           const items = xmlDoc.querySelectorAll("item");
 
           if (items.length > 0) {
-            const firstItem = items[0];
-            const description = firstItem.querySelector("description")?.textContent || "";
-            const pubDate = firstItem.querySelector("pubDate")?.textContent || "";
+            // Find the most recent post by date (skip pinned posts if any)
+            let latestItem = null;
+            let latestDate = null;
 
-            // Clean up description (remove HTML tags if any)
-            const cleanContent = description.replace(/<[^>]*>?/gm, '').trim();
+            // Check all items and find the one with the most recent date
+            Array.from(items).forEach(item => {
+              const pubDateText = item.querySelector("pubDate")?.textContent || "";
+              if (pubDateText) {
+                const itemDate = new Date(pubDateText);
+                if (!latestDate || itemDate > latestDate) {
+                  latestDate = itemDate;
+                  latestItem = item;
+                }
+              }
+            });
 
-            // Format timestamp
+            // Use the latest item or fallback to first item
+            const targetItem = latestItem || items[0];
+            const description = targetItem.querySelector("description")?.textContent || "";
+            const contentEncoded = targetItem.querySelector("content\\:encoded, encoded")?.textContent || "";
+            const pubDate = targetItem.querySelector("pubDate")?.textContent || "";
+
+            // Use content:encoded if available (usually longer), otherwise use description
+            const rawContent = contentEncoded.length > description.length ? contentEncoded : description;
+
+            // Clean up content (remove HTML tags if any)
+            const cleanContent = rawContent
+              .replace(/<[^>]*>/gm, '')  // Remove HTML tags
+              .replace(/&nbsp;/g, ' ')    // Replace &nbsp; with space
+              .replace(/&amp;/g, '&')     // Replace &amp; with &
+              .replace(/&lt;/g, '<')      // Replace &lt; with <
+              .replace(/&gt;/g, '>')      // Replace &gt; with >
+              .replace(/&quot;/g, '"')    // Replace &quot; with "
+              .trim();
+
+            // Debug: log the content length and date
+            console.log('Fetched Threads content length:', cleanContent.length);
+            console.log('Content preview:', cleanContent.substring(0, 200) + '...');
+            console.log('Post date:', pubDate);
+
+            // Format timestamp - more accurate calculation
             const date = new Date(pubDate);
             const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const timeString = diffDays <= 1 ? '방금 전' : `${diffDays}일 전`;
+            const diffTime = now - date;
+            const diffMinutes = Math.floor(diffTime / (1000 * 60));
+            const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            let timeString;
+            if (diffMinutes < 60) {
+              timeString = diffMinutes <= 1 ? '방금 전' : `${diffMinutes}분 전`;
+            } else if (diffHours < 24) {
+              timeString = `${diffHours}시간 전`;
+            } else if (diffDays < 7) {
+              timeString = `${diffDays}일 전`;
+            } else {
+              // Show actual date if older than a week
+              timeString = date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+            }
 
             setLatestThread(prev => ({
               ...prev,
               content: cleanContent || prev.content,
               timestamp: timeString,
-              likes: Math.floor(Math.random() * 50) + 10, // Mock likes as RSS doesn't provide it
-              replies: Math.floor(Math.random() * 10) + 1 // Mock replies
+              likes: null, // RSS doesn't provide this info
+              replies: null // RSS doesn't provide this info
             }));
           }
         }
@@ -125,8 +171,8 @@ const HomePage = () => {
           ...prev,
           content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
           timestamp: '1일 전',
-          likes: 42,
-          replies: 5
+          likes: null,
+          replies: null
         }));
       }
     };
@@ -202,7 +248,9 @@ const HomePage = () => {
             </div>
             <div className="threads-footer-info">
               <span className="threads-time">{latestThread.timestamp}</span>
-              <span className="threads-stats">{latestThread.likes} 좋아요 · {latestThread.replies} 답글</span>
+              {latestThread.likes !== null && latestThread.replies !== null && (
+                <span className="threads-stats">{latestThread.likes} 좋아요 · {latestThread.replies} 답글</span>
+              )}
             </div>
           </div>
         </div>

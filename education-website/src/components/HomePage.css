@@ -511,14 +511,16 @@ section {
   }
 
   .indicator-dot {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
 
   .indicator-dot.active {
-    width: 12px;
-    /* Reduced width for more natural look */
-    border-radius: 6px;
+    width: 10px;
+    height: 10px;
+    /* Keep circular shape on mobile */
+    border-radius: 50%;
+    transform: scale(1.2);
   }
 }
 
@@ -804,6 +806,13 @@ section {
   white-space: pre-line;
   overflow-wrap: break-word;
   word-break: break-word;
+  /* No max-height restriction - show full content */
+  max-height: none;
+}
+
+.threads-content p {
+  margin: 0;
+  white-space: pre-wrap;
 }
 
 .threads-footer-info {
