@@ -1,191 +1,198 @@
-.course-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+.c
+
+/* Course Registration Page */
+.page-container {
+  padding: 8rem 2rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: var(--color-bg);
 }
 
+.page-container h1 {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  color: var(--color-text-main);
+}
+
+/* Admin Actions */
+.admin-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+}
+
+.admin-actions h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--color-text-main);
+}
+
+.admin-actions button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-base);
+}
+
+.admin-actions button:hover {
+  background-color: var(--color-primary-light);
+}
+
+/* Course List Grid */
+.course-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2rem;
+}
+
+/* Minimalist Course Card */
 .course-card {
-  position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 249, 250, 1) 100%);
-  border: 2px solid transparent;
+  background-color: white;
+  border: 1px solid var(--color-border);
   border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2rem;
+  transition: var(--transition-base);
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .course-card::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-  border-radius: 20px;
-  opacity: 0;
-  transition: opacity 0.4s;
-  z-index: -1;
-}
-
-.course-card:hover::before {
-  opacity: 1;
+  display: none;
+  /* Remove gradient border */
 }
 
 .course-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25);
-  border-color: transparent;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-border-hover);
 }
 
 .card-admin-actions {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1;
+  top: 1.5rem;
+  right: 1.5rem;
   display: flex;
   gap: 0.5rem;
 }
 
-.card-admin-actions button {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.3rem 0.6rem;
+.edit-btn,
+.delete-btn {
+  padding: 0.4rem 0.8rem;
   font-size: 0.8rem;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  border: 1px solid var(--color-border);
+  background-color: white;
+  transition: var(--transition-base);
 }
 
-.card-admin-actions button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+.edit-btn:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-primary);
 }
 
-.card-admin-actions .delete-btn {
-  background-color: rgba(217, 83, 79, 0.7);
-}
-
-.card-admin-actions .delete-btn:hover {
-  background-color: rgba(217, 83, 79, 1);
+.delete-btn:hover {
+  background-color: #FEF2F2;
+  color: #EF4444;
+  border-color: #FECACA;
 }
 
 .course-info {
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  /* Allows the button to be pushed to the bottom */
 }
 
 .course-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: var(--color-text-main);
+  font-family: 'Inter Tight', sans-serif;
 }
 
 .course-description {
-  font-size: 1rem;
-  color: #555;
-  margin: 0 0 1.5rem 0;
+  color: var(--color-text-sub);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
   flex-grow: 1;
 }
 
 .course-details {
+  background-color: var(--color-bg-secondary);
+  padding: 1.25rem;
+  border-radius: 12px;
   margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  color: #333;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .course-details p {
-  margin: 0.3rem 0;
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-main);
+  display: flex;
+  justify-content: space-between;
 }
 
+.course-details strong {
+  color: var(--color-text-sub);
+  font-weight: 500;
+}
+
+/* Register Button */
 .register-btn {
-  align-self: flex-end;
   width: 100%;
   padding: 1rem;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: var(--color-primary);
+  border: 1px solid var(--color-primary);
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-  position: relative;
-  overflow: hidden;
+  transition: var(--transition-base);
+  box-shadow: none;
 }
 
 .register-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.register-btn:hover::before {
-  width: 300px;
-  height: 300px;
+  display: none;
+  /* Remove ripple effect */
 }
 
 .register-btn:hover {
+  background-color: var(--color-primary-light);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
-/* Admin styles */
-.admin-actions {
-  margin-top: 1rem;
-  padding: 1.5rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-}
-
-.admin-actions h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.admin-actions button {
-  margin-right: 1rem;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #5cb85c;
-  /* Green for create */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.admin-actions button:hover {
-  background-color: #449d44;
-}
-
-/* Create Course & Application Modal Form */
+/* Form Styles */
 .create-course-form,
 .application-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .create-course-form h2,
 .application-form h2 {
   text-align: center;
   margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: var(--color-text-main);
 }
 
 .create-course-form input,
@@ -194,12 +201,18 @@
 .application-form select {
   padding: 1rem;
   font-size: 1rem;
-  border: 2px solid #e0e0e0;
+  border: 1px solid var(--color-border);
   border-radius: 12px;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.3s ease;
-  background: white;
+  transition: var(--transition-base);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+}
+
+.create-course-form textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
 .create-course-form input:focus,
@@ -207,65 +220,35 @@
 .application-form input:focus,
 .application-form select:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.select-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.application-form select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  padding-right: 2rem;
-  /* Make space for custom arrow */
-}
-
-/* Custom Arrow */
-.select-wrapper::after {
-  content: '▼';
-  font-size: 12px;
-  color: #555;
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  /* Allows clicking through the arrow to the select */
-}
-
-.create-course-form textarea {
-  min-height: 100px;
-  resize: vertical;
+  border-color: var(--color-accent);
+  background-color: white;
+  box-shadow: 0 0 0 3px var(--color-accent-light);
 }
 
 .create-course-form button,
 .application-form button {
   margin-top: 1rem;
   padding: 1rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  background: var(--color-accent);
   border: none;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  transition: var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .create-course-form button:hover,
 .application-form button:hover {
+  background-color: var(--color-accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 .application-form button:disabled {
