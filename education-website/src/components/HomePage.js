@@ -128,9 +128,6 @@ const HomePage = () => {
               <p className="review-comment">"{review.comment}"</p>
               <div className="review-footer">
                 <span className="review-tag">{review.date}</span>
-                <a href="https://open.kakao.com/o/sovpYkzc" target="_blank" rel="noopener noreferrer" className="review-kakao-btn">
-                  카카오톡 상담하기
-                </a>
               </div>
             </div>
           ))}
@@ -178,7 +175,7 @@ const HomePage = () => {
 
       {/* Floating KakaoTalk Button */}
       <a
-        href="https://pf.kakao.com/"
+        href="https://open.kakao.com/o/sovpYkzc"
         target="_blank"
         rel="noopener noreferrer"
         className="floating-kakao-btn"
