@@ -82,10 +82,12 @@ const HomePage = () => {
     replies: null
   });
   const [isThreadExpanded, setIsThreadExpanded] = useState(false);
+  const [isThreadLoading, setIsThreadLoading] = useState(true);
 
   useEffect(() => {
     const CACHE_KEY = 'threads_latest_post';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour (increased from 30 mins)
+    const FETCH_TIMEOUT = 10000; // 10 seconds timeout
 
     const fetchLatestThread = async () => {
       try {
@@ -100,18 +102,31 @@ const HomePage = () => {
           // If cache is valid (within duration), use it immediately
           if (now - timestamp < CACHE_DURATION) {
             setLatestThread(data);
+            setIsThreadLoading(false);
             hasValidCache = true;
             console.log('Using cached Threads data');
             return; // Skip fetching if cache is valid
           } else {
             // Even if expired, show it first while fetching new data (stale-while-revalidate)
             setLatestThread(data);
+            setIsThreadLoading(false);
             console.log('Using expired cached Threads data while fetching new');
           }
         }
 
+        // Fetch with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+        setIsThreadLoading(true);
+        console.log('Fetching Threads data...');
+
         // Use allorigins proxy to avoid CORS issues
-        const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'));
+        const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'), {
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
         const xmlText = await response.text();
 
         if (xmlText) {
@@ -214,6 +229,7 @@ const HomePage = () => {
             };
 
             setLatestThread(newThreadData);
+            setIsThreadLoading(false);
 
             // Update cache
             localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -224,6 +240,8 @@ const HomePage = () => {
         }
       } catch (error) {
         console.error("Failed to fetch Threads:", error);
+        setIsThreadLoading(false);
+
         // Fallback to cached data if available (even if expired), otherwise static fallback
         const cachedData = localStorage.getItem(CACHE_KEY);
         if (cachedData) {
@@ -231,10 +249,15 @@ const HomePage = () => {
           setLatestThread(data);
           console.log('Using cached data due to fetch error');
         } else {
+          // Show user-friendly error message
+          const errorMessage = error.name === 'AbortError'
+            ? '쓰레드 불러오기 시간 초과\n잠시 후 다시 시도해주세요.'
+            : '쓰레드를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.';
+
           setLatestThread(prev => ({
             ...prev,
-            content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
-            timestamp: '1일 전',
+            content: errorMessage,
+            timestamp: '방금 전',
             likes: null,
             replies: null
           }));
@@ -308,19 +331,28 @@ const HomePage = () => {
                 </svg>
               </div>
             </div>
-            <div className="threads-content">
-              <p>
-                {isThreadExpanded || latestThread.content.length <= 300
-                  ? latestThread.content
-                  : `${latestThread.content.substring(0, 300)}...`}
-              </p>
-              {latestThread.content.length > 300 && (
-                <button
-                  className="threads-toggle-btn"
-                  onClick={() => setIsThreadExpanded(!isThreadExpanded)}
-                >
-                  {isThreadExpanded ? '접기' : '더보기'}
-                </button>
+            <div className={`threads-content ${isThreadLoading ? 'loading' : ''}`}>
+              {isThreadLoading && latestThread.content === '불러오는 중...' ? (
+                <p className="loading-text">
+                  <span className="loading-spinner"></span>
+                  불러오는 중...
+                </p>
+              ) : (
+                <>
+                  <p>
+                    {isThreadExpanded || latestThread.content.length <= 300
+                      ? latestThread.content
+                      : `${latestThread.content.substring(0, 300)}...`}
+                  </p>
+                  {latestThread.content.length > 300 && (
+                    <button
+                      className="threads-toggle-btn"
+                      onClick={() => setIsThreadExpanded(!isThreadExpanded)}
+                    >
+                      {isThreadExpanded ? '접기' : '더보기'}
+                    </button>
+                  )}
+                </>
               )}
             </div>
             <div className="threads-footer-info">
