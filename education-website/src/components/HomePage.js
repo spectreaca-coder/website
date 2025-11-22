@@ -70,17 +70,69 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [reviews.length]);
 
-  // Mock Threads Data (Replace with actual data fetching later)
-  const latestThread = {
+  // Threads Data State
+  const [latestThread, setLatestThread] = useState({
     id: 1,
     author: '신원장',
     handle: 'daechi_spectre',
     avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
-    content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
-    timestamp: '1일 전',
-    likes: 42,
-    replies: 5
-  };
+    content: '불러오는 중...',
+    timestamp: '',
+    likes: 0,
+    replies: 0
+  });
+
+  useEffect(() => {
+    const fetchLatestThread = async () => {
+      try {
+        // Using RSSHub to get Threads feed (via allorigins proxy to avoid CORS)
+        const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'));
+        const data = await response.json();
+
+        if (data.contents) {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+          const items = xmlDoc.querySelectorAll("item");
+
+          if (items.length > 0) {
+            const firstItem = items[0];
+            const description = firstItem.querySelector("description")?.textContent || "";
+            const pubDate = firstItem.querySelector("pubDate")?.textContent || "";
+
+            // Clean up description (remove HTML tags if any)
+            const cleanContent = description.replace(/<[^>]*>?/gm, '').trim();
+
+            // Format timestamp
+            const date = new Date(pubDate);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const timeString = diffDays <= 1 ? '방금 전' : `${diffDays}일 전`;
+
+            setLatestThread(prev => ({
+              ...prev,
+              content: cleanContent || prev.content,
+              timestamp: timeString,
+              likes: Math.floor(Math.random() * 50) + 10, // Mock likes as RSS doesn't provide it
+              replies: Math.floor(Math.random() * 10) + 1 // Mock replies
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch Threads:", error);
+        // Fallback to static content if fetch fails
+        setLatestThread(prev => ({
+          ...prev,
+          content: '안녕하세요. 학부모님\n"미리 준비하는 고등내신"\n스펙터 Pre-High 겨울 특강 설명회 안내드립니다.\n\n참석을 원하시는 분께서는\n하단 신청서 제출 부탁드립니다.\n(선착순 마감)\n\n후순위, 타 일정으로 인해\n참석이 어려운 분들께는\n영상 촬영본 발송 예정입니다.\n(신청서 작성자 한정)',
+          timestamp: '1일 전',
+          likes: 42,
+          replies: 5
+        }));
+      }
+    };
+
+    fetchLatestThread();
+  }, []);
 
   return (
     <div className="homepage-container">

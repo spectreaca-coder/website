@@ -802,6 +802,8 @@ section {
   color: var(--color-text-main);
   margin-bottom: 2rem;
   white-space: pre-line;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .threads-footer-info {
