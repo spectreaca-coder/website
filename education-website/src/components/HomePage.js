@@ -85,66 +85,150 @@ const HomePage = () => {
   const [isThreadLoading, setIsThreadLoading] = useState(true);
 
   useEffect(() => {
+    const CACHE_KEY = 'threads_latest_post';
+    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
+    const FETCH_TIMEOUT = 5000; // 5 seconds (reduced from 10)
+
     const fetchLatestThread = async () => {
       try {
-        setIsThreadLoading(true);
-        console.log('Fetching Threads data from Firestore...');
+        // 1. Check cache first - show immediately if available
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        if (cachedData) {
+          const { data, timestamp } = JSON.parse(cachedData);
+          const now = new Date().getTime();
 
-        // Import Firestore functions
-        const { doc, getDoc } = await import('firebase/firestore');
-        const { db } = await import('./firebase');
-
-        // Get latest thread from Firestore
-        const docRef = doc(db, 'threads', 'latest');
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          console.log('Loaded thread from Firestore:', data);
-
-          setLatestThread({
-            id: 1,
-            author: data.author || '신원장',
-            handle: data.handle || 'daechi_spectre',
-            avatar: data.avatar || 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
-            content: data.content || '',
-            timestamp: data.timestamp || '',
-            likes: data.likes || null,
-            replies: data.replies || null,
-          });
-
+          // Always show cached data immediately
+          setLatestThread(data);
           setIsThreadLoading(false);
-        } else {
-          console.log('No thread data found in Firestore');
-          // Trigger sync by calling the API
-          console.log('Triggering initial sync...');
-          const response = await fetch('/api/sync-threads');
-          const result = await response.json();
 
-          if (result.success && result.data) {
-            setLatestThread({
-              id: 1,
-              author: result.data.author,
-              handle: result.data.handle,
-              avatar: result.data.avatar,
-              content: result.data.content,
-              timestamp: result.data.timestamp,
-              likes: result.data.likes,
-              replies: result.data.replies,
-            });
+          // If cache is still valid, skip fetching
+          if (now - timestamp < CACHE_DURATION) {
+            console.log('Using valid cached Threads data');
+            return;
           }
-          setIsThreadLoading(false);
+
+          console.log('Cache expired, fetching in background...');
+        } else {
+          setIsThreadLoading(true);
         }
-      } catch (error) {
-        console.error('Failed to fetch Threads from Firestore:', error);
+
+        // 2. Fetch from RSS with fast proxy
+        const PROXIES = [
+          'https://corsproxy.io/?',
+          'https://api.allorigins.win/raw?url=',
+        ];
+
+        const RSS_URL = 'https://rsshub.app/threads/@daechi_spectre';
+        let xmlText = null;
+
+        // Try proxies quickly
+        for (const proxy of PROXIES) {
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+            const proxyUrl = proxy + encodeURIComponent(RSS_URL);
+            const response = await fetch(proxyUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            xmlText = await response.text();
+            console.log(`Success with proxy: ${proxy}`);
+            break;
+          } catch (error) {
+            console.warn(`Proxy failed:`, error.message);
+            continue;
+          }
+        }
+
+        if (!xmlText) throw new Error('All proxies failed');
+
+        // 3. Parse XML
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        const items = xmlDoc.querySelectorAll('item');
+
+        if (items.length === 0) throw new Error('No items found');
+
+        // 4. Get latest post
+        const allPosts = Array.from(items).map(item => {
+          const description = item.querySelector('description')?.textContent || '';
+          const contentEncoded = item.querySelector('content\\:encoded, encoded')?.textContent || '';
+          const pubDateText = item.querySelector('pubDate')?.textContent || '';
+
+          let content = contentEncoded || description;
+
+          // HTML decode
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = content;
+          content = (tempDiv.textContent || tempDiv.innerText || content)
+            .replace(/\s+/g, ' ')
+            .trim();
+
+          return {
+            content,
+            pubDate: pubDateText,
+            date: new Date(pubDateText),
+          };
+        });
+
+        allPosts.sort((a, b) => b.date - a.date);
+        const latest = allPosts[0];
+
+        // 5. Format timestamp
+        const now = new Date();
+        const diffMs = now - latest.date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        let timeString;
+        if (diffMins < 60) {
+          timeString = diffMins <= 1 ? '방금 전' : `${diffMins}분 전`;
+        } else if (diffHours < 24) {
+          timeString = `${diffHours}시간 전`;
+        } else if (diffDays < 7) {
+          timeString = `${diffDays}일 전`;
+        } else {
+          timeString = latest.date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+        }
+
+        const newData = {
+          id: 1,
+          author: '신원장',
+          handle: 'daechi_spectre',
+          avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
+          content: latest.content,
+          timestamp: timeString,
+          likes: null,
+          replies: null,
+        };
+
+        setLatestThread(newData);
         setIsThreadLoading(false);
 
-        // Show error message
-        setLatestThread(prev => ({
-          ...prev,
-          content: '쓰레드를 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.',
-          timestamp: '방금 전',
+        // Update cache
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          data: newData,
+          timestamp: new Date().getTime()
         }));
+
+        console.log('Threads data updated successfully');
+
+      } catch (error) {
+        console.error('Failed to fetch Threads:', error);
+        setIsThreadLoading(false);
+
+        // If we already have cached data, keep it
+        // Otherwise show error
+        if (!cachedData) {
+          setLatestThread(prev => ({
+            ...prev,
+            content: '쓰레드를 불러올 수 없습니다.\n잠시 후 새로고침해주세요.',
+            timestamp: '방금 전',
+          }));
+        }
       }
     };
 
