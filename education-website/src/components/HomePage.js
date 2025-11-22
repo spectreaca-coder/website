@@ -114,20 +114,51 @@ const HomePage = () => {
           }
         }
 
-        // Fetch with timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+        // Fetch with timeout and multiple proxy fallbacks
+        const PROXIES = [
+          (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+          (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+          (url) => url // Direct attempt as last resort
+        ];
+
+        const RSS_URL = 'https://rsshub.app/threads/@daechi_spectre';
+        let xmlText = null;
+        let lastError = null;
 
         setIsThreadLoading(true);
         console.log('Fetching Threads data...');
 
-        // Use allorigins proxy to avoid CORS issues
-        const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'), {
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
+        // Try each proxy in order
+        for (let i = 0; i < PROXIES.length; i++) {
+          const proxyUrl = PROXIES[i](RSS_URL);
+          console.log(`Trying proxy ${i + 1}/${PROXIES.length}: ${proxyUrl}`);
 
-        const xmlText = await response.text();
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+            const response = await fetch(proxyUrl, {
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            xmlText = await response.text();
+            console.log(`Success with proxy ${i + 1}`);
+            break; // Success, exit loop
+          } catch (error) {
+            console.warn(`Proxy ${i + 1} failed:`, error.message);
+            lastError = error;
+            // Continue to next proxy
+          }
+        }
+
+        if (!xmlText) {
+          throw lastError || new Error('All proxies failed');
+        }
 
         if (xmlText) {
           const parser = new DOMParser();
