@@ -5,8 +5,6 @@ import './HomePage.css';
 const HomePage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [recentNotices, setRecentNotices] = useState([]);
-  const [expandedFaq, setExpandedFaq] = useState(null);
-
   useEffect(() => {
     setIsAdmin(sessionStorage.getItem('isAdmin') === 'true');
 
@@ -17,10 +15,6 @@ const HomePage = () => {
       setRecentNotices(inquiries.slice(0, 3));
     }
   }, []);
-
-  const toggleFaq = (index) => {
-    setExpandedFaq(expandedFaq === index ? null : index);
-  };
 
   // Sample reviews data from uploaded image
   const reviews = [
@@ -55,30 +49,6 @@ const HomePage = () => {
       rating: 5,
       comment: '첫 수업 들어보시면 알겠지만 신쌤은 사랑입니다! 타이트하게 수업 진행 하면서도 웃음과 유머를 겸비하셨기 때문에 몸은 힘들어도 저는 언제나 신쌤 수업 들으러 학원 가는게 기쁘고 행복했던 것 같습니다.ㅎㅎ 한번 들으면 못 빠져나올걸요?! 제가 장담합니다.ㅋㅋ',
       date: '유쾌한 강의'
-    }
-  ];
-
-  // FAQ data
-  const faqs = [
-    {
-      question: '수강신청은 어떻게 하나요?',
-      answer: '상단 메뉴의 "수강신청" 페이지에서 원하시는 강좌를 선택하시고 신청하실 수 있습니다. 또는 전화 상담을 통해서도 신청 가능합니다.'
-    },
-    {
-      question: '강의 시간은 어떻게 되나요?',
-      answer: '강좌별로 다양한 시간대를 운영하고 있습니다. 평일반, 주말반, 저녁반 등 학생의 일정에 맞춰 선택하실 수 있습니다.'
-    },
-    {
-      question: '환불 규정은 어떻게 되나요?',
-      answer: '학원의 설립·운영 및 과외교습에 관한 법률에 따라 환불 규정을 준수하고 있습니다. 자세한 내용은 전화 문의 부탁드립니다.'
-    },
-    {
-      question: '체험 수업이 가능한가요?',
-      answer: '네, 가능합니다. 첫 수업은 무료 체험으로 진행되며, 강사진과의 상담을 통해 수준에 맞는 반을 배정받으실 수 있습니다.'
-    },
-    {
-      question: '주차 시설이 있나요?',
-      answer: '건물 내 주차장을 이용하실 수 있으며, 인근 공영 주차장도 이용 가능합니다.'
     }
   ];
 
@@ -128,24 +98,6 @@ const HomePage = () => {
               <p className="review-comment">"{review.comment}"</p>
               <div className="review-footer">
                 <span className="review-tag">{review.date}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="faq-section">
-        <h2 className="section-title">자주 묻는 질문</h2>
-        <div className="faq-container">
-          {faqs.map((faq, index) => (
-            <div key={index} className={`faq-item ${expandedFaq === index ? 'expanded' : ''}`}>
-              <button className="faq-question" onClick={() => toggleFaq(index)}>
-                <span>{faq.question}</span>
-                <span className="faq-icon">{expandedFaq === index ? '−' : '+'}</span>
-              </button>
-              <div className="faq-answer">
-                <p>{faq.answer}</p>
               </div>
             </div>
           ))}
