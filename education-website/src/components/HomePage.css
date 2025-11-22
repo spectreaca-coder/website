@@ -516,7 +516,9 @@ section {
   }
 
   .indicator-dot.active {
-    width: 16px;
+    width: 12px;
+    /* Reduced width for more natural look */
+    border-radius: 6px;
   }
 }
 
@@ -640,19 +642,26 @@ section {
 /* Mobile Sidebar */
 @media (max-width: 768px) {
   .hero-social-sidebar {
-    left: 1rem;
-    gap: 0.5rem;
-    /* Reduced mobile gap */
+    left: 50%;
+    top: auto;
+    bottom: 2rem;
+    transform: translateX(-50%);
+    flex-direction: row;
+    gap: 1.5rem;
+    width: 100%;
+    justify-content: center;
   }
 
   .sidebar-icon {
     width: 40px;
     height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Slightly transparent on mobile */
   }
 
   .sidebar-line {
-    height: 20px;
-    /* Reduced mobile height */
+    display: none;
+    /* Hide line on mobile */
   }
 }
 
