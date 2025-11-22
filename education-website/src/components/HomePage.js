@@ -67,7 +67,7 @@ const HomePage = () => {
         <div className="hero-background-orb"></div>
         <div className="hero-content">
           <h1 className="hero-title">
-            <span className="hero-title-main">스펙터 아카데미</span>
+            <span className="hero-title-main">스펙터 학원</span>
             <span className="hero-title-sub">최고가 최고를 만듭니다</span>
           </h1>
           <p className="hero-description">
@@ -76,7 +76,7 @@ const HomePage = () => {
           </p>
           <div className="hero-buttons">
             <Link to="/register" className="cta-button primary">수강신청</Link>
-            <Link to="/my-classes" className="cta-button secondary">강좌보기</Link>
+            <Link to="/my-classes" className="cta-button secondary">강좌소개</Link>
           </div>
         </div>
       </section>
