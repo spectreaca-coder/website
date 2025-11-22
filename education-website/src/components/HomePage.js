@@ -64,6 +64,7 @@ const HomePage = () => {
     <div className="homepage-container">
       {/* Hero Section */}
       <section className="hero-section">
+        <div className="hero-background-orb"></div>
         <div className="hero-content">
           <h1 className="hero-title">
             <span className="hero-title-main">스펙터 아카데미</span>

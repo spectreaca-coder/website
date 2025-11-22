@@ -17,47 +17,96 @@
   overflow: hidden;
 }
 
-/* Animated Background Effect */
+/* Floating Orbs Animation */
 .hero-section::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(41, 182, 246, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(20, 36, 138, 0.03) 0%, transparent 40%);
-  background-size: 100% 100%;
-  animation: backgroundRotate 60s linear infinite;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(41, 182, 246, 0.15) 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: floatOrb1 20s infinite ease-in-out;
   z-index: 0;
 }
 
 .hero-section::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    linear-gradient(var(--color-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
-  background-size: 50px 50px;
-  background-position: center center;
-  opacity: 0.3;
-  mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(20, 36, 138, 0.1) 0%, transparent 70%);
+  bottom: 10%;
+  right: -5%;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: floatOrb2 25s infinite ease-in-out;
   z-index: 0;
 }
 
-@keyframes backgroundRotate {
-  0% {
-    transform: rotate(0deg);
+/* Additional Orb for more depth */
+.hero-background-orb {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(40, 53, 147, 0.08) 0%, transparent 70%);
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  filter: blur(30px);
+  animation: floatOrb3 30s infinite ease-in-out;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes floatOrb1 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
   }
 
+  33% {
+    transform: translate(30px, 50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes floatOrb2 {
+
+  0%,
   100% {
-    transform: rotate(360deg);
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(20px, -20px) scale(0.9);
+  }
+}
+
+@keyframes floatOrb3 {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  33% {
+    transform: translate(-40%, -60%) scale(1.2);
+  }
+
+  66% {
+    transform: translate(-60%, -40%) scale(0.8);
   }
 }
 
