@@ -22,31 +22,39 @@ const HomePage = () => {
     setExpandedFaq(expandedFaq === index ? null : index);
   };
 
-  // Sample reviews data
+  // Sample reviews data from uploaded image
   const reviews = [
     {
       id: 1,
-      name: '김민지',
-      course: '수학 집중반',
+      name: '박성재',
+      course: '서울대 의예과',
       rating: 5,
-      comment: '선생님의 설명이 정말 이해하기 쉽고, 체계적인 커리큘럼 덕분에 성적이 많이 올랐습니다. 강력 추천합니다!',
-      date: '2025.01.10'
+      comment: '신쌤 수업을 들으면서 제가 가장 크게 느낀 점은 학습 효율성이 높다는 것이었어요! 철저한 오답풀이 중심의 수업 구성 덕분에 시간을 낭비하지 않고 제게 필요한 영어 학습에 집중하여 공부할 수 있었습니다.',
+      date: '효율적 수업'
     },
     {
       id: 2,
-      name: '이준호',
-      course: '영어 고급반',
+      name: '허영준',
+      course: '서울대 화공생명학과',
       rating: 5,
-      comment: '1:1 맞춤 관리가 정말 좋았어요. 약점을 파악해서 집중적으로 학습할 수 있었습니다.',
-      date: '2025.01.08'
+      comment: '신쌤께 배운 이후에는 신쌤의 초강력 내신대비 덕분에 계속 1등급을 받을 수 있었어요. 특히 신쌤의 예상문제는 진짜 대박입니다. 공부할 때 진짜 이대로 나오나 하다가 시험지 보고 똑같이 나와서 깜놀 한 적이 한 두번이 아니었죠.ㅎㅎ',
+      date: '놀라운 적중력'
     },
     {
       id: 3,
-      name: '박서연',
-      course: '국어 심화반',
+      name: '김유은',
+      course: '연세대 사학과',
       rating: 5,
-      comment: '분위기도 좋고 강사진들의 열정이 느껴집니다. 목표했던 대학에 합격했어요!',
-      date: '2025.01.05'
+      comment: '신쌤 수업을 유독 강조하는 이유는 열정 이에요! 새벽이 되어도 저희 질문을 친절하게 받아주시기 때문에 내신 공부하는데에 큰 도움이 되었어요. 시험 전날 밤까지 모르는 게 생기면 답답해서 미치는데 신쌤이 저희와 함께 깨어있으시기 때문에 다음날 시험을 상쾌하게 볼 수 있었어요.',
+      date: '열정적 강의'
+    },
+    {
+      id: 4,
+      name: '황이주',
+      course: '연세대 경영학과',
+      rating: 5,
+      comment: '첫 수업 들어보시면 알겠지만 신쌤은 사랑입니다! 타이트하게 수업 진행 하면서도 웃음과 유머를 겸비하셨기 때문에 몸은 힘들어도 저는 언제나 신쌤 수업 들으러 학원 가는게 기쁘고 행복했던 것 같습니다.ㅎㅎ 한번 들으면 못 빠져나올걸요?! 제가 장담합니다.ㅋㅋ',
+      date: '유쾌한 강의'
     }
   ];
 
@@ -118,7 +126,12 @@ const HomePage = () => {
                 </div>
               </div>
               <p className="review-comment">"{review.comment}"</p>
-              <p className="review-date">{review.date}</p>
+              <div className="review-footer">
+                <span className="review-tag">{review.date}</span>
+                <a href="https://open.kakao.com/o/sovpYkzc" target="_blank" rel="noopener noreferrer" className="review-kakao-btn">
+                  카카오톡 상담하기
+                </a>
+              </div>
             </div>
           ))}
         </div>

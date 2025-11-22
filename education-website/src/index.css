@@ -1,17 +1,17 @@
 :root {
-  /* Primary Colors - Deep Navy & Slate */
-  --color-primary: #0F172A;
-  /* Slate 900 */
-  --color-primary-light: #334155;
-  /* Slate 700 */
+  /* Primary Colors - Deep Navy from Logo */
+  --color-primary: #14248A;
+  /* Deep Royal Blue */
+  --color-primary-light: #283593;
+  /* Lighter Navy */
 
-  /* Accent Colors - Trustworthy Blue */
-  --color-accent: #2563EB;
-  /* Blue 600 */
-  --color-accent-hover: #1D4ED8;
-  /* Blue 700 */
-  --color-accent-light: #EFF6FF;
-  /* Blue 50 */
+  /* Accent Colors - Cyan/Blue from Logo Triangle */
+  --color-accent: #29B6F6;
+  /* Light Blue */
+  --color-accent-hover: #0288D1;
+  /* Darker Blue */
+  --color-accent-light: #E1F5FE;
+  /* Very Light Blue */
 
   /* Background Colors */
   --color-bg: #FFFFFF;
