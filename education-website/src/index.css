@@ -5,12 +5,12 @@
   --color-primary-light: #283593;
   /* Lighter Navy */
 
-  /* Accent Colors - Cyan/Blue from Logo Triangle */
-  --color-accent: #29B6F6;
-  /* Light Blue */
-  --color-accent-hover: #0288D1;
-  /* Darker Blue */
-  --color-accent-light: #E1F5FE;
+  /* Accent Colors - Royal Blue for Buttons/Highlights */
+  --color-accent: #2563EB;
+  /* Royal Blue */
+  --color-accent-hover: #1D4ED8;
+  /* Darker Royal Blue */
+  --color-accent-light: #EFF6FF;
   /* Very Light Blue */
 
   /* Background Colors */
