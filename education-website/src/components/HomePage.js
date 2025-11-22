@@ -70,175 +70,8 @@ const HomePage = () => {
     return () => clearInterval(interval);
   }, [reviews.length]);
 
-  // Threads Data State
-  const [latestThread, setLatestThread] = useState({
-    id: 1,
-    author: '신원장',
-    handle: 'daechi_spectre',
-    avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
-    content: '불러오는 중...',
-    timestamp: '',
-    likes: null,
-    replies: null
-  });
-  const [isThreadExpanded, setIsThreadExpanded] = useState(false);
-  const [isThreadLoading, setIsThreadLoading] = useState(true);
-
-  useEffect(() => {
-    const CACHE_KEY = 'threads_latest_post';
-    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
-    const FETCH_TIMEOUT = 10000; // 10 seconds (increased back)
-
-    const fetchLatestThread = async () => {
-      let cachedData = null;
-
-      try {
-        // 1. Check cache first - show immediately if available
-        cachedData = localStorage.getItem(CACHE_KEY);
-        if (cachedData) {
-          const { data, timestamp } = JSON.parse(cachedData);
-          const now = new Date().getTime();
-
-          // Always show cached data immediately
-          setLatestThread(data);
-          setIsThreadLoading(false);
-
-          // If cache is still valid, skip fetching
-          if (now - timestamp < CACHE_DURATION) {
-            console.log('Using valid cached Threads data');
-            return;
-          }
-
-          console.log('Cache expired, fetching in background...');
-        } else {
-          setIsThreadLoading(true);
-        }
-
-        // 2. Fetch from RSS with multiple proxies
-        const PROXIES = [
-          'https://api.allorigins.win/raw?url=',
-          'https://corsproxy.io/?',
-          'https://api.codetabs.com/v1/proxy?quest=',
-          '', // Direct attempt (no proxy)
-        ];
-
-        const RSS_URL = 'https://rsshub.app/threads/@daechi_spectre';
-        let xmlText = null;
-
-        // Try proxies quickly
-        for (const proxy of PROXIES) {
-          try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
-
-            const proxyUrl = proxy + encodeURIComponent(RSS_URL);
-            const response = await fetch(proxyUrl, { signal: controller.signal });
-            clearTimeout(timeoutId);
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-            xmlText = await response.text();
-            console.log(`Success with proxy: ${proxy}`);
-            break;
-          } catch (error) {
-            console.warn(`Proxy failed:`, error.message);
-            continue;
-          }
-        }
-
-        if (!xmlText) throw new Error('All proxies failed');
-
-        // 3. Parse XML
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-        const items = xmlDoc.querySelectorAll('item');
-
-        if (items.length === 0) throw new Error('No items found');
-
-        // 4. Get latest post
-        const allPosts = Array.from(items).map(item => {
-          const description = item.querySelector('description')?.textContent || '';
-          const contentEncoded = item.querySelector('content\\:encoded, encoded')?.textContent || '';
-          const pubDateText = item.querySelector('pubDate')?.textContent || '';
-
-          let content = contentEncoded || description;
-
-          // HTML decode
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = content;
-          content = (tempDiv.textContent || tempDiv.innerText || content)
-            .replace(/\s+/g, ' ')
-            .trim();
-
-          return {
-            content,
-            pubDate: pubDateText,
-            date: new Date(pubDateText),
-          };
-        });
-
-        allPosts.sort((a, b) => b.date - a.date);
-        const latest = allPosts[0];
-
-        // 5. Format timestamp
-        const now = new Date();
-        const diffMs = now - latest.date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        let timeString;
-        if (diffMins < 60) {
-          timeString = diffMins <= 1 ? '방금 전' : `${diffMins}분 전`;
-        } else if (diffHours < 24) {
-          timeString = `${diffHours}시간 전`;
-        } else if (diffDays < 7) {
-          timeString = `${diffDays}일 전`;
-        } else {
-          timeString = latest.date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
-        }
-
-        const newData = {
-          id: 1,
-          author: '신원장',
-          handle: 'daechi_spectre',
-          avatar: 'https://ui-avatars.com/api/?name=Shin&background=000&color=fff',
-          content: latest.content,
-          timestamp: timeString,
-          likes: null,
-          replies: null,
-        };
-
-        setLatestThread(newData);
-        setIsThreadLoading(false);
-
-        // Update cache
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          data: newData,
-          timestamp: new Date().getTime()
-        }));
-
-        console.log('Threads data updated successfully');
-
-      } catch (error) {
-        console.error('Failed to fetch Threads:', error);
-        console.error('Error details:', error.message);
-        setIsThreadLoading(false);
-
-        // If we already have cached data, keep it
-        // Otherwise show fallback content
-        if (!cachedData) {
-          setLatestThread(prev => ({
-            ...prev,
-            content: '안녕하세요. 학부모님\n현재 쓰레드 데이터를 불러오는 중 문제가 발생했습니다.\n페이지를 새로고침하거나 잠시 후 다시 시도해주세요.\n\n자세한 내용은 Threads (@daechi_spectre)를 확인해주세요.',
-            timestamp: '방금 전',
-          }));
-        }
-      }
-    };
-
-    fetchLatestThread();
-  }, []);
+  // Threads - using iframe embed
+  const threadsProfileUrl = 'https://www.threads.net/@daechi_spectre';
 
   return (
     <div className="homepage-container">
@@ -285,54 +118,15 @@ const HomePage = () => {
             <span className="pulse-dot"></span>
             오늘의 신원장
           </div>
-          <div className="threads-card emphasized">
-            <div className="threads-header">
-              <div className="threads-profile">
-                <div className="threads-avatar">
-                  <img src={latestThread.avatar} alt={latestThread.author} />
-                </div>
-                <div className="threads-info">
-                  <span className="threads-author">{latestThread.author}</span>
-                  <span className="threads-handle">@{latestThread.handle}</span>
-                </div>
-              </div>
-              <div className="threads-logo-icon">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
-                  <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c1.28 0 2.47-.4 3.46-1.09.66.67 1.58 1.09 2.54 1.09 2.21 0 4-1.79 4-4s-1.79-4-4-4c-1.86 0-3.43 1.28-3.87 3.02-.08.31-.13.63-.13.98 0 2.21 1.79 4 4 4 .92 0 1.77-.31 2.46-.84.4.57.64 1.26.64 2.01 0 1.59-1.06 2.94-2.52 3.35C17.23 16.88 14.76 18 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.36 0 2.61.45 3.61 1.21L14.5 8.3C13.77 7.8 12.91 7.5 12 7.5c-2.48 0-4.5 2.02-4.5 4.5s2.02 4.5 4.5 4.5c1.04 0 2-.35 2.77-.94-.3-.43-.48-.95-.48-1.51 0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5c0 1.14-.78 2.1-1.84 2.39-.86.23-1.77.36-2.71.36-2.76 0-5-2.24-5-5s2.24-5 5-5c1.15 0 2.22.39 3.08 1.05l1.1-1.1C15.19 6.74 13.67 6 12 6z" />
-                </svg>
-              </div>
-            </div>
-            <div className={`threads-content ${isThreadLoading ? 'loading' : ''}`}>
-              {isThreadLoading && latestThread.content === '불러오는 중...' ? (
-                <p className="loading-text">
-                  <span className="loading-spinner"></span>
-                  불러오는 중...
-                </p>
-              ) : (
-                <>
-                  <p>
-                    {isThreadExpanded || latestThread.content.length <= 300
-                      ? latestThread.content
-                      : `${latestThread.content.substring(0, 300)}...`}
-                  </p>
-                  {latestThread.content.length > 300 && (
-                    <button
-                      className="threads-toggle-btn"
-                      onClick={() => setIsThreadExpanded(!isThreadExpanded)}
-                    >
-                      {isThreadExpanded ? '접기' : '더보기'}
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-            <div className="threads-footer-info">
-              <span className="threads-time">{latestThread.timestamp}</span>
-              {latestThread.likes !== null && latestThread.replies !== null && (
-                <span className="threads-stats">{latestThread.likes} 좋아요 · {latestThread.replies} 답글</span>
-              )}
-            </div>
+          <div className="threads-embed-wrapper">
+            <iframe
+              src={threadsProfileUrl}
+              className="threads-iframe"
+              title="Threads @daechi_spectre"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              allowFullScreen
+            />
           </div>
         </div>
       </section>
