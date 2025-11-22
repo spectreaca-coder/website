@@ -87,7 +87,7 @@ const HomePage = () => {
   useEffect(() => {
     const CACHE_KEY = 'threads_latest_post';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour
-    const FETCH_TIMEOUT = 5000; // 5 seconds (reduced from 10)
+    const FETCH_TIMEOUT = 10000; // 10 seconds (increased back)
 
     const fetchLatestThread = async () => {
       let cachedData = null;
@@ -220,14 +220,15 @@ const HomePage = () => {
 
       } catch (error) {
         console.error('Failed to fetch Threads:', error);
+        console.error('Error details:', error.message);
         setIsThreadLoading(false);
 
         // If we already have cached data, keep it
-        // Otherwise show error
+        // Otherwise show fallback content
         if (!cachedData) {
           setLatestThread(prev => ({
             ...prev,
-            content: '쓰레드를 불러올 수 없습니다.\n잠시 후 새로고침해주세요.',
+            content: '안녕하세요. 학부모님\n현재 쓰레드 데이터를 불러오는 중 문제가 발생했습니다.\n페이지를 새로고침하거나 잠시 후 다시 시도해주세요.\n\n자세한 내용은 Threads (@daechi_spectre)를 확인해주세요.',
             timestamp: '방금 전',
           }));
         }
