@@ -81,10 +81,11 @@ const HomePage = () => {
     likes: null,
     replies: null
   });
+  const [isThreadExpanded, setIsThreadExpanded] = useState(false);
 
   useEffect(() => {
     const CACHE_KEY = 'threads_latest_post';
-    const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour (increased from 30 mins)
 
     const fetchLatestThread = async () => {
       try {
@@ -101,6 +102,7 @@ const HomePage = () => {
             setLatestThread(data);
             hasValidCache = true;
             console.log('Using cached Threads data');
+            return; // Skip fetching if cache is valid
           } else {
             // Even if expired, show it first while fetching new data (stale-while-revalidate)
             setLatestThread(data);
@@ -108,58 +110,77 @@ const HomePage = () => {
           }
         }
 
-        // If we have valid cache, we can skip fetching or fetch in background
-        // Here we fetch in background to keep it fresh if it's expired or close to expiring
+        // Use allorigins proxy to avoid CORS issues
+        const response = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'));
+        const xmlText = await response.text();
 
-        // Using RSSHub to get Threads feed (via allorigins proxy to avoid CORS)
-        const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://rsshub.app/threads/@daechi_spectre'));
-        const data = await response.json();
-
-        if (data.contents) {
+        if (xmlText) {
           const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+          const xmlDoc = parser.parseFromString(xmlText, "text/xml");
           const items = xmlDoc.querySelectorAll("item");
 
-          if (items.length > 0) {
-            // Find the most recent post by date (skip pinned posts if any)
-            let latestItem = null;
-            let latestDate = null;
+          console.log(`Found ${items.length} thread items`);
 
-            // Check all items and find the one with the most recent date
-            Array.from(items).forEach(item => {
+          if (items.length > 0) {
+            // Parse all items and filter out potential pinned posts
+            const allPosts = Array.from(items).map((item, index) => {
+              const title = item.querySelector("title")?.textContent || "";
+              const description = item.querySelector("description")?.textContent || "";
+              const contentEncoded = item.querySelector("content\\:encoded, encoded")?.textContent || "";
               const pubDateText = item.querySelector("pubDate")?.textContent || "";
-              if (pubDateText) {
-                const itemDate = new Date(pubDateText);
-                if (!latestDate || itemDate > latestDate) {
-                  latestDate = itemDate;
-                  latestItem = item;
-                }
-              }
+              const link = item.querySelector("link")?.textContent || "";
+
+              // Use content:encoded if available (usually full content), otherwise use description
+              let rawContent = contentEncoded || description;
+
+              // More comprehensive HTML entity decoding
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = rawContent;
+              rawContent = tempDiv.textContent || tempDiv.innerText || rawContent;
+
+              // Additional cleanup
+              const cleanContent = rawContent
+                .replace(/<[^>]*>/gm, '')  // Remove any remaining HTML tags
+                .replace(/&nbsp;/gi, ' ')
+                .replace(/&amp;/gi, '&')
+                .replace(/&lt;/gi, '<')
+                .replace(/&gt;/gi, '>')
+                .replace(/&quot;/gi, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&apos;/g, "'")
+                .replace(/\s+/g, ' ')  // Normalize whitespace
+                .trim();
+
+              return {
+                index,
+                title,
+                content: cleanContent,
+                pubDate: pubDateText,
+                date: new Date(pubDateText),
+                link
+              };
             });
 
-            // Use the latest item or fallback to first item
-            const targetItem = latestItem || items[0];
-            const description = targetItem.querySelector("description")?.textContent || "";
-            const contentEncoded = targetItem.querySelector("content\\:encoded, encoded")?.textContent || "";
-            const pubDate = targetItem.querySelector("pubDate")?.textContent || "";
+            // Debug: Log all posts
+            console.log('All posts:', allPosts.map(p => ({
+              index: p.index,
+              date: p.pubDate,
+              contentLength: p.content.length,
+              preview: p.content.substring(0, 100)
+            })));
 
-            // Use content:encoded if available (usually longer), otherwise use description
-            const rawContent = contentEncoded.length > description.length ? contentEncoded : description;
+            // Sort by date descending (newest first) and take the first non-pinned post
+            allPosts.sort((a, b) => b.date - a.date);
 
-            // Clean up content (remove HTML tags if any)
-            const cleanContent = rawContent
-              .replace(/<[^>]*>/gm, '')  // Remove HTML tags
-              .replace(/&nbsp;/g, ' ')    // Replace &nbsp; with space
-              .replace(/&amp;/g, '&')     // Replace &amp; with &
-              .replace(/&lt;/g, '<')      // Replace &lt; with <
-              .replace(/&gt;/g, '>')      // Replace &gt; with >
-              .replace(/&quot;/g, '"')    // Replace &quot; with "
-              .trim();
+            // Use the most recent post (index 0 after sorting)
+            const latestPost = allPosts[0];
+            const cleanContent = latestPost.content;
+            const pubDate = latestPost.pubDate;
 
-            // Debug: log the content length and date
-            console.log('Fetched Threads content length:', cleanContent.length);
-            console.log('Content preview:', cleanContent.substring(0, 200) + '...');
-            console.log('Post date:', pubDate);
+            // Debug: log the selected content
+            console.log('Selected post date:', pubDate);
+            console.log('Selected content length:', cleanContent.length);
+            console.log('Full content:', cleanContent);
 
             // Format timestamp - more accurate calculation
             const date = new Date(pubDate);
@@ -288,7 +309,19 @@ const HomePage = () => {
               </div>
             </div>
             <div className="threads-content">
-              <p>{latestThread.content}</p>
+              <p>
+                {isThreadExpanded || latestThread.content.length <= 300
+                  ? latestThread.content
+                  : `${latestThread.content.substring(0, 300)}...`}
+              </p>
+              {latestThread.content.length > 300 && (
+                <button
+                  className="threads-toggle-btn"
+                  onClick={() => setIsThreadExpanded(!isThreadExpanded)}
+                >
+                  {isThreadExpanded ? '접기' : '더보기'}
+                </button>
+              )}
             </div>
             <div className="threads-footer-info">
               <span className="threads-time">{latestThread.timestamp}</span>

@@ -815,6 +815,26 @@ section {
   white-space: pre-wrap;
 }
 
+.threads-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+  transition: var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.threads-toggle-btn:hover {
+  color: var(--color-accent);
+  transform: translateX(2px);
+}
+
 .threads-footer-info {
   display: flex;
   justify-content: space-between;
