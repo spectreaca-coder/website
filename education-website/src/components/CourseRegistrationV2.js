@@ -67,36 +67,6 @@ const CourseRegistrationV2 = () => {
         };
     }, []);
 
-    // Custom Cursor Logic
-    useEffect(() => {
-        const cursor = document.querySelector('.custom-cursor-v2');
-        const moveCursor = (e) => {
-            if (cursor) {
-                cursor.style.left = `${e.clientX}px`;
-                cursor.style.top = `${e.clientY}px`;
-            }
-        };
-
-        const handleHover = () => cursor?.classList.add('hover');
-        const handleLeave = () => cursor?.classList.remove('hover');
-
-        window.addEventListener('mousemove', moveCursor);
-
-        const interactiveElements = document.querySelectorAll('a, button, .cr-card-v2');
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', handleHover);
-            el.addEventListener('mouseleave', handleLeave);
-        });
-
-        return () => {
-            window.removeEventListener('mousemove', moveCursor);
-            interactiveElements.forEach(el => {
-                el.removeEventListener('mouseenter', handleHover);
-                el.removeEventListener('mouseleave', handleLeave);
-            });
-        };
-    }, []);
-
     useScrollReveal('.reveal-on-scroll', 0.1, [courses]);
 
     const sendToGoogleSheets = async (applicationData) => {
@@ -277,7 +247,6 @@ const CourseRegistrationV2 = () => {
 
     return (
         <div className="cr-v2-page">
-            <div className="custom-cursor-v2"></div>
             <div className="noise-overlay-v2"></div>
 
             <HeaderV2 />

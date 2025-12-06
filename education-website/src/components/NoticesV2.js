@@ -167,25 +167,10 @@ const NoticesV2 = () => {
         }
     };
 
-    // Custom Cursor
-    useEffect(() => {
-        const cursor = document.querySelector('.custom-cursor-v2');
-        if (!cursor) return;
-
-        const moveCursor = (e) => {
-            cursor.style.left = `${e.clientX}px`;
-            cursor.style.top = `${e.clientY}px`;
-        };
-
-        window.addEventListener('mousemove', moveCursor);
-        return () => window.removeEventListener('mousemove', moveCursor);
-    }, []);
-
     useScrollReveal('.reveal-on-scroll', 0.1, [notices]);
 
     return (
         <div className="notices-v2-page">
-            <div className="custom-cursor-v2"></div>
             <div className="noise-overlay-v2"></div>
 
             <HeaderV2 />

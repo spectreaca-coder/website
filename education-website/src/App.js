@@ -19,7 +19,6 @@ import InstructorsV2 from './components/InstructorsV2';
 import CurriculumV2 from './components/CurriculumV2';
 import CourseRegistrationV2 from './components/CourseRegistrationV2';
 import NoticesV2 from './components/NoticesV2';
-import CustomCursorV2 from './components/CustomCursorV2';
 import './App.css';
 
 function AppContent() {
@@ -34,7 +33,6 @@ function AppContent() {
 
   return (
     <div className="App">
-      {isV2 && <CustomCursorV2 />}
       {!isV2 && !isV3 && <Header />}
       <Routes>
         {/* Main Routes - Now using V2 Components */}

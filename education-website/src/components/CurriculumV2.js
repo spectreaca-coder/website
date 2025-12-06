@@ -168,7 +168,6 @@ const CurriculumV2 = () => {
 
     return (
         <div className="curriculum-v2-page">
-            <div className="custom-cursor-v2"></div>
             <div className="noise-overlay-v2"></div>
 
             <HeaderV2 />
