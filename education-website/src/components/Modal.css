@@ -1,6 +1,7 @@
 .modal-overlay {
   position: fixed;
-  top: 0;
+  top: 71px;
+  /* 헤더 높이만큼 내려서 헤더가 항상 접근 가능 */
   left: 0;
   right: 0;
   bottom: 0;
@@ -177,4 +178,109 @@
   .modal-photo {
     margin-bottom: 0.75rem;
   }
+}
+
+/* Admin Login Modal */
+.admin-login-modal {
+  max-width: 400px;
+}
+
+.admin-login-modal .modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.admin-login-modal .form-group {
+  margin-bottom: 1rem;
+}
+
+.admin-login-modal .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.admin-login-modal .form-control {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid #000;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.admin-login-modal .form-control:focus {
+  outline: none;
+  background: #f9f9f9;
+}
+
+.admin-login-modal .error-message {
+  background: #fee;
+  border: 1px solid #c00;
+  color: #c00;
+  padding: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.admin-login-modal .modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.modal-button {
+  padding: 12px 24px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  border: 1.5px solid #000;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-button.primary {
+  background: #000;
+  color: #fff;
+}
+
+.modal-button.primary:hover {
+  background: #333;
+}
+
+.modal-button.secondary {
+  background: #fff;
+  color: #000;
+}
+
+.modal-button.secondary:hover {
+  background: #f5f5f5;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Admin Badge */
+.admin-badge {
+  position: absolute;
+  bottom: -5px;
+  right: -10px;
+  background: #c00;
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }

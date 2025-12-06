@@ -22,6 +22,7 @@ const InquiryPage = () => {
   const [author, setAuthor] = useState('');
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
 
   useEffect(() => {
     const adminFlag = sessionStorage.getItem('isAdmin') === 'true';
@@ -60,15 +61,20 @@ const InquiryPage = () => {
     setIsFormVisible(true);
   };
 
-  const handleDeleteInquiry = async (id) => {
-    if (window.confirm('정말로 이 글을 삭제하시겠습니까?')) {
-      try {
-        await deleteDoc(doc(db, 'notices', id));
-        alert('공지가 삭제되었습니다.');
-      } catch (error) {
-        console.error('공지 삭제 실패:', error);
-        alert('공지 삭제에 실패했습니다.');
-      }
+  const showDeleteConfirm = (id) => {
+    setDeleteConfirm({ show: true, id: id });
+  };
+
+  const confirmDelete = async () => {
+    const id = deleteConfirm.id;
+    setDeleteConfirm({ show: false, id: null });
+
+    try {
+      await deleteDoc(doc(db, 'notices', id));
+      alert('공지가 삭제되었습니다.');
+    } catch (error) {
+      console.error('공지 삭제 실패:', error);
+      alert('공지 삭제에 실패했습니다.');
     }
   };
 
@@ -112,9 +118,9 @@ const InquiryPage = () => {
   const quillModules = {
     toolbar: [
       [{ 'header': [1, 2, 3, false] }, { 'size': ['small', false, 'large', 'huge'] }],
-      ['bold', 'italic', 'underline','strike', 'blockquote'],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
       [{ 'align': [] }],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
       ['link', 'image', 'video'],
       ['clean']
     ],
@@ -191,7 +197,7 @@ const InquiryPage = () => {
                 {isAdmin && (
                   <td className="col-manage">
                     <button onClick={() => handleEditClick(item)} className="edit-btn">수정</button>
-                    <button onClick={() => handleDeleteInquiry(item.id)} className="inquiry-delete-btn">삭제</button>
+                    <button onClick={() => showDeleteConfirm(item.id)} className="inquiry-delete-btn">삭제</button>
                   </td>
                 )}
               </tr>
@@ -203,12 +209,27 @@ const InquiryPage = () => {
         <Modal onClose={handleCloseModal}>
           <div className="modal-header"><h2>{selectedInquiry.title}</h2><div className="modal-meta"><span>작성자: {selectedInquiry.author}</span><span>작성일: {selectedInquiry.createdAtDisplay || new Date(selectedInquiry.createdAt).toLocaleDateString()}</span></div></div>
           <div className="modal-body">
-            <div className="ql-editor" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedInquiry.content, {
-              ADD_TAGS: ['iframe'],
-              ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'class', 'src']
-            }) }} />
+            <div className="ql-editor" dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(selectedInquiry.content, {
+                ADD_TAGS: ['iframe'],
+                ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling', 'class', 'src']
+              })
+            }} />
           </div>
         </Modal>
+      )}
+
+      {/* 삭제 확인 모달 */}
+      {deleteConfirm.show && (
+        <div className="confirm-modal-overlay">
+          <div className="confirm-modal">
+            <p>정말로 이 글을 삭제하시겠습니까?</p>
+            <div className="confirm-modal-actions">
+              <button className="cancel-btn" onClick={() => setDeleteConfirm({ show: false, id: null })}>취소</button>
+              <button className="delete-btn" onClick={confirmDelete}>삭제</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

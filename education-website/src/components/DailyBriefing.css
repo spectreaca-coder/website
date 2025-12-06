@@ -1,0 +1,122 @@
+.daily-briefing-section {
+    padding: 2rem 1rem;
+    background-color: #f0f0f0;
+    border-bottom: 1.5px solid #000;
+}
+
+.daily-briefing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1.5px solid #000;
+    box-shadow: 2px 2px 0px #000;
+    padding: 2rem;
+    position: relative;
+}
+
+.daily-briefing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #000;
+    padding-bottom: 1rem;
+}
+
+.daily-briefing-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0;
+    color: #000;
+}
+
+.daily-briefing-date {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    background: #000;
+    color: #fff;
+    padding: 0.2rem 0.5rem;
+}
+
+.daily-briefing-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+    /* Preserves newlines */
+}
+
+.daily-briefing-textarea {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border: 2px solid #000;
+    font-family: inherit;
+    margin-bottom: 1rem;
+    resize: vertical;
+}
+
+.daily-briefing-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.daily-briefing-save-btn,
+.daily-briefing-cancel-btn,
+.daily-briefing-edit-btn {
+    padding: 0.5rem 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 2px solid #000;
+    transition: all 0.2s;
+}
+
+.daily-briefing-save-btn {
+    background-color: #000;
+    color: #fff;
+}
+
+.daily-briefing-save-btn:hover {
+    background-color: #333;
+}
+
+.daily-briefing-cancel-btn {
+    background-color: #fff;
+    color: #000;
+}
+
+.daily-briefing-cancel-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.daily-briefing-edit-btn {
+    margin-top: 1rem;
+    background-color: #ff4d4d;
+    /* Red for visibility */
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.daily-briefing-edit-btn:hover {
+    background-color: #cc0000;
+    box-shadow: 2px 2px 0px #000;
+    transform: translate(-1px, -1px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .daily-briefing-container {
+        padding: 1.5rem;
+        box-shadow: 3px 3px 0px #000;
+    }
+
+    .daily-briefing-title {
+        font-size: 1.2rem;
+    }
+
+    .daily-briefing-content p {
+        font-size: 1rem;
+    }
+}
