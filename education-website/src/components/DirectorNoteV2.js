@@ -49,8 +49,14 @@ const DirectorNoteV2 = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         try {
-            await setDoc(doc(db, 'settings', 'directorNote'), formData);
-            setNoteData(formData);
+            // 현재 날짜로 자동 업데이트
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
+            const updatedData = { ...formData, date: dateStr };
+
+            await setDoc(doc(db, 'settings', 'directorNote'), updatedData);
+            setNoteData(updatedData);
+            setFormData(updatedData);
             setIsEditing(false);
             alert('저장되었습니다.');
         } catch (error) {
