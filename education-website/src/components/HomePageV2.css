@@ -560,7 +560,7 @@ body {
     /* Hide default cursor */
 }
 
-/* Reviews Section - Raw Grid */
+/* Reviews Section - 2x2 Grid */
 .reviews-section-v2 {
     padding: 50px 20px;
     border-bottom: var(--sw-border);
@@ -568,10 +568,58 @@ body {
 
 .reviews-grid-v2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    max-width: 1000px;
     margin: 0 auto;
+}
+
+/* New Review Card Style */
+.review-card-new-v2 {
+    background: #d4d4c8;
+    padding: 25px;
+    border-radius: 0;
+    text-align: left;
+}
+
+.review-category-v2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.review-title-v2 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #006600;
+    margin-bottom: 15px;
+    text-decoration: underline;
+}
+
+.review-comment-v2 {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.review-author-v2 {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: right;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .reviews-grid-v2 {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .review-category-v2 {
+        font-size: 1.2rem;
+    }
 }
 
 .review-card-v2 {

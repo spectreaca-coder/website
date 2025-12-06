@@ -5,7 +5,6 @@ import './HomePageV2.css';
 import HeaderV2 from './HeaderV2';
 import FooterV2 from './FooterV2';
 import useScrollReveal from '../hooks/useScrollReveal';
-import DailyBriefing from './DailyBriefing';
 import heroBg1 from '../assets/main-bg-v2.jpg';
 import heroBg2 from '../assets/hero-bg-2.jpg';
 import heroBg3 from '../assets/hero-bg-3.jpg';
@@ -13,58 +12,66 @@ import heroBg4 from '../assets/hero-bg-4.jpg';
 import heroBg5 from '../assets/hero-bg-5.jpg';
 import heroBg6 from '../assets/hero-bg-6.jpg';
 import heroBg7 from '../assets/hero-bg-7.jpg';
-import logo from '../assets/logo.png';
 import DirectorNoteV2 from './DirectorNoteV2';
-
-
+import { db } from '../firebase';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 
 const HomePageV2 = () => {
-    // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Moved to HeaderV2
-    const [heroImages, setHeroImages] = useState([
+    const [heroImages] = useState([
         heroBg1, heroBg2, heroBg3, heroBg4, heroBg5, heroBg6, heroBg7
     ]);
     const [currentBgIndex, setCurrentBgIndex] = useState(0);
-    const [seoulTime, setSeoulTime] = useState(''); // Kept for Hero section display if needed, but HeaderV2 has its own.
-    // Wait, the Hero section ALSO displays the time in the middle. I should keep seoulTime logic here for the Hero section.
-    // Or I can remove it from Hero if it's in the header?
-    // The design shows it in the header AND potentially in the hero?
-    // Looking at previous code: <div className="seoul-clock-v2">{seoulTime}</div> was in the Hero content too?
-    // No, line 178: <div className="seoul-clock-v2">{seoulTime}</div> is inside .hero-content-v2.
-    // And line 131 (in previous file view, but not in the snippet I replaced) had it in header?
-    // Let's check the previous file view of HomePageV2.js (Step 822).
-    // Line 178 is inside .hero-content-v2.
-    // Line 134-163 was the header. It did NOT have the clock in the header in the previous version!
-    // But HeaderV2 added it.
-    // If I add it to HeaderV2, do I still need it in Hero?
-    // The user asked for "Unification". The sub-pages had the clock in the header (e.g. InstructorsV2 line 131).
-    // HomePageV2 had it in the Hero.
-    // To unify, maybe we should have it in the Header for ALL pages, including Home?
-    // Or keep it in Hero for Home and Header for others?
-    // The "Design Debate" mentioned "Seoul Clock" in the header context.
-    // I will keep the logic here for the Hero section if it's used there, but HeaderV2 handles the header one.
-    // Actually, looking at the code I replaced in HomePageV2 (lines 134-163), it did NOT have the clock.
-    // So HomePageV2 only had it in the Hero.
-    // InstructorsV2 had it in the Header.
-    // I will keep the logic in HomePageV2 for the Hero section clock.
+    const [seoulTime, setSeoulTime] = useState('');
+    const [recentNotices, setRecentNotices] = useState([]);
 
-    const [scrolled, setScrolled] = useState(false); // Used for parallax
-
-    // Reviews Data
+    // 후기 데이터 (스크린샷 기반)
     const reviews = [
-        { id: 1, name: '김OO', course: '영어 심화반', rating: 5, comment: '스펙터 아카데미 덕분에 내신 1등급 받았습니다! 원장님의 전략적인 접근이 정말 큰 도움이 되었어요.', date: '2024.10.15' },
-        { id: 2, name: '이OO', course: '수학 집중반', rating: 5, comment: '수학이 너무 어려웠는데, 제임스 선생님 강의 듣고 자신감이 생겼습니다. 문제 풀이 속도가 확실히 빨라졌어요.', date: '2024.10.12' },
-        { id: 3, name: '박OO', course: '국어 논술', rating: 4, comment: '논술 첨삭이 정말 꼼꼼합니다. 글쓰기 실력이 많이 늘었어요.', date: '2024.10.08' },
-        { id: 4, name: '최OO', course: '과학 탐구', rating: 5, comment: '실험 중심 수업이라 이해가 잘 됩니다. 물리 성적이 많이 올랐어요.', date: '2024.10.05' },
+        {
+            id: 1,
+            category: '효율적 수업',
+            title: 'Q&A 방식 강의로 최대 효율을 추구',
+            comment: '"신쌤 수업을 들으면서 제가 가장 크게 느낀 점은 학습 효율성이 높다 라는 것이었어요! 철저한 오답풀이 중심의 수업 구성 덕분에 시간을 낭비하지 않고 제게 필요한 영어 학습에 집중하여 공부할 수 있었습니다."',
+            author: '서울대 의예과 박성재'
+        },
+        {
+            id: 2,
+            category: '놀라운 적중력',
+            title: '기출 데이터에 근거한 학교별 예상문제',
+            comment: '"신쌤께 배운 이후에는 신쌤의 초강력 내신대비 덕분에 계속 1등급을 받을 수 있었어요. 특히 신쌤의 예상문제는 진짜 대박입니다. 공부할 때는 진짜 이대로 나오나 하다가 시험지 보고 똑같이 나와서 깜놀 한 적이 한 두번이 아니었죠. ㅎㅎ"',
+            author: '서울대 화공생명학과 허영준'
+        },
+        {
+            id: 3,
+            category: '열정적 강의',
+            title: '학생들을 감동시키는 무한 열정 강의',
+            comment: '"신쌤 수업을 유독 강조하는 이유는 열정 이에요! 새벽이 되어도 저희 질문을 친절하게 받아주시기 때문에 내신 공부하는데에 큰 도움이 되었어요. 시험 전날 밤까지 모르는 게 생기면 답답해서 미치는데 신쌤이 저희와 함께 깨어있으시기 때문에 다음날 시험을 상쾌하게 볼 수 있었어요."',
+            author: '연세대 사학과 김유은'
+        },
+        {
+            id: 4,
+            category: '유쾌한 강의',
+            title: '수업에 몰입할 수 밖에 없는 유쾌한 강의',
+            comment: '"첫 수업 들어보시면 알겠지만 신쌤은 사랑입니다! 타이트하게 수업 진행 하면서도 웃음과 유머를 겸비하셨기 때문에 몸은 힘들어도 저는 언제나 신쌤 수업 들으러 학원 가는게 기쁘고 행복했던 것 같습니다. ㅎㅎ 한번 들으면 못 빠져나올걸요?! 제가 장담합니다. ㅋㅋ"',
+            author: '연세대 경영학과 황이주'
+        },
     ];
 
-    // Notices Data
-    const recentNotices = [
-        { id: 1, title: '2025년 상반기 수강신청 안내', createdAt: '2024.11.28' },
-        { id: 2, title: '겨울방학 특강 개설 안내', createdAt: '2024.11.15' },
-        { id: 3, title: '강사진 변경 안내', createdAt: '2024.11.01' },
-    ];
-
-    // const toggleMobileMenu = () => {setIsMobileMenuOpen(!isMobileMenuOpen); }; // Moved to HeaderV2
+    // Firebase에서 공지사항 로드
+    useEffect(() => {
+        const q = query(
+            collection(db, 'notices'),
+            orderBy('createdAt', 'desc'),
+            limit(3)
+        );
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const notices = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setRecentNotices(notices);
+        });
+        return () => unsubscribe();
+    }, []);
 
     // Scroll Reveal Hook
     useScrollReveal();
@@ -77,14 +84,13 @@ const HomePageV2 = () => {
             if (heroBg) {
                 heroBg.style.transform = `translateY(${scrollY * 0.5}px)`;
             }
-            setScrolled(scrollY > 50);
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Clock Logic (Kept for Hero Section)
+    // Clock Logic
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
@@ -119,7 +125,6 @@ const HomePageV2 = () => {
 
     return (
         <div className="homepage-v2-container">
-            {/* Streetwear Header V2 */}
             <HeaderV2 />
 
             {/* Hero Section */}
@@ -164,8 +169,6 @@ const HomePageV2 = () => {
                 </div>
             </div>
 
-
-
             <div className="section-divider-v2"></div>
 
             {/* Director's Note Section */}
@@ -173,50 +176,24 @@ const HomePageV2 = () => {
 
             <div className="section-divider-v2"></div>
 
-            {/* Honor Roll Section */}
+            {/* 수강생 후기 Section */}
             <section className="reviews-section-v2">
                 <h2 className="section-title-v2 reveal-on-scroll">수강생 후기</h2>
-                <div className="reviews-marquee-container-v2">
-                    <div className="reviews-track-v2">
-                        {/* Original Reviews */}
-                        {reviews.map((review) => (
-                            <div key={`original-${review.id}`} className="review-card-v2">
-                                <div className="review-header-v2">
-                                    <div>
-                                        <h3 className="review-name-v2">{review.name}</h3>
-                                        <p className="review-course-v2">{review.course}</p>
-                                    </div>
-                                    <div className="review-rating-v2">
-                                        {'★'.repeat(review.rating)}
-                                    </div>
-                                </div>
-                                <p className="review-comment-v2">{review.comment}</p>
-                                <span className="review-date-v2">{review.date}</span>
-                            </div>
-                        ))}
-                        {/* Duplicated Reviews for Infinite Scroll */}
-                        {reviews.map((review) => (
-                            <div key={`duplicate-${review.id}`} className="review-card-v2">
-                                <div className="review-header-v2">
-                                    <div>
-                                        <h3 className="review-name-v2">{review.name}</h3>
-                                        <p className="review-course-v2">{review.course}</p>
-                                    </div>
-                                    <div className="review-rating-v2">
-                                        {'★'.repeat(review.rating)}
-                                    </div>
-                                </div>
-                                <p className="review-comment-v2">{review.comment}</p>
-                                <span className="review-date-v2">{review.date}</span>
-                            </div>
-                        ))}
-                    </div>
+                <div className="reviews-grid-v2">
+                    {reviews.map((review) => (
+                        <div key={review.id} className="review-card-new-v2 reveal-on-scroll">
+                            <div className="review-category-v2">{review.category}</div>
+                            <h3 className="review-title-v2">{review.title}</h3>
+                            <p className="review-comment-v2">{review.comment}</p>
+                            <p className="review-author-v2">· {review.author} ·</p>
+                        </div>
+                    ))}
                 </div>
             </section>
 
             <div className="section-divider-v2"></div>
 
-            {/* Notices Section */}
+            {/* Notices Section - Firebase 연동 */}
             <section className="notices-section-v2" style={{ padding: '50px 20px', maxWidth: '1000px', margin: '0 auto' }}>
                 <h2 className="section-title-v2 reveal-on-scroll">공지사항</h2>
                 {recentNotices.length > 0 ? (
@@ -225,7 +202,9 @@ const HomePageV2 = () => {
                             <li key={notice.id} className="notice-item-v2 reveal-on-scroll" style={{ transitionDelay: `${index * 0.1}s` }}>
                                 <Link to="/notices" className="notice-link-v2">
                                     <span className="notice-title-text-v2">{notice.title}</span>
-                                    <span className="notice-date-v2">{notice.createdAt}</span>
+                                    <span className="notice-date-v2">
+                                        {notice.date || new Date(notice.createdAt).toLocaleDateString('ko-KR')}
+                                    </span>
                                 </Link>
                             </li>
                         ))}

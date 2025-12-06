@@ -113,3 +113,69 @@
         font-size: 1rem;
     }
 }
+
+/* Edit Button */
+.note-edit-btn {
+    padding: 8px 16px;
+    background: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 15px;
+}
+
+.note-edit-btn:hover {
+    background: #333;
+}
+
+/* Form Styles */
+.director-note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.director-note-form h2 {
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
+.director-note-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.director-note-form label {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.director-note-form input,
+.director-note-form textarea {
+    padding: 12px;
+    border: 2px solid #000;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.director-note-form .form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.director-note-form .form-buttons button {
+    padding: 12px 24px;
+    border: 2px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    background: #fff;
+}
+
+.director-note-form .form-buttons button.primary {
+    background: #000;
+    color: #fff;
+}
