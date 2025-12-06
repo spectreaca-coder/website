@@ -222,18 +222,13 @@ a:hover:not(.sw-nav-link-v2):not(.mobile-nav-link-v2):not(.footer-v2-column a):n
     left: 0;
     width: 100%;
     height: 100%;
-    /* Keep 100% but bottom:0 ensures stretch if auto height fails */
     bottom: 0;
     background-size: cover;
-    /* Ensure coverage */
-    background-position: center;
-    /* Center the image */
+    background-position: top center;
     background-repeat: no-repeat;
     opacity: 0;
-    /* Hidden by default for crossfade */
     z-index: 0;
     transition: opacity 1s ease-in-out;
-    /* Smooth crossfade */
 }
 
 .hero-bg-image-v2.active {
