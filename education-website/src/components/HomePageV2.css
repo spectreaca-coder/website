@@ -554,10 +554,7 @@ body {
     background-color: var(--sw-white);
     color: var(--sw-black);
     font-family: 'Courier New', Courier, monospace;
-    /* Raw, info-heavy feel */
     -webkit-font-smoothing: antialiased;
-    cursor: none;
-    /* Hide default cursor */
 }
 
 /* Reviews Section - 2x2 Grid */
