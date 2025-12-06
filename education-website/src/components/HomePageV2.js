@@ -18,7 +18,7 @@ import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestor
 
 const HomePageV2 = () => {
     const [heroImages] = useState([
-        heroBg1, heroBg2, heroBg3, heroBg4, heroBg5, heroBg6, heroBg7
+        heroBg1, heroBg3, heroBg4, heroBg5, heroBg6, heroBg7
     ]);
     const [currentBgIndex, setCurrentBgIndex] = useState(0);
     const [seoulTime, setSeoulTime] = useState('');
