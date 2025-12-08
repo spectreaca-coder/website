@@ -45,15 +45,18 @@ const HomePageV2 = () => {
     // Scroll Reveal Hook
     useScrollReveal();
 
-    // Parallax Effect
+    // Parallax Effect - Applied to ALL images to prevent jumps on transition
     useEffect(() => {
         const handleScroll = () => {
             const scrollY = window.scrollY;
-            const heroBg = document.querySelector('.hero-bg-image-v2.active');
-            if (heroBg) {
-                heroBg.style.transform = `translateY(${scrollY * 0.5}px)`;
-            }
+            const heroBgs = document.querySelectorAll('.hero-bg-image-v2');
+            heroBgs.forEach(bg => {
+                bg.style.transform = `translateY(${scrollY * 0.5}px)`;
+            });
         };
+
+        // Initial call to set position correctly on load
+        handleScroll();
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -87,7 +90,7 @@ const HomePageV2 = () => {
                 <div className="hero-bg-overlay-v2"></div>
                 <div className="hero-content-v2">
 
-                    <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTER">SPECTER</h1>
+                    <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTRE">SPECTRE</h1>
                     <div className="hero-buttons-v2">
                         <Link to="/register" className="sw-button-v2 primary pulse">수강신청</Link>
                         <Link to="/curriculum" className="sw-button-v2 secondary">수업소개</Link>

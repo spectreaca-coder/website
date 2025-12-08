@@ -8,7 +8,7 @@ const FooterV2 = () => {
             <div className="footer-v2-content">
                 <div className="footer-v2-top">
                     <div className="footer-v2-brand">
-                        <h2>SPECTER<br />ACADEMY</h2>
+                        <h2>SPECTRE<br />ACADEMY</h2>
                     </div>
                     <div className="footer-v2-links">
                         <div className="footer-v2-column">

@@ -214,6 +214,9 @@ a:hover:not(.sw-nav-link-v2):not(.mobile-nav-link-v2):not(.footer-v2-column a):n
     justify-content: center;
     overflow: hidden;
     background-color: var(--sw-black);
+    padding-top: 71px;
+    /* Compensate for fixed header */
+    box-sizing: border-box;
 }
 
 .hero-bg-image-v2 {
@@ -266,6 +269,30 @@ a:hover:not(.sw-nav-link-v2):not(.mobile-nav-link-v2):not(.footer-v2-column a):n
     /* Wide tracking for cinematic feel */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     position: relative;
+}
+
+@media (max-width: 768px) {
+    .hero-title-main-v2 {
+        font-size: 2.5rem;
+        /* Significantly smaller for mobile */
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+    }
+
+    .hero-buttons-v2 {
+        flex-direction: column;
+        /* Stack buttons */
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .sw-button-v2 {
+        width: 100%;
+        /* Full width buttons */
+        max-width: 300px;
+    }
 }
 
 /* Glitch Effect */

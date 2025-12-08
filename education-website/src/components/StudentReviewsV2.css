@@ -28,40 +28,21 @@
     mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
+/* JS-Driven Marquee with Drag Support */
 .reviews-track-marquee {
     display: flex;
     gap: 40px;
-    /* Space between cards */
     width: max-content;
-    animation: marquee-scroll 40s linear infinite;
-    /* Adjust speed here */
     padding: 20px 0;
-    /* Space for shadows */
+    will-change: transform;
+    cursor: grab;
+    /* Prevent text selection during drag */
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-/* Pause on hover for readability */
-.reviews-track-marquee:hover {
-    animation-play-state: paused;
-}
-
-@keyframes marquee-scroll {
-    0% {
-        transform: translateX(0);
-    }
-
-    100% {
-        /* Move by 50% if we doubled the content. 
-           But since we quadupled (x4) or simply need to find the loop point. 
-           If we have 4 items x 4 = 16 items. 
-           We want to scroll by the width of ONE set (4 items) to loop seamlessly?
-           Actually, the easiest way for seamless loop with equal items is to scroll -50% if duplicated 2x. 
-           If duplicated 4x for safety on wide screens, scrolling -25% works if width is consistent.
-           
-           Let's assume the track holds 4 sets of 4 reviews. 
-           To loop seamlessly, we just need to scroll past the first set.
-        */
-        transform: translateX(-25%);
-    }
+.reviews-track-marquee.draggable:active {
+    cursor: grabbing;
 }
 
 .review-slide-v2 {
@@ -198,6 +179,19 @@
     .review-slide-v2 {
         width: 85vw;
         /* Almost full width on mobile */
+    }
+
+    .review-card-v2 {
+        padding: 25px;
+        /* Reduced padding for mobile */
+    }
+
+    .review-title-v2 {
+        font-size: 1.2rem;
+    }
+
+    .review-body-v2 {
+        font-size: 0.9rem;
     }
 
     .reviews-track-marquee {

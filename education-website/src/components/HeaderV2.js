@@ -91,7 +91,7 @@ const HeaderV2 = () => {
 
                 <div className="header-logo-container-v2">
                     <div onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
-                        <img src={logo} alt="Specter Academy" />
+                        <img src={logo} alt="Spectre Academy" />
                         {isAdmin && <span className="admin-badge">ADMIN</span>}
                     </div>
                 </div>

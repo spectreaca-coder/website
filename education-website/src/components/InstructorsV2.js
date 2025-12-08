@@ -13,8 +13,20 @@ const InstructorsV2 = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [editingInstructor, setEditingInstructor] = useState(null);
+    const [messageModal, setMessageModal] = useState({ show: false, message: '', type: 'success' }); // 'success' or 'error'
+    const [isImagePickModalOpen, setIsImagePickModalOpen] = useState(false);
+
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
     const fileInputRef = useRef(null);
+
+    // Helper to replace alert
+    const showMessage = (message, type = 'success') => {
+        setMessageModal({ show: true, message, type });
+    };
+
+    const closeMessage = () => {
+        setMessageModal({ show: false, message: '', type: 'success' });
+    };
 
     const [formData, setFormData] = useState({
         name: '',
@@ -55,12 +67,18 @@ const InstructorsV2 = () => {
         return () => unsubscribe();
     }, []);
 
-    // 이미지 선택
-    const handleImageSelect = (e) => {
+    // 이미지 선택 (File Input Trigger)
+    const handleFileSelectTrigger = () => {
+        fileInputRef.current?.click();
+        setIsImagePickModalOpen(false);
+    };
+
+    // 이미지 선택 핸들러 (Change Event)
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             if (file.size > 5 * 1024 * 1024) {
-                alert('파일 크기는 5MB 이하여야 합니다.');
+                showMessage('파일 크기는 5MB 이하여야 합니다.', 'error');
                 return;
             }
             const reader = new FileReader();
@@ -117,7 +135,7 @@ const InstructorsV2 = () => {
                 await uploadBytes(storageRef, formData.imageFile);
                 imageUrl = await getDownloadURL(storageRef);
             } catch (error) {
-                alert('이미지 업로드에 실패했습니다.');
+                showMessage('이미지 업로드에 실패했습니다.', 'error');
                 return;
             }
         }
@@ -135,16 +153,16 @@ const InstructorsV2 = () => {
         try {
             if (editingInstructor) {
                 await updateDoc(doc(db, 'instructors', editingInstructor.id), instructorData);
-                alert('강사 정보가 수정되었습니다.');
+                showMessage('강사 정보가 수정되었습니다.');
             } else {
                 instructorData.createdAt = new Date().toISOString();
                 await addDoc(collection(db, 'instructors'), instructorData);
-                alert('새 강사가 추가되었습니다.');
+                showMessage('새 강사가 추가되었습니다.');
             }
             setIsEditorOpen(false);
         } catch (error) {
             console.error('저장 실패:', error);
-            alert('저장에 실패했습니다.');
+            showMessage('저장에 실패했습니다.', 'error');
         }
     };
 
@@ -158,19 +176,21 @@ const InstructorsV2 = () => {
         setDeleteConfirm({ show: false, id: null });
         try {
             await deleteDoc(doc(db, 'instructors', id));
-            alert('강사가 삭제되었습니다.');
+            showMessage('강사가 삭제되었습니다.');
         } catch (error) {
             console.error('삭제 실패:', error);
-            alert('삭제에 실패했습니다.');
+            showMessage('삭제에 실패했습니다.', 'error');
         }
     };
 
     return (
         <div className="instructors-page">
+            <div className="noise-overlay-v2"></div>
             <HeaderV2 />
 
             <main className="instructors-main">
                 <div className="instructors-content">
+                    {/* ... (Header & Buttons remain same) ... */}
                     <div className="instructors-header">
                         <h1 className="instructors-title">강사진</h1>
                         {isAdmin && (
@@ -267,24 +287,29 @@ const InstructorsV2 = () => {
 
                         <div className="form-group">
                             <label>프로필 사진</label>
-                            {formData.imagePreview ? (
-                                <div className="image-preview">
-                                    <img src={formData.imagePreview} alt="미리보기" />
-                                    <button type="button" onClick={() => {
-                                        setFormData({ ...formData, imageFile: null, imagePreview: '', imageUrl: '' });
-                                        if (fileInputRef.current) fileInputRef.current.value = '';
-                                    }}>제거</button>
-                                </div>
-                            ) : (
-                                <div className="image-upload" onClick={() => fileInputRef.current?.click()}>
-                                    📷 클릭하여 이미지 선택
-                                </div>
-                            )}
+                            {/* 이미지 미리보기 및 클릭 시 팝업 오픈 */}
+                            <div
+                                className="image-preview-container"
+                                onClick={() => setIsImagePickModalOpen(true)}
+                            >
+                                {formData.imagePreview ? (
+                                    <div className="image-preview">
+                                        <img src={formData.imagePreview} alt="미리보기" />
+                                        <div className="overlay-text">📷 사진 변경</div>
+                                    </div>
+                                ) : (
+                                    <div className="image-upload-placeholder">
+                                        📷 사진 추가
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Hidden File Input */}
                             <input
                                 ref={fileInputRef}
                                 type="file"
                                 accept="image/*"
-                                onChange={handleImageSelect}
+                                onChange={handleImageChange}
                                 style={{ display: 'none' }}
                             />
                         </div>
@@ -304,6 +329,43 @@ const InstructorsV2 = () => {
                         </div>
                     </form>
                 </Modal>
+            )}
+
+            {/* 이미지 선택 방식 모달 */}
+            {isImagePickModalOpen && (
+                <Modal onClose={() => setIsImagePickModalOpen(false)}>
+                    <div className="image-pick-modal">
+                        <h3>이미지 올리기</h3>
+                        <p>컴퓨터에서 이미지를 선택해주세요.</p>
+                        <div className="pick-buttons">
+                            <button className="pick-btn primary" onClick={handleFileSelectTrigger}>
+                                파일 선택
+                            </button>
+                            {formData.imagePreview && (
+                                <button className="pick-btn delete" onClick={() => {
+                                    setFormData({ ...formData, imageFile: null, imagePreview: '', imageUrl: '' });
+                                    if (fileInputRef.current) fileInputRef.current.value = '';
+                                    setIsImagePickModalOpen(false);
+                                }}>
+                                    이미지 삭제
+                                </button>
+                            )}
+                            <button className="pick-btn cancel" onClick={() => setIsImagePickModalOpen(false)}>
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </Modal>
+            )}
+
+            {/* 메시지 모달 (Alert 대체) */}
+            {messageModal.show && (
+                <div className="message-modal-overlay">
+                    <div className={`message-modal ${messageModal.type}`}>
+                        <p>{messageModal.message}</p>
+                        <button onClick={closeMessage}>확인</button>
+                    </div>
+                </div>
             )}
 
             {/* 삭제 확인 모달 */}
