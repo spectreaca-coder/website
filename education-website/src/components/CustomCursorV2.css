@@ -46,5 +46,5 @@ body.cursor-hidden-v2 button,
 body.cursor-hidden-v2 input,
 body.cursor-hidden-v2 textarea,
 body.cursor-hidden-v2 select {
-    cursor: none !important;
+    /* cursor: none !important; */
 }
