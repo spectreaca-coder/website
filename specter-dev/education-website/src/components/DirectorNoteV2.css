@@ -1,0 +1,181 @@
+/* Director's Note V2 Styles */
+.director-note-section-v2 {
+    padding: 80px 20px;
+    background-color: var(--sw-white);
+    display: flex;
+    justify-content: center;
+    border-bottom: var(--sw-border);
+}
+
+.director-note-container-v2 {
+    max-width: 800px;
+    width: 100%;
+    border: 2px solid var(--sw-black);
+    padding: 40px;
+    position: relative;
+    background: var(--sw-white);
+    box-shadow: 10px 10px 0px var(--sw-black);
+    /* Hard shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.director-note-container-v2:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 12px 12px 0px var(--sw-primary);
+}
+
+/* "Tape" effect */
+.director-note-container-v2::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-2deg);
+    width: 150px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+.note-header-v2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--sw-black);
+    padding-bottom: 10px;
+}
+
+.note-title-v2 {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem;
+    margin: 0;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    color: var(--sw-black);
+}
+
+.note-date-v2 {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    font-size: 1rem;
+    color: var(--sw-primary);
+}
+
+.note-content-v2 {
+    font-family: 'Courier New', Courier, monospace;
+    /* Typewriter feel */
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--sw-black);
+}
+
+.note-content-v2 p {
+    margin-bottom: 20px;
+}
+
+.note-signature-v2 {
+    text-align: right;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 40px;
+    font-size: 1.2rem;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+.note-footer-deco-v2 {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #999;
+    font-family: 'Helvetica Neue', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .director-note-container-v2 {
+        padding: 20px;
+        box-shadow: 5px 5px 0px var(--sw-black);
+    }
+
+    .note-title-v2 {
+        font-size: 1.8rem;
+    }
+
+    .note-content-v2 {
+        font-size: 1rem;
+    }
+}
+
+/* Edit Button */
+.note-edit-btn {
+    padding: 8px 16px;
+    background: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 15px;
+}
+
+.note-edit-btn:hover {
+    background: #333;
+}
+
+/* Form Styles */
+.director-note-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.director-note-form h2 {
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+
+.director-note-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.director-note-form label {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.director-note-form input,
+.director-note-form textarea {
+    padding: 12px;
+    border: 2px solid #000;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.director-note-form .form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.director-note-form .form-buttons button {
+    padding: 12px 24px;
+    border: 2px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    background: #fff;
+}
+
+.director-note-form .form-buttons button.primary {
+    background: #000;
+    color: #fff;
+}

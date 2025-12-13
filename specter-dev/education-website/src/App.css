@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #e9ecef; /* Slightly darker grey background */
+  color: #333; /* Default dark text color */
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  padding-top: 70px; /* Offset for fixed header on non-home pages */
+}
+
+.app-main.home-main {
+  padding-top: 0; /* No offset for homepage to allow content to go behind header */
+}
+
+/* Re-adding the shared page container style */
+.page-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem; /* Horizontal padding */
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .page-container {
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+
+  .app-main {
+    padding-top: 56px; /* Adjusted for mobile header with hamburger menu */
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    margin: 0.5rem auto;
+    padding: 0 0.75rem;
+  }
+
+  .app-main {
+    padding-top: 54px; /* Adjusted for smaller mobile header */
+  }
+}
