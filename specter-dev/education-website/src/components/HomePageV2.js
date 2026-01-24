@@ -8,7 +8,6 @@ import useScrollReveal from '../hooks/useScrollReveal';
 import heroBg1 from '../assets/main-bg-v2.jpg';
 import heroBg2 from '../assets/hero-bg-2.jpg';
 import heroBg4 from '../assets/hero-bg-4.jpg';
-import heroBg5 from '../assets/hero-bg-5.jpg';
 import heroBgNew1 from '../assets/hero-bg-new-1.png';
 import heroBgNew2 from '../assets/hero-bg-new-2.png';
 import heroBgNew3 from '../assets/hero-bg-new-3.jpg';
@@ -92,7 +91,7 @@ const HomePageV2 = () => {
                 <div className="hero-bg-overlay-v2"></div>
                 <div className="hero-content-v2">
 
-                    <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTRE">SPECTRE</h1>
+                    <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTRE V2">SPECTRE V2</h1>
                     <div className="hero-buttons-v2">
                         <Link to="/register" className="sw-button-v2 primary pulse">수강신청</Link>
                         <Link to="/curriculum" className="sw-button-v2 secondary">수업소개</Link>
