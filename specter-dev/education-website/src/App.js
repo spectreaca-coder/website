@@ -1,12 +1,9 @@
+// Initializing App
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
-import HomePage from './components/HomePage';
-import Instructors from './components/Instructors/Instructors';
 import Location from './components/Location/Location';
-import CourseRegistration from './components/CourseRegistration';
 import InquiryPage from './components/InquiryPage';
 import LoginPage from './components/LoginPage';
-import MyClasses from './components/MyClasses';
 import Footer from './components/Footer';
 import HomePageV2 from './components/HomePageV2';
 import HomePageV3 from './components/HomePageV3';
