@@ -150,7 +150,7 @@ const StudentReviewsV2 = () => {
         cards.forEach(card => observer.observe(card));
 
         return () => observer.disconnect();
-    }, [reviews]);
+    }, []);
 
 
     return (

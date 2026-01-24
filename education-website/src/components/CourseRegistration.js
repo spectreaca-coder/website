@@ -67,7 +67,7 @@ const CourseRegistration = () => {
     console.log('✅ Google Sheets로 데이터 전송 시작:', GOOGLE_SCRIPT_URL);
 
     try {
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
