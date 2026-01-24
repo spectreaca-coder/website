@@ -16,3 +16,15 @@ root.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+// Service Worker Cleanup (Fix for caching issues)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.ready.then(registration => {
+    registration.unregister();
+  });
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
