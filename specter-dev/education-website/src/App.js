@@ -22,11 +22,6 @@ import './App.css';
 function AppContent() {
   const location = useLocation();
 
-  // Debugging Version
-  React.useEffect(() => {
-    console.log('Build Version: 2026-01-24 17:30 (Global Sync Applied)');
-  }, []);
-
   const isV2 = location.pathname.startsWith('/v2') ||
     location.pathname === '/' ||
     location.pathname === '/instructors' ||

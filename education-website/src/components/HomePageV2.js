@@ -91,7 +91,7 @@ const HomePageV2 = () => {
                 <div className="hero-bg-overlay-v2"></div>
                 <div className="hero-content-v2">
 
-                    <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTRE V2">SPECTRE V2</h1>
+                    <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTRE">SPECTRE</h1>
                     <div className="hero-buttons-v2">
                         <Link to="/register" className="sw-button-v2 primary pulse">수강신청</Link>
                         <Link to="/curriculum" className="sw-button-v2 secondary">수업소개</Link>
