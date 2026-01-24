@@ -9,8 +9,10 @@ import heroBg1 from '../assets/main-bg-v2.jpg';
 import heroBg2 from '../assets/hero-bg-2.jpg';
 import heroBg4 from '../assets/hero-bg-4.jpg';
 import heroBg5 from '../assets/hero-bg-5.jpg';
-import heroBg6 from '../assets/hero-bg-6.jpg';
-import heroBg7 from '../assets/hero-bg-7.jpg';
+import heroBgNew1 from '../assets/hero-bg-new-1.png';
+import heroBgNew2 from '../assets/hero-bg-new-2.png';
+import heroBgNew3 from '../assets/hero-bg-new-3.jpg';
+import heroBgNew4 from '../assets/hero-bg-new-4.jpg';
 import DirectorNoteV2 from './DirectorNoteV2';
 import StudentReviewsV2 from './StudentReviewsV2';
 import { db } from '../firebase';
@@ -18,7 +20,7 @@ import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestor
 
 const HomePageV2 = () => {
     const [heroImages] = useState([
-        heroBg1, heroBg2, heroBg4, heroBg5, heroBg6, heroBg7
+        heroBg1, heroBgNew1, heroBg2, heroBgNew2, heroBg4, heroBgNew3, heroBgNew4
     ]);
     const [currentBgIndex, setCurrentBgIndex] = useState(0);
 

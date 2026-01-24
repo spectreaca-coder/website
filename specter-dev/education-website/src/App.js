@@ -1,4 +1,5 @@
 // Initializing App
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Location from './components/Location/Location';
@@ -20,6 +21,12 @@ import './App.css';
 
 function AppContent() {
   const location = useLocation();
+
+  // Debugging Version
+  React.useEffect(() => {
+    console.log('Build Version: 2026-01-24 17:20 (Sync Applied)');
+  }, []);
+
   const isV2 = location.pathname.startsWith('/v2') ||
     location.pathname === '/' ||
     location.pathname === '/instructors' ||
