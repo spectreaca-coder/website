@@ -14,6 +14,7 @@ const useScrollReveal = (selector = '.reveal-on-scroll, .section-divider-v2', th
         targets.forEach(target => observer.observe(target));
 
         return () => targets.forEach(target => observer.unobserve(target));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selector, threshold, ...dependencies]);
 };
 
