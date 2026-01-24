@@ -1,0 +1,328 @@
+/* Notices V2 - Firebase CRUD + Rich Content */
+.notices-v2-page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #fff;
+}
+
+.notices-v2-main {
+    padding-top: 120px;
+    padding-bottom: 80px;
+}
+
+.notices-v2-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.notices-v2-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.notices-v2-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    color: #000;
+}
+
+/* List */
+.notices-v2-list {
+    border-top: 1.5px solid #000;
+}
+
+.notices-v2-item {
+    border-bottom: 1.5px solid #000;
+}
+
+.notices-v2-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notices-v2-item-header:hover {
+    background-color: #fafafa;
+}
+
+.notices-v2-item-header.active {
+    background-color: #f0f0f0;
+}
+
+.notices-v2-item-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.notices-v2-date {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.notices-v2-item-title {
+    margin: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.notices-v2-item-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notices-v2-toggle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+}
+
+/* Admin Actions */
+.notices-admin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.notices-admin-actions button {
+    background: none;
+    border: 1px solid #000;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.notices-admin-actions button:hover {
+    background: #000;
+    color: #fff;
+}
+
+.notices-admin-actions button.delete {
+    border-color: #c00;
+    color: #c00;
+}
+
+.notices-admin-actions button.delete:hover {
+    background: #c00;
+    color: #fff;
+}
+
+/* Details (Expanded) */
+.notices-v2-details {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-top: 1px dashed #ccc;
+}
+
+.notices-media {
+    margin-bottom: 20px;
+    background: #eee;
+}
+
+.notices-media img {
+    width: 100%;
+    display: block;
+}
+
+.notices-media iframe {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: block;
+}
+
+.notices-content {
+    margin: 0;
+    line-height: 1.8;
+    font-size: 1rem;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+/* Editor Form */
+.notices-editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notices-editor-form h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.notices-editor-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.notices-editor-form .form-group label {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.notices-editor-form input,
+.notices-editor-form textarea,
+.notices-editor-form select {
+    padding: 12px;
+    border: 1.5px solid #000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+}
+
+.notices-editor-form input:focus,
+.notices-editor-form textarea:focus,
+.notices-editor-form select:focus {
+    outline: none;
+    background: #f9f9f9;
+}
+
+/* Loading & Admin Button */
+.loading-message {
+    text-align: center;
+    padding: 40px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #666;
+}
+
+.admin-add-btn {
+    padding: 12px 24px;
+    background: #000;
+    color: #fff;
+    border: 1.5px solid #000;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-add-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.form-actions button {
+    padding: 12px 24px;
+    border: 1.5px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    background: #fff;
+}
+
+.form-actions button.primary {
+    background: #000;
+    color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .notices-v2-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .notices-v2-title {
+        font-size: 2rem;
+    }
+
+    .notices-v2-item-title {
+        font-size: 1rem;
+    }
+
+    .notices-v2-item-right {
+        gap: 10px;
+    }
+
+    .notices-admin-actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
+/* Confirm Modal */
+.confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.confirm-modal {
+    background: #fff;
+    padding: 30px 40px;
+    border: 2px solid #000;
+    max-width: 400px;
+    text-align: center;
+}
+
+.confirm-modal p {
+    margin: 0 0 25px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #000;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.confirm-modal-actions button {
+    padding: 12px 24px;
+    border: 1.5px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.confirm-modal-actions .cancel-btn {
+    background: #fff;
+    color: #000;
+}
+
+.confirm-modal-actions .cancel-btn:hover {
+    background: #f0f0f0;
+}
+
+.confirm-modal-actions .delete-btn {
+    background: #c00;
+    color: #fff;
+    border-color: #c00;
+}
+
+.confirm-modal-actions .delete-btn:hover {
+    background: #900;
+}

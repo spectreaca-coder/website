@@ -1,0 +1,452 @@
+/* Curriculum V2 - 반응형 매거진 + 슬라이더 */
+.curriculum-v2-page {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #fff;
+}
+
+.curriculum-v2-main {
+    padding-top: 120px;
+    padding-bottom: 80px;
+}
+
+.curriculum-v2-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.curriculum-v2-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.curriculum-v2-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 3rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    color: #000;
+}
+
+/* ========================================
+   PC: 매거진 스타일
+   ======================================== */
+.curriculum-magazine {
+    display: block;
+}
+
+.curriculum-section {
+    margin-bottom: 80px;
+    padding-bottom: 80px;
+    border-bottom: 1.5px solid #000;
+}
+
+.curriculum-section:last-child {
+    border-bottom: none;
+}
+
+.curriculum-section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.curriculum-week {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #666;
+    text-transform: uppercase;
+    min-width: 80px;
+}
+
+.curriculum-section-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+.curriculum-admin-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    gap: 10px;
+}
+
+.curriculum-admin-actions button {
+    background: none;
+    border: 1px solid #000;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.curriculum-admin-actions button:hover {
+    background: #000;
+    color: #fff;
+}
+
+.curriculum-admin-actions button.delete {
+    border-color: #c00;
+    color: #c00;
+}
+
+.curriculum-admin-actions button.delete:hover {
+    background: #c00;
+    color: #fff;
+}
+
+.curriculum-section-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.curriculum-media {
+    width: 100%;
+    background: #f5f5f5;
+    border: 1.5px solid #000;
+}
+
+.curriculum-media img {
+    width: 100%;
+    display: block;
+}
+
+.curriculum-media iframe {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: block;
+}
+
+.curriculum-text {
+    padding: 20px 0;
+}
+
+.curriculum-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.curriculum-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.curriculum-details li {
+    padding: 15px 0;
+    border-bottom: 1px dashed #ccc;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    position: relative;
+    padding-left: 30px;
+}
+
+.curriculum-details li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #666;
+}
+
+.curriculum-details li:last-child {
+    border-bottom: none;
+}
+
+/* ========================================
+   Mobile: 카드 슬라이더
+   ======================================== */
+.curriculum-slider {
+    display: none;
+}
+
+.slider-tabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.slider-tab {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    border: 1.5px solid #000;
+    background: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.slider-tab.active {
+    background: #000;
+    color: #fff;
+}
+
+.slider-content {
+    border: 1.5px solid #000;
+    padding: 25px;
+}
+
+.slider-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0 0 20px 0;
+    text-transform: uppercase;
+}
+
+.slider-media {
+    margin-bottom: 20px;
+    background: #f5f5f5;
+}
+
+.slider-media img,
+.slider-media iframe {
+    width: 100%;
+    display: block;
+}
+
+.slider-media iframe {
+    aspect-ratio: 16/9;
+}
+
+.slider-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.slider-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.slider-details li {
+    padding: 10px 0;
+    border-bottom: 1px dotted #ccc;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+}
+
+.slider-admin-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #ccc;
+}
+
+.slider-admin-actions button {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #000;
+    background: #fff;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.slider-admin-actions button.delete {
+    border-color: #c00;
+    color: #c00;
+}
+
+/* ========================================
+   Editor Form
+   ======================================== */
+.curriculum-editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.curriculum-editor-form h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    gap: 15px;
+}
+
+.curriculum-editor-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.curriculum-editor-form .form-group label {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.curriculum-editor-form input,
+.curriculum-editor-form textarea,
+.curriculum-editor-form select {
+    padding: 12px;
+    border: 1.5px solid #000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+}
+
+.curriculum-editor-form input:focus,
+.curriculum-editor-form textarea:focus,
+.curriculum-editor-form select:focus {
+    outline: none;
+    background: #f9f9f9;
+}
+
+/* Loading */
+.loading-message {
+    text-align: center;
+    padding: 60px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #666;
+}
+
+/* Admin Button */
+.admin-add-btn {
+    padding: 12px 24px;
+    background: #000;
+    color: #fff;
+    border: 1.5px solid #000;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-add-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.form-actions button {
+    padding: 12px 24px;
+    border: 1.5px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    background: #fff;
+}
+
+.form-actions button.primary {
+    background: #000;
+    color: #fff;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 768px) {
+    .curriculum-magazine {
+        display: none;
+    }
+
+    .curriculum-slider {
+        display: block;
+    }
+
+    .curriculum-v2-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .curriculum-v2-title {
+        font-size: 2rem;
+    }
+}
+
+/* Confirm Modal */
+.confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.confirm-modal {
+    background: #fff;
+    padding: 30px 40px;
+    border: 2px solid #000;
+    max-width: 400px;
+    text-align: center;
+}
+
+.confirm-modal p {
+    margin: 0 0 25px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #000;
+}
+
+.confirm-modal-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.confirm-modal-actions button {
+    padding: 12px 24px;
+    border: 1.5px solid #000;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.confirm-modal-actions .cancel-btn {
+    background: #fff;
+    color: #000;
+}
+
+.confirm-modal-actions .cancel-btn:hover {
+    background: #f0f0f0;
+}
+
+.confirm-modal-actions .delete-btn {
+    background: #c00;
+    color: #fff;
+    border-color: #c00;
+}
+
+.confirm-modal-actions .delete-btn:hover {
+    background: #900;
+}

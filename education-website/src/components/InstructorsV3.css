@@ -1,0 +1,90 @@
+.instructors-v3-container {
+    background-color: var(--v3-navy);
+    color: var(--v3-white);
+    font-family: 'Pretendard', sans-serif;
+    min-height: 100vh;
+    padding-top: 100px;
+    /* Ticker + Header */
+}
+
+.v3-page-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 3rem 0;
+    color: var(--v3-white);
+    text-transform: uppercase;
+}
+
+.v3-instructors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2px;
+    /* Thin lines between items */
+    background-color: var(--v3-white);
+    /* Lines color */
+    border-top: 2px solid var(--v3-white);
+    border-bottom: 2px solid var(--v3-white);
+}
+
+.v3-instructor-card {
+    background-color: var(--v3-navy);
+    padding: 2rem;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.v3-instructor-card:hover {
+    background-color: #1a2b9e;
+}
+
+.v3-instructor-photo {
+    width: 100%;
+    height: 250px;
+    background-color: #0a1245;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.2);
+    font-family: 'Courier New';
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.v3-instructor-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+    color: var(--v3-lime);
+}
+
+.v3-instructor-subject {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.v3-instructor-bio {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    margin-top: 1rem;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.v3-instructor-card:hover .v3-instructor-bio {
+    transform: translateY(0);
+    opacity: 0.8;
+}

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specter V3 Concept: Intellectual Block</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;800&display=swap');
+
+        :root {
+            --navy: #14248A;
+            --white: #FFFFFF;
+            --lime: #CCFF00;
+            /* Creative Accent */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--navy);
+            color: var(--white);
+            font-family: 'Pretendard', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* 1. THE TICKER (Creative Element: Live Status) */
+        .ticker-wrap {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 40px;
+            background: var(--white);
+            color: var(--navy);
+            overflow: hidden;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--navy);
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 20s linear infinite;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 2rem;
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+
+            100% {
+                transform: translate3d(-100%, 0, 0);
+            }
+        }
+
+        /* 2. HERO SECTION (Aura Style Blocks) */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            height: 100vh;
+            padding-top: 40px;
+            /* Space for ticker */
+        }
+
+        .hero-text {
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .hero-visual {
+            background-color: #0a1245;
+            /* Darker Navy */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Typography Mix: Serif (Academic) + Sans (Hip) */
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 5rem;
+            line-height: 0.9;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+        }
+
+        h1 span.serif {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            color: var(--lime);
+            /* Accent Pop */
+        }
+
+        p.sub {
+            font-size: 1.2rem;
+            max-width: 400px;
+            line-height: 1.6;
+            opacity: 0.8;
+            border-left: 2px solid var(--lime);
+            padding-left: 20px;
+        }
+
+        /* 3. INTERACTIVE CURRICULUM (Hover Reveal) */
+        .section-title {
+            font-size: 10rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.05);
+            text-align: center;
+            margin: -5rem 0 2rem 0;
+            pointer-events: none;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--white);
+            border-bottom: 1px solid var(--white);
+        }
+
+        .grid-item {
+            height: 300px;
+            border-right: 1px solid var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .grid-item:last-child {
+            border-right: none;
+        }
+
+        .grid-item h3 {
+            font-size: 2rem;
+            font-family: 'Inter', sans-serif;
+            z-index: 2;
+        }
+
+        .grid-item span.num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-style: italic;
+            opacity: 0.5;
+        }
+
+        .grid-item .reveal-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            color: var(--navy);
+            padding: 2rem;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .grid-item:hover .reveal-content {
+            transform: translateY(0);
+        }
+
+        .grid-item:hover {
+            background: #1a2b9e;
+        }
+
+        /* Abstract Shape in Hero */
+        .shape {
+            width: 300px;
+            height: 300px;
+            border: 2px solid var(--white);
+            border-radius: 50%;
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--lime);
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(10deg);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .hero-visual {
+                height: 300px;
+                order: -1;
+            }
+
+            .hero-text {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 3rem;
+            }
+
+            .grid-menu {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-item {
+                height: 200px;
+                border-right: none;
+                border-bottom: 1px solid var(--white);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CREATIVE ELEMENT 1: Live Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item">SPECTER ACADEMY 2025 ADMISSIONS OPEN</div>
+            <div class="ticker-item">●</div>
+            <div class="ticker-item">NEXT CLASS: MATH (ADVANCED) STARTS IN 15 MIN</div>
+            <div class="ticker-item">●</div>
+            <div class="ticker-item">NEW INSTRUCTOR: JAMES KIM JOINED</div>
+            <div class="ticker-item">●</div>
+            <div class="ticker-item">TODAY'S QUOTE: "KNOWLEDGE IS POWER"</div>
+        </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <div class="hero-grid">
+        <div class="hero-text">
+            <h1>
+                THE NEW <br>
+                STANDARD OF <br>
+                <span class="serif">Learning.</span>
+            </h1>
+            <p class="sub">
+                We don't just teach subjects.<br>
+                We architect your future.<br>
+                Experience the Specter difference.
+            </p>
+        </div>
+        <div class="hero-visual">
+            <div class="shape"></div>
+            <!-- Placeholder for a cool, non-fashion realistic photo -->
+            <div
+                style="position: absolute; bottom: 20px; right: 20px; font-family: 'Courier New'; font-size: 0.8rem; text-align: right;">
+                EST. 2024<br>
+                SEOUL, KR
+            </div>
+        </div>
+    </div>
+
+    <!-- CURRICULUM GRID -->
+    <div style="padding: 4rem 0; background: var(--navy);">
+        <div class="section-title">SUBJECTS</div>
+        <div class="grid-menu">
+            <div class="grid-item">
+                <span class="num">01</span>
+                <h3>MATHEMATICS</h3>
+                <div class="reveal-content">
+                    <h4>Advanced Calculus</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Master the language of the universe with logical
+                        precision.</p>
+                    <button
+                        style="margin-top: 20px; padding: 10px 20px; background: var(--navy); color: var(--white); border: none; cursor: pointer;">VIEW
+                        CURRICULUM →</button>
+                </div>
+            </div>
+            <div class="grid-item">
+                <span class="num">02</span>
+                <h3>ENGLISH</h3>
+                <div class="reveal-content">
+                    <h4>Critical Reading</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Analyze texts with depth and articulate your
+                        thoughts clearly.</p>
+                    <button
+                        style="margin-top: 20px; padding: 10px 20px; background: var(--navy); color: var(--white); border: none; cursor: pointer;">VIEW
+                        CURRICULUM →</button>
+                </div>
+            </div>
+            <div class="grid-item">
+                <span class="num">03</span>
+                <h3>SCIENCE</h3>
+                <div class="reveal-content">
+                    <h4>Physics & Chem</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">Understand the fundamental laws that govern our
+                        reality.</p>
+                    <button
+                        style="margin-top: 20px; padding: 10px 20px; background: var(--navy); color: var(--white); border: none; cursor: pointer;">VIEW
+                        CURRICULUM →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
