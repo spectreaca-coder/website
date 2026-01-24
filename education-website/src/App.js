@@ -24,7 +24,7 @@ function AppContent() {
 
   // Debugging Version
   React.useEffect(() => {
-    console.log('Build Version: 2026-01-24 16:40 (Force Update)');
+    console.log('Build Version: 2026-01-24 17:20 (Sync Applied)');
   }, []);
 
   const isV2 = location.pathname.startsWith('/v2') ||
