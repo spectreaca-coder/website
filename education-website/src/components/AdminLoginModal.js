@@ -14,7 +14,7 @@ const AdminLoginModal = ({ onClose, onLogin }) => {
         const adminUsername = process.env.REACT_APP_ADMIN_USERNAME || 'specter123';
         const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD || 'admin1031!';
 
-        console.log('Debug Login Info:', { adminUsername, adminPassword }); // 디버깅용 로그
+        console.log('Debug Login Info (v2025-01-31):', { adminUsername, adminPassword }); // 디버깅용 로그 v2
 
         if (username === adminUsername && password === adminPassword) {
             sessionStorage.setItem('isAdmin', 'true');
