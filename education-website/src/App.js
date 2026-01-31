@@ -13,6 +13,7 @@ import CurriculumV3 from './components/CurriculumV3';
 import NoticesV3 from './components/NoticesV3';
 import CourseRegistrationV3 from './components/CourseRegistrationV3';
 import LocationV3 from './components/LocationV3';
+import HeroImageManager from './components/HeroImageManager';
 import InstructorsV2 from './components/InstructorsV2';
 import CurriculumV2 from './components/CurriculumV2';
 import CourseRegistrationV2 from './components/CourseRegistrationV2';
@@ -41,6 +42,12 @@ function AppContent() {
         <Route path="/notices" element={<NoticesV2 />} />
         <Route path="/register" element={<CourseRegistrationV2 />} />
         <Route path="/location" element={<Location />} /> {/* Keep Location if V2 doesn't have specific one, or use LocationV3 if compatible? V2 didn't seem to have LocationV2. Location.js is likely fine. */}
+
+        {/* Admin Routes */}
+        <Route path="/admin/hero-images" element={<HeroImageManager />} />
+
+        {/* Catch-all Route for V3 */}
+        <Route path="/v3/*" element={<HomePageV3 />} />
 
         {/* Legacy/Other Routes */}
         <Route path="/intro" element={<HomePageV2 />} />

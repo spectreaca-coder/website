@@ -18,13 +18,26 @@ import { db } from '../firebase';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 
 const HomePageV2 = () => {
-    const [heroImages] = useState([
+    // Initial state with local images as fallback immediately
+    const [heroImages, setHeroImages] = useState([
         heroBg1, heroBgNew1, heroBg2, heroBgNew2, heroBg4, heroBgNew3, heroBgNew4
     ]);
     const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
     const [recentNotices, setRecentNotices] = useState([]);
 
+
+    // Firebase에서 배경 이미지 로드 (Hero Images)
+    useEffect(() => {
+        const q = query(collection(db, 'hero_images'), orderBy('order', 'asc')); // Sort by order
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const dbImages = snapshot.docs.map(doc => doc.data().url);
+            if (dbImages.length > 0) {
+                setHeroImages(dbImages); // Firestore 이미지가 있으면 덮어쓰기
+            }
+        });
+        return () => unsubscribe();
+    }, []);
 
     // Firebase에서 공지사항 로드
     useEffect(() => {

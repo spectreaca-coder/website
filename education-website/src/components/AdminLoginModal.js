@@ -9,8 +9,14 @@ const AdminLoginModal = ({ onClose, onLogin }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // 하드코딩된 관리자 계정
-        if (username === 'admin' && password === 'spectre123') {
+        // 하드코딩된 관리자 계정 (LoginPage.js와 통일)
+        // 실제로는 환경변수나 서버 인증을 사용해야 합니다.
+        const adminUsername = process.env.REACT_APP_ADMIN_USERNAME || 'specter123';
+        const adminPassword = process.env.REACT_APP_ADMIN_PASSWORD || 'admin1031!';
+
+        console.log('Debug Login Info:', { adminUsername, adminPassword }); // 디버깅용 로그
+
+        if (username === adminUsername && password === adminPassword) {
             sessionStorage.setItem('isAdmin', 'true');
             onLogin();
             onClose();

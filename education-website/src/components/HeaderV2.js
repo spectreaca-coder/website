@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './HomePageV2.css';
 import logo from '../assets/logo.png';
 import AdminLoginModal from './AdminLoginModal';
@@ -10,6 +10,7 @@ const HeaderV2 = () => {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
 
     // 로고 탭 카운터
     const tapCountRef = useRef(0);
@@ -39,16 +40,19 @@ const HeaderV2 = () => {
                 sessionStorage.removeItem('isAdmin');
                 setIsAdmin(false);
                 alert('관리자 모드가 해제되었습니다.');
+                navigate('/'); // Refresh or stay
             } else {
                 // 로그인 모달 표시
                 setShowAdminModal(true);
             }
         } else {
-            // 1초 후 카운터 리셋
+            // 1초/0.5초 후 카운터 리셋
             tapTimeoutRef.current = setTimeout(() => {
-                // 1탭이면 홈으로 이동
+                // 1탭이면 홈으로 이동 (Reload 방지)
                 if (tapCountRef.current === 1) {
-                    window.location.href = '/';
+                    if (location.pathname !== '/') {
+                        navigate('/');
+                    }
                 }
                 tapCountRef.current = 0;
             }, 500);
