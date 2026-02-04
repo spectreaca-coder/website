@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './HomePageV2.css';
 
@@ -14,52 +14,88 @@ import heroBgNew3 from '../assets/hero-bg-new-3.jpg';
 import heroBgNew4 from '../assets/hero-bg-new-4.jpg';
 import DirectorNoteV2 from './DirectorNoteV2';
 import StudentReviewsV2 from './StudentReviewsV2';
-import { db } from '../firebase';
-import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { db, storage } from '../firebase';
+import { collection, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, writeBatch, getDocs } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+
+// 로컬 이미지 배열 (1~5번만 사용, 6,7번 제외)
+const LOCAL_IMAGES = [
+    { url: heroBg1, name: 'main-bg-v2.jpg' },
+    { url: heroBgNew1, name: 'hero-bg-new-1.png' },
+    { url: heroBg2, name: 'hero-bg-2.jpg' },
+    { url: heroBgNew2, name: 'hero-bg-new-2.png' },
+    { url: heroBg4, name: 'hero-bg-4.jpg' },
+    // 6번 heroBgNew3, 7번 heroBgNew4 제외
+];
 
 const HomePageV2 = () => {
-    // Initial state with local images as fallback immediately
-    const [heroImages, setHeroImages] = useState([
-        heroBg1, heroBgNew1, heroBg2, heroBgNew2, heroBg4, heroBgNew3, heroBgNew4
-    ]);
+    // 하이브리드 로딩
+    const [heroImages, setHeroImages] = useState(LOCAL_IMAGES.map(img => img.url));
+    const [heroImagesData, setHeroImagesData] = useState([]);
     const [currentBgIndex, setCurrentBgIndex] = useState(0);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [showImageManager, setShowImageManager] = useState(false);
+
+    // Image Manager states
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const [syncing, setSyncing] = useState(false);
+    const fileInputRef = useRef(null);
 
     const [recentNotices, setRecentNotices] = useState([]);
 
-
-    // Firebase에서 배경 이미지 로드 (Hero Images)
+    // Admin 상태 체크
     useEffect(() => {
-        const q = query(collection(db, 'hero_images'), orderBy('order', 'asc')); // Sort by order
+        const checkAdminStatus = () => {
+            const adminFlag = sessionStorage.getItem('isAdmin') === 'true';
+            setIsAdmin(adminFlag);
+        };
+        checkAdminStatus();
+        window.addEventListener('storage', checkAdminStatus);
+        window.addEventListener('focus', checkAdminStatus);
+        const interval = setInterval(checkAdminStatus, 1000);
+        return () => {
+            window.removeEventListener('storage', checkAdminStatus);
+            window.removeEventListener('focus', checkAdminStatus);
+            clearInterval(interval);
+        };
+    }, []);
+
+    // Firebase에서 배경 이미지 로드
+    useEffect(() => {
+        const q = query(collection(db, 'hero_images'), orderBy('order', 'asc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const dbImages = snapshot.docs.map(doc => doc.data().url);
-            if (dbImages.length > 0) {
-                setHeroImages(dbImages); // Firestore 이미지가 있으면 덮어쓰기
+            const fetchedImages = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            console.log('Firebase hero_images:', fetchedImages.length);
+            setHeroImagesData(fetchedImages);
+            if (fetchedImages.length > 0) {
+                setHeroImages(fetchedImages.map(img => img.url));
             }
+        }, (error) => {
+            console.error('Firebase error:', error);
         });
         return () => unsubscribe();
     }, []);
 
-    // Firebase에서 공지사항 로드
+    // 공지사항 로드
     useEffect(() => {
-        const q = query(
-            collection(db, 'notices'),
-            orderBy('createdAt', 'desc'),
-            limit(3)
-        );
+        const q = query(collection(db, 'notices'), orderBy('createdAt', 'desc'), limit(3));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const notices = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
+            const notices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setRecentNotices(notices);
         });
         return () => unsubscribe();
     }, []);
 
-    // Scroll Reveal Hook
     useScrollReveal();
 
-    // Parallax Effect - Applied to ALL images to prevent jumps on transition
+    // Parallax Effect
     useEffect(() => {
         const handleScroll = () => {
             const scrollY = window.scrollY;
@@ -68,23 +104,51 @@ const HomePageV2 = () => {
                 bg.style.transform = `translateY(${scrollY * 0.5}px)`;
             });
         };
-
-        // Initial call to set position correctly on load
         handleScroll();
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-
-
-    // Carousel Logic
+    // Carousel - 패널 열려있으면 정지
     useEffect(() => {
+        if (showImageManager) return;
         const interval = setInterval(() => {
-            setCurrentBgIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+            setCurrentBgIndex((prev) => (prev + 1) % heroImages.length);
         }, 5000);
         return () => clearInterval(interval);
-    }, [heroImages.length]);
+    }, [heroImages.length, showImageManager]);
+
+    // 로컬 이미지 → Firebase 초기화 (Storage 미지원으로 비활성화)
+    const handleSyncLocalToFirebase = async () => {
+        alert('현재 Firebase Storage가 활성화되지 않아 업로드를 지원하지 않습니다.\n개발자에게 문의하여 이미지를 교체해주세요.');
+    };
+
+    // 파일 선택
+    const handleFileSelect = (e) => {
+        // 기능 비활성화
+    };
+
+    // 이미지 업로드
+    const handleUpload = async () => {
+        // 기능 비활성화
+    };
+
+    // 이미지 삭제
+    const handleDelete = async (image) => {
+        // 기능 비활성화
+    };
+
+    // 순서 변경
+    const handleMove = async (fromIndex, toIndex) => {
+        // 기능 비활성화
+    };
+
+    const handleDragStart = (index) => { };
+    const handleDragOver = (e) => { };
+    const handleDrop = (targetIndex) => { };
+
+    // Firebase 이미지가 있는지 확인
+    const hasFirebaseImages = heroImagesData.length > 0;
 
     return (
         <div className="homepage-v2-container">
@@ -103,7 +167,6 @@ const HomePageV2 = () => {
                 ))}
                 <div className="hero-bg-overlay-v2"></div>
                 <div className="hero-content-v2">
-
                     <h1 className="hero-title-main-v2 glitch-text" data-text="SPECTRE">SPECTRE</h1>
                     <div className="hero-buttons-v2">
                         <Link to="/register" className="sw-button-v2 primary pulse">수강신청</Link>
@@ -122,9 +185,67 @@ const HomePageV2 = () => {
                         </a>
                     </div>
                 </div>
+
+                {/* Admin Sidebar */}
+                {isAdmin && (
+                    <div className={`hero-admin-sidebar ${showImageManager ? 'open' : ''}`}>
+                        <button
+                            className="sidebar-toggle-tab"
+                            onClick={() => setShowImageManager(!showImageManager)}
+                        >
+                            {showImageManager ? '✕' : '🖼️'}
+                        </button>
+
+                        <div className="sidebar-content">
+                            <div className="sidebar-header">
+                                <h4>배경 목록</h4>
+                                <span className="image-count">
+                                    {hasFirebaseImages ? heroImagesData.length : LOCAL_IMAGES.length}장
+                                </span>
+                            </div>
+
+                            {/* 로컬 이미지일 때 안내 */}
+                            {!hasFirebaseImages && (
+                                <div className="local-preview">
+                                    <p className="local-notice" style={{ color: '#ffa502' }}>
+                                        ⚠️ 서버 저장소(Storage) 미연동<br />
+                                        로컬 기본 이미지 5장이 순환됩니다.
+                                    </p>
+                                    <div className="local-thumbs">
+                                        {LOCAL_IMAGES.map((img, index) => (
+                                            <div
+                                                key={index}
+                                                className={`local-thumb ${index === currentBgIndex ? 'active' : ''}`}
+                                                onClick={() => setCurrentBgIndex(index)}
+                                            >
+                                                <img src={img.url} alt={img.name} />
+                                                <span>{index + 1}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="local-notice" style={{ marginTop: '20px', fontSize: '0.7rem' }}>
+                                        이미지 변경/순서 조정이 필요하면<br />
+                                        개발자에게 문의해주세요.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* 슬라이드 인디케이터 */}
+                <div className="slide-indicators">
+                    {heroImages.map((_, index) => (
+                        <button
+                            key={index}
+                            className={`indicator-dot ${index === currentBgIndex ? 'active' : ''}`}
+                            onClick={() => setCurrentBgIndex(index)}
+                        />
+                    ))}
+                </div>
             </section>
 
-            {/* Kinetic Typography Marquee */}
+            {/* Marquee */}
             <div className="marquee-section-v2">
                 <div className="marquee-content-v2">
                     <span>스펙터 아카데미 2025학년도 수강생 모집 ● 대치동 최고의 입시 전문가 그룹 ● 최상위권 도약을 위한 완벽한 커리큘럼 ● </span>
@@ -133,18 +254,12 @@ const HomePageV2 = () => {
             </div>
 
             <div className="section-divider-v2"></div>
-
-            {/* Director's Note Section */}
             <DirectorNoteV2 />
-
             <div className="section-divider-v2"></div>
-
-            {/* Reviews Section - Presentation Style Carousel */}
             <StudentReviewsV2 />
-
             <div className="section-divider-v2"></div>
 
-            {/* Notices Section - Firebase 연동 */}
+            {/* Notices */}
             <section className="notices-section-v2" style={{ padding: '50px 20px', maxWidth: '1000px', margin: '0 auto' }}>
                 <h2 className="section-title-v2 reveal-on-scroll">공지사항</h2>
                 {recentNotices.length > 0 ? (
@@ -168,7 +283,7 @@ const HomePageV2 = () => {
                 </div>
             </section>
 
-            {/* Floating KakaoTalk Button */}
+            {/* KakaoTalk */}
             <a
                 href="https://open.kakao.com/o/sovpYkzc"
                 target="_blank"
@@ -178,6 +293,22 @@ const HomePageV2 = () => {
             >
                 <span className="kakao-icon-v2">TALK</span>
             </a>
+
+            {/* Delete Modal */}
+            {deleteConfirm && (
+                <div className="delete-modal-overlay" onClick={() => setDeleteConfirm(null)}>
+                    <div className="delete-modal" onClick={e => e.stopPropagation()}>
+                        <h3>🗑️ 이미지 삭제</h3>
+                        <p>이 이미지를 삭제하시겠습니까?</p>
+                        <p className="warning">삭제된 이미지는 복구할 수 없습니다.</p>
+                        <img src={deleteConfirm.url} alt="Delete target" className="delete-preview" />
+                        <div className="delete-modal-actions">
+                            <button className="cancel-btn" onClick={() => setDeleteConfirm(null)}>취소</button>
+                            <button className="confirm-delete-btn" onClick={() => handleDelete(deleteConfirm)}>삭제</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <FooterV2 />
         </div>
