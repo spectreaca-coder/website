@@ -245,9 +245,21 @@ const HomePageV2 = () => {
                     ))}
                 </div>
 
-                {/* 버전 표시 (디버깅용) */}
-                <div style={{ position: 'absolute', bottom: '10px', left: '10px', color: 'rgba(255,255,255,0.3)', fontSize: '10px', zIndex: 9999, pointerEvents: 'none' }}>
-                    v1.5 Fixed
+                {/* 버전 표시 (디버깅용 - 확실하게 보이게 수정) */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    left: '20px',
+                    color: 'red',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    backgroundColor: 'white',
+                    padding: '10px',
+                    zIndex: 9999,
+                    pointerEvents: 'none',
+                    border: '5px solid yellow'
+                }}>
+                    v1.6 FINAL CHECK
                 </div>
             </section>
 
