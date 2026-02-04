@@ -64,24 +64,23 @@ const HomePageV2 = () => {
         };
     }, []);
 
-    // Firebase에서 배경 이미지 로드 (현재 Storage 미지원 문제로 비활성화 - 로컬 강제 사용)
+    // Firebase에서 배경 이미지 로드
     useEffect(() => {
-        // const q = query(collection(db, 'hero_images'), orderBy('order', 'asc'));
-        // const unsubscribe = onSnapshot(q, (snapshot) => {
-        //     const fetchedImages = snapshot.docs.map(doc => ({
-        //         id: doc.id,
-        //         ...doc.data()
-        //     }));
-        //     console.log('Firebase hero_images:', fetchedImages.length);
-        //     setHeroImagesData(fetchedImages);
-        //     if (fetchedImages.length > 0) {
-        //         setHeroImages(fetchedImages.map(img => img.url));
-        //     }
-        // }, (error) => {
-        //     console.error('Firebase error:', error);
-        // });
-        // return () => unsubscribe();
-        setHeroImages(LOCAL_IMAGES.map(img => img.url));
+        const q = query(collection(db, 'hero_images'), orderBy('order', 'asc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const fetchedImages = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            console.log('Firebase hero_images:', fetchedImages.length);
+            setHeroImagesData(fetchedImages);
+            if (fetchedImages.length > 0) {
+                setHeroImages(fetchedImages.map(img => img.url));
+            }
+        }, (error) => {
+            console.error('Firebase error:', error);
+        });
+        return () => unsubscribe();
     }, []);
 
     // 공지사항 로드
@@ -119,34 +118,141 @@ const HomePageV2 = () => {
         return () => clearInterval(interval);
     }, [heroImages.length, showImageManager]);
 
-    // 로컬 이미지 → Firebase 초기화 (Storage 미지원으로 비활성화)
+    // 로컬 이미지 → Firebase 초기화
     const handleSyncLocalToFirebase = async () => {
-        alert('현재 Firebase Storage가 활성화되지 않아 업로드를 지원하지 않습니다.\n개발자에게 문의하여 이미지를 교체해주세요.');
+        if (!window.confirm('기본 로컬 이미지 5장을 Firebase에 업로드하시겠습니까?')) return;
+        setSyncing(true);
+        try {
+            const batch = writeBatch(db);
+            const collectionRef = collection(db, 'hero_images');
+
+            // 기존 데이터 삭제
+            const snapshot = await getDocs(collectionRef);
+            snapshot.docs.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+
+            // 순차 업로드
+            for (let i = 0; i < LOCAL_IMAGES.length; i++) {
+                const img = LOCAL_IMAGES[i];
+                const response = await fetch(img.url);
+                const blob = await response.blob();
+
+                // Storage 업로드
+                const storageRef = ref(storage, `hero-images/${Date.now()}_${img.name}`);
+                await uploadBytes(storageRef, blob);
+                const downloadURL = await getDownloadURL(storageRef);
+
+                // Firestore 저장
+                await addDoc(collection(db, 'hero_images'), {
+                    url: downloadURL,
+                    name: img.name,
+                    order: i,
+                    createdAt: serverTimestamp()
+                });
+            }
+            alert('동기화 완료! 이제 이미지를 관리할 수 있습니다.');
+            // window.location.reload(); // 새로고침 불필요 (onSnapshot이 처리)
+        } catch (error) {
+            console.error('Sync error:', error);
+            alert('동기화 중 오류가 발생했습니다: ' + error.message);
+        } finally {
+            setSyncing(false);
+        }
     };
 
     // 파일 선택
     const handleFileSelect = (e) => {
-        // 기능 비활성화
+        const file = e.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
     };
 
     // 이미지 업로드
     const handleUpload = async () => {
-        // 기능 비활성화
+        if (!selectedFile) return;
+        setUploading(true);
+        try {
+            const storageRef = ref(storage, `hero-images/${Date.now()}_${selectedFile.name}`);
+            await uploadBytes(storageRef, selectedFile);
+            const downloadURL = await getDownloadURL(storageRef);
+
+            await addDoc(collection(db, 'hero_images'), {
+                url: downloadURL,
+                name: selectedFile.name,
+                order: heroImagesData.length,
+                createdAt: serverTimestamp()
+            });
+
+            setSelectedFile(null);
+            setPreviewUrl(null);
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            alert('업로드가 완료되었습니다.');
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('업로드 실패: ' + error.message);
+        } finally {
+            setUploading(false);
+        }
     };
 
     // 이미지 삭제
     const handleDelete = async (image) => {
-        // 기능 비활성화
+        try {
+            // Storage 삭제 (try-catch로 감싸서 DB만이라도 지워지게 함)
+            try {
+                const storageRef = ref(storage, image.url); // URL 기반 참조
+                await deleteObject(storageRef);
+            } catch (storageErr) {
+                console.warn('Storage file delete failed (maybe mismatch/already deleted):', storageErr);
+            }
+
+            // Firestore 삭제
+            await deleteDoc(doc(db, 'hero_images', image.id));
+            setDeleteConfirm(null);
+        } catch (error) {
+            console.error('Delete error:', error);
+            alert('삭제 실패: ' + error.message);
+        }
     };
 
     // 순서 변경
     const handleMove = async (fromIndex, toIndex) => {
-        // 기능 비활성화
+        if (toIndex < 0 || toIndex >= heroImagesData.length) return;
+
+        const newImages = [...heroImagesData];
+        const [movedItem] = newImages.splice(fromIndex, 1);
+        newImages.splice(toIndex, 0, movedItem);
+
+        // Optimistic update
+        setHeroImagesData(newImages);
+        setHeroImages(newImages.map(img => img.url));
+
+        // Batch update orders
+        try {
+            const batch = writeBatch(db);
+            newImages.forEach((img, index) => {
+                const docRef = doc(db, 'hero_images', img.id);
+                batch.update(docRef, { order: index });
+            });
+            await batch.commit();
+        } catch (error) {
+            console.error('Reorder error:', error);
+            alert('순서 저장 실패 (새로고침 됩니다)');
+            window.location.reload();
+        }
     };
 
-    const handleDragStart = (index) => { };
-    const handleDragOver = (e) => { };
-    const handleDrop = (targetIndex) => { };
+    const handleDragStart = (index) => { setDraggedIndex(index); };
+    const handleDragOver = (e) => { e.preventDefault(); };
+    const handleDrop = (targetIndex) => {
+        if (draggedIndex === null) return;
+        handleMove(draggedIndex, targetIndex);
+        setDraggedIndex(null);
+    };
 
     // Firebase 이미지가 있는지 확인
     const hasFirebaseImages = heroImagesData.length > 0;
@@ -205,31 +311,66 @@ const HomePageV2 = () => {
                                 </span>
                             </div>
 
-                            {/* 로컬 이미지일 때 안내 */}
-                            {!hasFirebaseImages && (
-                                <div className="local-preview">
-                                    <p className="local-notice" style={{ color: '#ffa502' }}>
-                                        ⚠️ 서버 저장소(Storage) 미연동<br />
-                                        로컬 기본 이미지 5장이 순환됩니다.
-                                    </p>
-                                    <div className="local-thumbs">
-                                        {LOCAL_IMAGES.map((img, index) => (
-                                            <div
-                                                key={index}
-                                                className={`local-thumb ${index === currentBgIndex ? 'active' : ''}`}
-                                                onClick={() => setCurrentBgIndex(index)}
-                                            >
-                                                <img src={img.url} alt={img.name} />
-                                                <span>{index + 1}</span>
-                                            </div>
-                                        ))}
+                            <div className="manager-controls">
+                                {/* Upload Area */}
+                                {!hasFirebaseImages && (
+                                    <button className="sync-btn" onClick={handleSyncLocalToFirebase} disabled={syncing}>
+                                        {syncing ? '연동 중...' : '기본 이미지 Firebase 연동하기 (최초 1회)'}
+                                    </button>
+                                )}
+
+                                {/* File Upload */}
+                                {hasFirebaseImages && (
+                                    <div className="upload-area">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileSelect}
+                                            ref={fileInputRef}
+                                            id="hero-upload"
+                                            style={{ display: 'none' }}
+                                        />
+                                        <label htmlFor="hero-upload" className="upload-label">
+                                            {selectedFile ? selectedFile.name : '새 이미지 선택'}
+                                        </label>
+                                        {selectedFile && (
+                                            <button className="upload-btn" onClick={handleUpload} disabled={uploading}>
+                                                {uploading ? '업로드 중...' : '업로드'}
+                                            </button>
+                                        )}
                                     </div>
-                                    <p className="local-notice" style={{ marginTop: '20px', fontSize: '0.7rem' }}>
-                                        이미지 변경/순서 조정이 필요하면<br />
-                                        개발자에게 문의해주세요.
-                                    </p>
-                                </div>
-                            )}
+                                )}
+                            </div>
+
+
+                            {/* Image List */}
+                            <div className="local-thumbs">
+                                {(hasFirebaseImages ? heroImagesData : LOCAL_IMAGES).map((img, index) => (
+                                    <div
+                                        key={img.id || index}
+                                        className={`local-thumb ${index === currentBgIndex ? 'active' : ''}`}
+                                        draggable={hasFirebaseImages}
+                                        onDragStart={() => handleDragStart(index)}
+                                        onDragOver={handleDragOver}
+                                        onDrop={() => handleDrop(index)}
+                                        onClick={() => setCurrentBgIndex(index)}
+                                    >
+                                        <img src={img.url} alt={img.name} />
+                                        <span className="number-badge">{index + 1}</span>
+
+                                        {hasFirebaseImages && (
+                                            <div className="thumb-actions">
+                                                <button
+                                                    className="delete-btn-mini"
+                                                    onClick={(e) => { e.stopPropagation(); setDeleteConfirm(img); }}
+                                                >
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -243,23 +384,6 @@ const HomePageV2 = () => {
                             onClick={() => setCurrentBgIndex(index)}
                         />
                     ))}
-                </div>
-
-                {/* 버전 표시 (디버깅용 - 확실하게 보이게 수정) */}
-                <div style={{
-                    position: 'absolute',
-                    bottom: '20px',
-                    left: '20px',
-                    color: 'red',
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    backgroundColor: 'white',
-                    padding: '10px',
-                    zIndex: 9999,
-                    pointerEvents: 'none',
-                    border: '5px solid yellow'
-                }}>
-                    v1.6 FINAL CHECK
                 </div>
             </section>
 
