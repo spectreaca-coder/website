@@ -4,13 +4,14 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // Firebase 구성 정보 (환경변수에서 가져옴)
+// Firebase 구성 정보 (Vercel 환경변수 이슈로 인해 하드코딩 적용)
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID
+  apiKey: "AIzaSyCUCopmqHwekmrCxci3zVze6HOpywtzkOg",
+  authDomain: "specter-13594.firebaseapp.com",
+  projectId: "specter-13594",
+  storageBucket: "specter-13594.firebasestorage.app",
+  messagingSenderId: "302766022298",
+  appId: "1:302766022298:web:e4b7ee570d466c3b3f4923"
 };
 
 // Firebase 앱 초기화
