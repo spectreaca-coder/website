@@ -312,16 +312,16 @@ const HomePageV2 = () => {
                             </div>
 
                             <div className="manager-controls">
-                                {/* Upload Area */}
+                                {/* Upload Area - 최초 연동용 */}
                                 {!hasFirebaseImages && (
                                     <button className="sync-btn" onClick={handleSyncLocalToFirebase} disabled={syncing}>
                                         {syncing ? '연동 중...' : '기본 이미지 Firebase 연동하기 (최초 1회)'}
                                     </button>
                                 )}
 
-                                {/* File Upload */}
+                                {/* Hidden file input (triggered by '+' card) */}
                                 {hasFirebaseImages && (
-                                    <div className="upload-area">
+                                    <>
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -330,15 +330,15 @@ const HomePageV2 = () => {
                                             id="hero-upload"
                                             style={{ display: 'none' }}
                                         />
-                                        <label htmlFor="hero-upload" className="upload-label">
-                                            {selectedFile ? selectedFile.name : '새 이미지 선택'}
-                                        </label>
                                         {selectedFile && (
-                                            <button className="upload-btn" onClick={handleUpload} disabled={uploading}>
-                                                {uploading ? '업로드 중...' : '업로드'}
-                                            </button>
+                                            <div className="upload-preview">
+                                                <span>{selectedFile.name}</span>
+                                                <button className="upload-btn" onClick={handleUpload} disabled={uploading}>
+                                                    {uploading ? '업로드 중...' : '업로드'}
+                                                </button>
+                                            </div>
                                         )}
-                                    </div>
+                                    </>
                                 )}
                             </div>
 
@@ -359,17 +359,24 @@ const HomePageV2 = () => {
                                         <span className="number-badge">{index + 1}</span>
 
                                         {hasFirebaseImages && (
-                                            <div className="thumb-actions">
-                                                <button
-                                                    className="delete-btn-mini"
-                                                    onClick={(e) => { e.stopPropagation(); setDeleteConfirm(img); }}
-                                                >
-                                                    🗑️
-                                                </button>
-                                            </div>
+                                            <button
+                                                className="delete-btn-mini"
+                                                onClick={(e) => { e.stopPropagation(); setDeleteConfirm(img); }}
+                                                title="이미지 삭제"
+                                            >
+                                                ✕
+                                            </button>
                                         )}
                                     </div>
                                 ))}
+
+                                {/* Add Image Card */}
+                                {hasFirebaseImages && (
+                                    <label htmlFor="hero-upload" className="add-image-card" title="새 이미지 추가">
+                                        <span className="plus-icon">+</span>
+                                        <span className="add-text">추가</span>
+                                    </label>
+                                )}
                             </div>
                         </div>
                     </div>
