@@ -64,23 +64,24 @@ const HomePageV2 = () => {
         };
     }, []);
 
-    // Firebase에서 배경 이미지 로드
+    // Firebase에서 배경 이미지 로드 (현재 Storage 미지원 문제로 비활성화 - 로컬 강제 사용)
     useEffect(() => {
-        const q = query(collection(db, 'hero_images'), orderBy('order', 'asc'));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const fetchedImages = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            console.log('Firebase hero_images:', fetchedImages.length);
-            setHeroImagesData(fetchedImages);
-            if (fetchedImages.length > 0) {
-                setHeroImages(fetchedImages.map(img => img.url));
-            }
-        }, (error) => {
-            console.error('Firebase error:', error);
-        });
-        return () => unsubscribe();
+        // const q = query(collection(db, 'hero_images'), orderBy('order', 'asc'));
+        // const unsubscribe = onSnapshot(q, (snapshot) => {
+        //     const fetchedImages = snapshot.docs.map(doc => ({
+        //         id: doc.id,
+        //         ...doc.data()
+        //     }));
+        //     console.log('Firebase hero_images:', fetchedImages.length);
+        //     setHeroImagesData(fetchedImages);
+        //     if (fetchedImages.length > 0) {
+        //         setHeroImages(fetchedImages.map(img => img.url));
+        //     }
+        // }, (error) => {
+        //     console.error('Firebase error:', error);
+        // });
+        // return () => unsubscribe();
+        setHeroImages(LOCAL_IMAGES.map(img => img.url));
     }, []);
 
     // 공지사항 로드
