@@ -10,8 +10,8 @@ import heroBg2 from '../assets/hero-bg-2.jpg';
 import heroBg4 from '../assets/hero-bg-4.jpg';
 import heroBgNew1 from '../assets/hero-bg-new-1.png';
 import heroBgNew2 from '../assets/hero-bg-new-2.png';
-import heroBgNew3 from '../assets/hero-bg-new-3.jpg';
-import heroBgNew4 from '../assets/hero-bg-new-4.jpg';
+// import heroBgNew3 from '../assets/hero-bg-new-3.jpg';  <-- 삭제됨
+// import heroBgNew4 from '../assets/hero-bg-new-4.jpg';  <-- 삭제됨
 import DirectorNoteV2 from './DirectorNoteV2';
 import StudentReviewsV2 from './StudentReviewsV2';
 import { db, storage } from '../firebase';
@@ -243,6 +243,11 @@ const HomePageV2 = () => {
                             onClick={() => setCurrentBgIndex(index)}
                         />
                     ))}
+                </div>
+
+                {/* 버전 표시 (디버깅용) */}
+                <div style={{ position: 'absolute', bottom: '10px', left: '10px', color: 'rgba(255,255,255,0.3)', fontSize: '10px', zIndex: 9999, pointerEvents: 'none' }}>
+                    v1.5 Fixed
                 </div>
             </section>
 
