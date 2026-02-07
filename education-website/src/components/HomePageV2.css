@@ -1735,14 +1735,35 @@ body {
 }
 
 .slide-indicators .indicator-dot {
-    width: clamp(6px, 1.5vw, 10px);
-    height: clamp(6px, 1.5vw, 10px);
+    width: 6px;
+    /* Base size */
+    height: 6px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.4);
     border: none;
     cursor: pointer;
     transition: all 0.3s;
     padding: 0;
+}
+
+/* Mobile Specific Override */
+@media (max-width: 768px) {
+    .slide-indicators {
+        bottom: 15px;
+        /* Lower */
+        gap: 6px;
+    }
+
+    .slide-indicators .indicator-dot {
+        width: 4px;
+        /* Tiny dots */
+        height: 4px;
+    }
+
+    .slide-indicators .indicator-dot.active {
+        transform: scale(1.5);
+        /* Pop more */
+    }
 }
 
 .slide-indicators .indicator-dot.active {
