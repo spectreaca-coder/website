@@ -2248,22 +2248,31 @@ body {
     cursor: not-allowed;
 }
 
-/* Mobile Slide Indicators - Ultra Minimal (2px) */
+/* Mobile Slide Indicators - Ultra Minimal (2px Fixed) */
 @media (max-width: 768px) {
     .slide-indicators {
-        bottom: 15px;
+        bottom: 12px;
+        /* Close to bottom */
         gap: 4px;
     }
 
     .slide-indicators .indicator-dot {
         width: 2px !important;
         height: 2px !important;
-        background: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.3) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
     }
 
     .slide-indicators .indicator-dot.active {
-        transform: scale(1.5);
-        /* 3px when active */
-        background: #fff;
+        width: 2px !important;
+        height: 2px !important;
+        transform: none !important;
+        /* No scaling */
+        background: #fff !important;
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.8) !important;
+        /* Subtle glow */
+        opacity: 1 !important;
     }
 }
