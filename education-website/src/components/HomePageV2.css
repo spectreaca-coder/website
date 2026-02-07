@@ -2247,3 +2247,23 @@ body {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+/* Mobile Slide Indicators - Ultra Minimal (2px) */
+@media (max-width: 768px) {
+    .slide-indicators {
+        bottom: 15px;
+        gap: 4px;
+    }
+
+    .slide-indicators .indicator-dot {
+        width: 2px !important;
+        height: 2px !important;
+        background: rgba(255, 255, 255, 0.4);
+    }
+
+    .slide-indicators .indicator-dot.active {
+        transform: scale(1.5);
+        /* 3px when active */
+        background: #fff;
+    }
+}
