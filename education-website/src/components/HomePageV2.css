@@ -1730,13 +1730,13 @@ body {
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 10px;
+    gap: clamp(6px, 1.5vw, 10px);
     z-index: 5;
 }
 
 .slide-indicators .indicator-dot {
-    width: 10px;
-    height: 10px;
+    width: clamp(6px, 1.5vw, 10px);
+    height: clamp(6px, 1.5vw, 10px);
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.4);
     border: none;
@@ -2255,21 +2255,4 @@ body {
 .upload-preview .upload-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-}
-
-/* Mobile Slide Indicators */
-@media (max-width: 768px) {
-    .slide-indicators {
-        bottom: 20px;
-        gap: 6px;
-    }
-
-    .slide-indicators .indicator-dot {
-        width: 6px;
-        height: 6px;
-    }
-
-    .slide-indicators .indicator-dot.active {
-        transform: scale(1.2);
-    }
 }
