@@ -20,7 +20,7 @@
     "web-vitals": "^2.1.4",
     "xhr2": "^0.2.1"
   },
-  "homepage": "https://spectreaca-coder.github.io/website",
+  "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
     "predeploy": "npm run build",
