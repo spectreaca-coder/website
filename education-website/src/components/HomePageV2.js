@@ -103,6 +103,16 @@ const HomePageV2 = () => {
         return () => unsubscribe();
     }, []);
 
+    // Load Marquee Text
+    useEffect(() => {
+        const unsubscribe = onSnapshot(doc(db, 'marquee', 'main'), (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                setMarqueeText(docSnapshot.data().text);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
     // Load Social Links
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, 'links', 'social'), (docSnapshot) => {
