@@ -38,7 +38,7 @@ const HomePageV2 = () => {
 
     // Image Manager states
     const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState(null);
+    // const [previewUrl, setPreviewUrl] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [draggedIndex, setDraggedIndex] = useState(null);

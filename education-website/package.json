@@ -20,8 +20,11 @@
     "web-vitals": "^2.1.4",
     "xhr2": "^0.2.1"
   },
+  "homepage": "https://spectreaca-coder.github.io/website",
   "scripts": {
     "start": "react-scripts start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -43,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
