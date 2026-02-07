@@ -500,12 +500,12 @@ const HomePageV2 = () => {
                     </div>
                 )}
 
-                {/* 슬라이드 인디케이터 */}
-                <div className="slide-indicators">
+                {/* 슬라이드 인디케이터 (클래스명 변경으로 스타일 충돌 방지) */}
+                <div className="hero-slide-indicators-v2">
                     {heroImages.map((_, index) => (
                         <button
                             key={index}
-                            className={`indicator-dot ${index === currentBgIndex ? 'active' : ''}`}
+                            className={`hero-indicator-dot-v2 ${index === currentBgIndex ? 'active' : ''}`}
                             onClick={() => setCurrentBgIndex(index)}
                         />
                     ))}

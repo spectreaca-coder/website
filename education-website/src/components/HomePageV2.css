@@ -2276,3 +2276,59 @@ body {
         opacity: 1 !important;
     }
 }
+
+/* ISOLATED NEW STYLES for Hero Indicators V2 */
+.hero-slide-indicators-v2 {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 5;
+}
+
+.hero-indicator-dot-v2 {
+    width: 6px;
+    /* PC Base */
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+    margin: 0;
+}
+
+.hero-indicator-dot-v2.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+.hero-indicator-dot-v2:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* Mobile Ultra Minimal - Isolated */
+@media (max-width: 768px) {
+    .hero-slide-indicators-v2 {
+        bottom: 15px;
+        gap: 4px;
+    }
+
+    .hero-indicator-dot-v2 {
+        width: 2px !important;
+        height: 2px !important;
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-indicator-dot-v2.active {
+        width: 2px !important;
+        height: 2px !important;
+        transform: none !important;
+        background: #fff !important;
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+        opacity: 1 !important;
+    }
+}
