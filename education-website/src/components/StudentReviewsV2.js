@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './StudentReviewsV2.css';
 
-const reviews = [
+import { db } from '../firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, getDocs, writeBatch, serverTimestamp } from 'firebase/firestore';
+import Modal from './Modal';
+
+const INITIAL_REVIEWS = [
     {
         id: 1,
         category: '효율적 수업',
@@ -33,6 +37,10 @@ const reviews = [
 ];
 
 const StudentReviewsV2 = () => {
+    const [reviews, setReviews] = useState([]);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingReview, setEditingReview] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const containerRef = useRef(null);
     const trackRef = useRef(null);
@@ -49,8 +57,85 @@ const StudentReviewsV2 = () => {
     const lastXRef = useRef(0);
     const velocityRef = useRef(0);
 
-    // Quadruple for smooth loop
-    const extendedReviews = [...reviews, ...reviews, ...reviews, ...reviews];
+    // Quadruple for smooth loop (requires at least some reviews)
+    const extendedReviews = reviews.length > 0 ? [...reviews, ...reviews, ...reviews, ...reviews] : [];
+
+    // Admin Check
+    useEffect(() => {
+        const checkAdmin = () => {
+            const adminFlag = sessionStorage.getItem('isAdmin') === 'true';
+            setIsAdmin(adminFlag);
+        };
+        checkAdmin();
+        const interval = setInterval(checkAdmin, 1000); // Check periodically
+        return () => clearInterval(interval);
+    }, []);
+
+    // Load Data & Migration
+    useEffect(() => {
+        const q = query(collection(db, 'student_reviews'), orderBy('createdAt', 'desc'));
+        const unsubscribe = onSnapshot(q, async (snapshot) => {
+            if (snapshot.empty) {
+                // Migration logic: if empty, upload initial data
+                const batch = writeBatch(db);
+                INITIAL_REVIEWS.forEach((review) => {
+                    const docRef = doc(collection(db, 'student_reviews'));
+                    batch.set(docRef, { ...review, createdAt: serverTimestamp() });
+                });
+                await batch.commit();
+                console.log('Initial reviews migrated to Firestore');
+            } else {
+                const fetchedReviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setReviews(fetchedReviews);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // CRUD Handlers
+    const handleAdd = () => {
+        setEditingReview({ category: '', title: '', comment: '', author: '' });
+        setIsEditing(true);
+    };
+
+    const handleEdit = (review) => {
+        setEditingReview({ ...review });
+        setIsEditing(true);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('정말 삭제하시겠습니까?')) {
+            await deleteDoc(doc(db, 'student_reviews', id));
+        }
+    };
+
+    const handleSave = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingReview.id) {
+                // Update
+                const reviewRef = doc(db, 'student_reviews', editingReview.id);
+                await updateDoc(reviewRef, {
+                    category: editingReview.category,
+                    title: editingReview.title,
+                    comment: editingReview.comment,
+                    author: editingReview.author
+                });
+            } else {
+                // Create
+                await addDoc(collection(db, 'student_reviews'), {
+                    ...editingReview,
+                    createdAt: serverTimestamp()
+                });
+            }
+            setIsEditing(false);
+            setEditingReview(null);
+            alert('저장되었습니다.');
+        } catch (error) {
+            console.error('Save error:', error);
+            alert('저장 실패: ' + error.message);
+        }
+    };
 
     const animate = useCallback(() => {
         if (!trackRef.current) return;
@@ -155,7 +240,21 @@ const StudentReviewsV2 = () => {
 
     return (
         <section className="student-reviews-section-v2">
-            <h2 className="section-title-reviews-v2">STUDENT REVIEWS</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '20px' }}>
+                <h2 className="section-title-reviews-v2" style={{ margin: 0 }}>STUDENT REVIEWS</h2>
+                {isAdmin && (
+                    <button
+                        onClick={handleAdd}
+                        style={{
+                            background: '#000', color: '#fff', border: 'none',
+                            padding: '5px 12px', borderRadius: '4px', cursor: 'pointer',
+                            fontSize: '0.8rem', fontWeight: 'bold'
+                        }}
+                    >
+                        + 추가
+                    </button>
+                )}
+            </div>
 
             <div className="reviews-marquee-wrapper" ref={containerRef}>
                 <div
@@ -187,6 +286,12 @@ const StudentReviewsV2 = () => {
                                 <div className="review-footer-v2">
                                     <p className="review-author-v2">{review.author}</p>
                                 </div>
+                                {isAdmin && (
+                                    <div className="admin-actions" style={{ marginTop: '10px', display: 'flex', gap: '5px', justifyContent: 'flex-end' }}>
+                                        <button onClick={() => handleEdit(review)} style={{ fontSize: '10px', padding: '2px 5px' }}>수정</button>
+                                        <button onClick={() => handleDelete(review.id)} style={{ fontSize: '10px', padding: '2px 5px', background: 'red', color: 'white', border: 'none' }}>삭제</button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -203,6 +308,59 @@ const StudentReviewsV2 = () => {
                     />
                 ))}
             </div>
+
+            {/* Edit Modal */}
+            {isEditing && (
+                <Modal onClose={() => setIsEditing(false)}>
+                    <form onSubmit={handleSave} className="director-note-form">
+                        <h2>후기 {editingReview.id ? '수정' : '추가'}</h2>
+                        <div className="form-group">
+                            <label>카테고리</label>
+                            <input
+                                type="text"
+                                value={editingReview.category}
+                                onChange={(e) => setEditingReview({ ...editingReview, category: e.target.value })}
+                                placeholder="예: 효율적 수업"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>제목</label>
+                            <input
+                                type="text"
+                                value={editingReview.title}
+                                onChange={(e) => setEditingReview({ ...editingReview, title: e.target.value })}
+                                placeholder="제목을 입력하세요"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>내용</label>
+                            <textarea
+                                value={editingReview.comment}
+                                onChange={(e) => setEditingReview({ ...editingReview, comment: e.target.value })}
+                                rows="5"
+                                placeholder="후기 내용을 입력하세요"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>작성자</label>
+                            <input
+                                type="text"
+                                value={editingReview.author}
+                                onChange={(e) => setEditingReview({ ...editingReview, author: e.target.value })}
+                                placeholder="예: 서울대 의예과 박성재"
+                                required
+                            />
+                        </div>
+                        <div className="form-buttons">
+                            <button type="button" onClick={() => setIsEditing(false)}>취소</button>
+                            <button type="submit" className="primary">저장</button>
+                        </div>
+                    </form>
+                </Modal>
+            )}
         </section>
     );
 };
