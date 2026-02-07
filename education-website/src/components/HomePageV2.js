@@ -54,6 +54,9 @@ const HomePageV2 = () => {
 
     const [recentNotices, setRecentNotices] = useState([]);
 
+    // Marquee State
+    const [marqueeText, setMarqueeText] = useState('스펙터 아카데미 2025학년도 수강생 모집 ● 대치동 최고의 입시 전문가 그룹 ● 최상위권 도약을 위한 완벽한 커리큘럼 ● ');
+
     // Admin 상태 체크
     useEffect(() => {
         const checkAdminStatus = () => {
@@ -294,6 +297,22 @@ const HomePageV2 = () => {
         }
     };
 
+    // Marquee Edit Handler
+    const handleEditMarquee = async () => {
+        if (!isAdmin) return;
+        const newText = window.prompt('흐르는 텍스트를 수정하세요:', marqueeText);
+        if (newText !== null && newText.trim() !== '') {
+            try {
+                await setDoc(doc(db, 'marquee', 'main'), { text: newText }, { merge: true });
+                alert('텍스트가 수정되었습니다.');
+            } catch (error) {
+                console.error('Marquee update error:', error);
+                alert('수정 실패: ' + error.message);
+            }
+        }
+    };
+
+
     // Firebase 이미지가 있는지 확인
     const hasFirebaseImages = heroImagesData.length > 0;
 
@@ -484,10 +503,10 @@ const HomePageV2 = () => {
             </section>
 
             {/* Marquee */}
-            <div className="marquee-section-v2">
+            <div className="marquee-section-v2" onClick={handleEditMarquee} style={{ cursor: isAdmin ? 'pointer' : 'default' }} title={isAdmin ? '클릭하여 텍스트 수정' : ''}>
                 <div className="marquee-content-v2">
-                    <span>스펙터 아카데미 2025학년도 수강생 모집 ● 대치동 최고의 입시 전문가 그룹 ● 최상위권 도약을 위한 완벽한 커리큘럼 ● </span>
-                    <span>스펙터 아카데미 2025학년도 수강생 모집 ● 대치동 최고의 입시 전문가 그룹 ● 최상위권 도약을 위한 완벽한 커리큘럼 ● </span>
+                    <span>{marqueeText}</span>
+                    <span>{marqueeText}</span>
                 </div>
             </div>
 
