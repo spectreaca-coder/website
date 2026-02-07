@@ -1778,9 +1778,9 @@ body {
 /* 토글 탭 버튼 */
 .sidebar-toggle-tab {
     position: absolute;
-    left: -50px;
+    left: -70px;
     top: 120px;
-    width: 50px;
+    width: 70px;
     height: 50px;
     background: rgba(255, 71, 87, 0.9);
     border: none;
