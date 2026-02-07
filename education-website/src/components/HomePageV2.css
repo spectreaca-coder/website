@@ -1236,37 +1236,7 @@ body {
     padding: 1rem 0;
 }
 
-.indicator-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--sw-border);
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0;
-}
-
-.indicator-dot.active {
-    background-color: var(--sw-green);
-    width: 20px;
-    border-radius: 10px;
-}
-
-@media (max-width: 768px) {
-    .reviews-carousel-container {
-        padding-bottom: 2.5rem;
-    }
-
-    .indicator-dot {
-        width: 6px;
-        height: 6px;
-    }
-
-    .indicator-dot.active {
-        width: 16px;
-    }
-}
+/* Legacy indicator styles removed to prevent conflict with hero slider */
 
 /* ===== ADMIN IMAGE MANAGER STYLES ===== */
 
