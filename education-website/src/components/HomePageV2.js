@@ -196,7 +196,7 @@ const HomePageV2 = () => {
         const file = e.target.files[0];
         if (file) {
             setSelectedFile(file);
-            setPreviewUrl(URL.createObjectURL(file));
+            // setPreviewUrl(URL.createObjectURL(file));
         }
     };
 
@@ -217,7 +217,7 @@ const HomePageV2 = () => {
             });
 
             setSelectedFile(null);
-            setPreviewUrl(null);
+            // setPreviewUrl(null);
             if (fileInputRef.current) fileInputRef.current.value = '';
             alert('업로드가 완료되었습니다.');
         } catch (error) {
