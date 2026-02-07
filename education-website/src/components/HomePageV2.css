@@ -1779,7 +1779,8 @@ body {
 .sidebar-toggle-tab {
     position: absolute;
     left: -70px;
-    top: 120px;
+    top: auto;
+    bottom: 120px;
     width: 70px;
     height: 50px;
     background: rgba(255, 71, 87, 0.9);
