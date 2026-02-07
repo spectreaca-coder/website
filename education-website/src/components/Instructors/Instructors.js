@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Instructors.css';
 import Modal from '../Modal';
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const Instructors = () => {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -15,7 +16,9 @@ const Instructors = () => {
   const [newSubject, setNewSubject] = useState('');
   const [newComment, setNewComment] = useState('');
   const [newCareer, setNewCareer] = useState('');
-  const [newPhoto, setNewPhoto] = useState('');
+  const [newPhoto, setNewPhoto] = useState(''); // URL or preview
+  const [photoFile, setPhotoFile] = useState(null); // File object for upload
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const adminFlag = sessionStorage.getItem('isAdmin') === 'true';
@@ -40,6 +43,7 @@ const Instructors = () => {
 
   const clearForm = () => {
     setNewName(''); setNewSubject(''); setNewComment(''); setNewCareer(''); setNewPhoto('');
+    setPhotoFile(null);
     setEditingInstructor(null);
     setIsCreateModalVisible(false);
   };
@@ -69,59 +73,19 @@ const Instructors = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (limit to 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        alert('이미지 파일 크기는 2MB 이하여야 합니다.');
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('이미지 파일 크기는 5MB 이하여야 합니다.');
         e.target.value = '';
         return;
       }
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const img = new Image();
-        img.onload = () => {
-          // Create canvas to resize image
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+      // Store file for later upload
+      setPhotoFile(file);
 
-          // Set max dimensions
-          const MAX_WIDTH = 800;
-          const MAX_HEIGHT = 800;
-          let width = img.width;
-          let height = img.height;
-
-          // Calculate new dimensions
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-
-          // Convert to base64 with compression
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-          setNewPhoto(compressedDataUrl);
-        };
-        img.onerror = () => {
-          alert('이미지 로딩에 실패했습니다.');
-          e.target.value = '';
-        };
-        img.src = reader.result;
-      };
-      reader.onerror = () => {
-        alert('파일 읽기에 실패했습니다.');
-        e.target.value = '';
-      };
-      reader.readAsDataURL(file);
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setNewPhoto(previewUrl);
     }
   };
 
@@ -129,7 +93,18 @@ const Instructors = () => {
     e.preventDefault();
     if (!newName || !newSubject || !newComment) { alert('모든 항목을 입력해주세요.'); return; }
 
+    setUploading(true);
     try {
+      let photoUrl = newPhoto;
+
+      // Upload new photo to Firebase Storage if file exists
+      if (photoFile) {
+        const fileName = `instructors/${Date.now()}_${photoFile.name}`;
+        const storageRef = ref(storage, fileName);
+        await uploadBytes(storageRef, photoFile);
+        photoUrl = await getDownloadURL(storageRef);
+      }
+
       if (editingInstructor) {
         // Update - Firestore
         await updateDoc(doc(db, 'instructors', editingInstructor.id), {
@@ -137,7 +112,7 @@ const Instructors = () => {
           subject: newSubject,
           comment: newComment,
           career: newCareer,
-          photo: newPhoto,
+          photo: photoUrl,
           updatedAt: new Date().toISOString()
         });
         alert('강사 정보가 수정되었습니다.');
@@ -148,7 +123,7 @@ const Instructors = () => {
           subject: newSubject,
           comment: newComment,
           career: newCareer,
-          photo: newPhoto || '',
+          photo: photoUrl || '',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         });
@@ -157,7 +132,9 @@ const Instructors = () => {
       clearForm();
     } catch (error) {
       console.error('저장 중 오류 발생:', error);
-      alert('저장에 실패했습니다. 이미지 파일이 너무 클 수 있습니다. 더 작은 이미지를 사용해주세요.');
+      alert('저장에 실패했습니다: ' + error.message);
+    } finally {
+      setUploading(false);
     }
   };
 
