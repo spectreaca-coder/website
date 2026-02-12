@@ -22,7 +22,7 @@ const CurriculumV2 = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
-    const [activeWeek, setActiveWeek] = useState(0);
+    const [activeWeek, setActiveWeek] = useState(-1);
 
     // 삭제 확인 모달 상태
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
@@ -247,11 +247,6 @@ const CurriculumV2 = () => {
                                             <h2 className="accordion-title">{item.title}</h2>
                                         </div>
                                         <div className="accordion-header-right">
-                                            {item.mediaUrl && activeWeek !== index && (
-                                                <div className="accordion-thumb">
-                                                    <img src={item.mediaUrl} alt={item.title} />
-                                                </div>
-                                            )}
                                             {isAdmin && (
                                                 <div className="accordion-admin-actions">
                                                     <button onClick={(e) => { e.stopPropagation(); openEditor(item); }}>수정</button>
@@ -264,13 +259,18 @@ const CurriculumV2 = () => {
                                         </div>
                                     </div>
 
+                                    {/* Main image always visible */}
+                                    {item.mediaUrl && (
+                                        <div
+                                            className={`accordion-main-image ${activeWeek === index ? 'expanded' : ''}`}
+                                            onClick={() => setActiveWeek(activeWeek === index ? -1 : index)}
+                                        >
+                                            <img src={item.mediaUrl} alt={item.title} />
+                                        </div>
+                                    )}
+
                                     {activeWeek === index && (
                                         <div className="accordion-body">
-                                            {item.mediaUrl && (
-                                                <div className="accordion-media">
-                                                    <img src={item.mediaUrl} alt={item.title} />
-                                                </div>
-                                            )}
                                             <div className="accordion-text html-content" dangerouslySetInnerHTML={{ __html: item.content }}></div>
                                         </div>
                                     )}

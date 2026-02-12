@@ -13,6 +13,7 @@ const InstructorsV2 = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [expandedInstructor, setExpandedInstructor] = useState(null);
+    const [activeTag, setActiveTag] = useState(null);
     const [editingInstructor, setEditingInstructor] = useState(null);
     const [messageModal, setMessageModal] = useState({ show: false, message: '', type: 'success' }); // 'success' or 'error'
     const [isImagePickModalOpen, setIsImagePickModalOpen] = useState(false);
@@ -204,54 +205,80 @@ const InstructorsV2 = () => {
                         )}
                     </div>
 
+                    {/* Tag Filter Buttons */}
+                    {!isLoading && instructors.length > 0 && (() => {
+                        const allTags = [...new Set(instructors.flatMap(i => i.tags || []))];
+                        if (allTags.length === 0) return null;
+                        return (
+                            <div className="tag-filter-bar">
+                                <button
+                                    className={`tag-filter-btn ${!activeTag ? 'active' : ''}`}
+                                    onClick={() => setActiveTag(null)}
+                                >
+                                    전체
+                                </button>
+                                {allTags.map(tag => (
+                                    <button
+                                        key={tag}
+                                        className={`tag-filter-btn ${activeTag === tag ? 'active' : ''}`}
+                                        onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                                    >
+                                        #{tag}
+                                    </button>
+                                ))}
+                            </div>
+                        );
+                    })()}
+
                     {isLoading ? (
                         <div className="loading">로딩 중...</div>
                     ) : instructors.length === 0 ? (
                         <div className="empty">등록된 강사가 없습니다.</div>
                     ) : (
                         <div className="instructors-accordion">
-                            {instructors.map((instructor, index) => (
-                                <div
-                                    key={instructor.id}
-                                    className={`accordion-item ${expandedInstructor === instructor.id ? 'open' : ''}`}
-                                >
+                            {instructors
+                                .filter(instructor => !activeTag || (instructor.tags && instructor.tags.includes(activeTag)))
+                                .map((instructor, index) => (
                                     <div
-                                        className="accordion-header"
-                                        onClick={() => setExpandedInstructor(expandedInstructor === instructor.id ? null : instructor.id)}
+                                        key={instructor.id}
+                                        className={`accordion-item ${expandedInstructor === instructor.id ? 'open' : ''}`}
                                     >
-                                        <div className="accordion-header-left">
-                                            <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
-                                            <div className="accordion-name-group">
-                                                <h2 className="accordion-title">{instructor.name}</h2>
-                                                <span className="accordion-subject">{instructor.subject}</span>
+                                        <div
+                                            className="accordion-header"
+                                            onClick={() => setExpandedInstructor(expandedInstructor === instructor.id ? null : instructor.id)}
+                                        >
+                                            <div className="accordion-header-left">
+                                                <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
+                                                <div className="accordion-name-group">
+                                                    <h2 className="accordion-title">{instructor.name}</h2>
+                                                    <span className="accordion-subject">{instructor.subject}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="accordion-header-right">
-                                            {instructor.imageUrl && expandedInstructor !== instructor.id && (
-                                                <div className="accordion-thumb">
-                                                    <img src={instructor.imageUrl} alt={instructor.name} />
-                                                </div>
-                                            )}
-                                            {isAdmin && (
-                                                <div className="accordion-admin-actions">
-                                                    <button onClick={(e) => { e.stopPropagation(); openEditor(instructor); }}>수정</button>
-                                                    <button className="delete" onClick={(e) => { e.stopPropagation(); showDeleteConfirmModal(instructor.id); }}>삭제</button>
-                                                </div>
-                                            )}
-                                            <span className="accordion-toggle">
-                                                {expandedInstructor === instructor.id ? '−' : '+'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {expandedInstructor === instructor.id && (
-                                        <div className="accordion-body">
-                                            <div className="instructor-detail">
-                                                {instructor.imageUrl && (
-                                                    <div className="instructor-detail-image">
-                                                        <img src={instructor.imageUrl} alt={instructor.name} />
+                                            <div className="accordion-header-right">
+                                                {isAdmin && (
+                                                    <div className="accordion-admin-actions">
+                                                        <button onClick={(e) => { e.stopPropagation(); openEditor(instructor); }}>수정</button>
+                                                        <button className="delete" onClick={(e) => { e.stopPropagation(); showDeleteConfirmModal(instructor.id); }}>삭제</button>
                                                     </div>
                                                 )}
+                                                <span className="accordion-toggle">
+                                                    {expandedInstructor === instructor.id ? '−' : '+'}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Main image always visible */}
+                                        {instructor.imageUrl && (
+                                            <div
+                                                className={`accordion-main-image ${expandedInstructor === instructor.id ? 'expanded' : ''}`}
+                                                onClick={() => setExpandedInstructor(expandedInstructor === instructor.id ? null : instructor.id)}
+                                            >
+                                                <img src={instructor.imageUrl} alt={instructor.name} />
+                                            </div>
+                                        )}
+
+                                        {expandedInstructor === instructor.id && (
+                                            <div className="accordion-body">
                                                 <div className="instructor-detail-info">
                                                     <p className="instructor-detail-bio">{instructor.bio}</p>
                                                     {instructor.tags && instructor.tags.length > 0 && (
@@ -263,10 +290,9 @@ const InstructorsV2 = () => {
                                                     )}
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
+                                        )}
+                                    </div>
+                                ))}
                         </div>
                     )}
                 </div>
