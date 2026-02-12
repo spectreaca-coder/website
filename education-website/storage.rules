@@ -13,6 +13,12 @@ service firebase.storage {
       allow write: if true;
     }
     
+    // curriculum 폴더 - 커리큘럼 이미지 업로드 허용
+    match /curriculum/{allPaths=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
     // 기타 파일은 기본 거부
     match /{allPaths=**} {
       allow read: if true;

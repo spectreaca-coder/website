@@ -263,7 +263,7 @@ const CurriculumV2 = () => {
 
             {/* Editor Modal */}
             {isEditorOpen && (
-                <Modal onClose={() => setIsEditorOpen(false)}>
+                <Modal onClose={() => setIsEditorOpen(false)} disableOutsideClick={true}>
                     <form onSubmit={handleSave} className="curriculum-editor-form">
                         <h2>{editingItem ? '항목 수정' : '새 항목 추가'}</h2>
 

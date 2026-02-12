@@ -242,7 +242,7 @@ const InstructorsV2 = () => {
 
             {/* 에디터 모달 */}
             {isEditorOpen && (
-                <Modal onClose={() => setIsEditorOpen(false)}>
+                <Modal onClose={() => setIsEditorOpen(false)} disableOutsideClick={true}>
                     <form onSubmit={handleSave} className="editor-form">
                         <h2>{editingInstructor ? '강사 정보 수정' : '새 강사 추가'}</h2>
 
