@@ -31,7 +31,6 @@ const FooterV2 = () => {
                     <div className="footer-v2-address">
                         <p>SEOUL, KOREA</p>
                         <p>DAECHI-DONG, GANGNAM-GU</p>
-                        <p>TEL: 02-1234-5678</p>
                     </div>
                     <div className="footer-v2-copyright">
                         &copy; 2025 스펙터 아카데미. ALL RIGHTS RESERVED.

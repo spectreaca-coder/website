@@ -1,4 +1,4 @@
-/* Curriculum V2 - 반응형 매거진 + 슬라이더 */
+/* Curriculum V2 - Accordion Layout */
 .curriculum-v2-page {
     width: 100%;
     min-height: 100vh;
@@ -19,8 +19,17 @@
 .curriculum-v2-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     margin-bottom: 60px;
+}
+
+/* ========================================
+   Page Title Block (shared pattern)
+   ======================================== */
+.page-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .curriculum-v2-title {
@@ -31,248 +40,225 @@
     text-transform: uppercase;
     letter-spacing: -1px;
     color: #000;
+    line-height: 1.1;
 }
 
-/* ========================================
-   PC: 매거진 스타일
-   ======================================== */
-.curriculum-magazine {
-    display: block;
+.page-title-sub {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: #999;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
-.curriculum-section {
-    margin-bottom: 80px;
-    padding-bottom: 80px;
-    border-bottom: 1.5px solid #000;
-}
-
-.curriculum-section:last-child {
-    border-bottom: none;
-}
-
-.curriculum-section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-    margin-bottom: 30px;
+.page-title-line {
+    width: 60px;
+    height: 3px;
+    background: #000;
+    margin-top: 8px;
     position: relative;
 }
 
-.curriculum-week {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #666;
-    text-transform: uppercase;
-    min-width: 80px;
-}
-
-.curriculum-section-title {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 2.5rem;
-    font-weight: 900;
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-}
-
-.curriculum-admin-actions {
+.page-title-line::after {
+    content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    gap: 10px;
+    bottom: -5px;
+    left: 0;
+    width: 30px;
+    height: 1px;
+    background: #ccc;
 }
 
-.curriculum-admin-actions button {
+/* ========================================
+   Accordion
+   ======================================== */
+.curriculum-accordion {
+    border-top: 2px solid #000;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #ddd;
+    transition: border-color 0.3s;
+}
+
+.accordion-item.open {
+    border-bottom: 2px solid #000;
+}
+
+.accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    gap: 20px;
+}
+
+.accordion-header:hover {
+    background-color: #fafafa;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.accordion-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+}
+
+.accordion-num {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.accordion-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.accordion-header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.accordion-thumb {
+    width: 60px;
+    height: 40px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.accordion-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.accordion-admin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.accordion-admin-actions button {
     background: none;
     border: 1px solid #000;
-    padding: 5px 10px;
-    font-size: 0.8rem;
+    padding: 4px 8px;
+    font-size: 0.75rem;
     cursor: pointer;
     font-family: 'Courier New', Courier, monospace;
 }
 
-.curriculum-admin-actions button:hover {
+.accordion-admin-actions button:hover {
     background: #000;
     color: #fff;
 }
 
-.curriculum-admin-actions button.delete {
+.accordion-admin-actions button.delete {
     border-color: #c00;
     color: #c00;
 }
 
-.curriculum-admin-actions button.delete:hover {
+.accordion-admin-actions button.delete:hover {
     background: #c00;
     color: #fff;
 }
 
-.curriculum-section-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: start;
+.accordion-toggle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    width: 30px;
+    text-align: center;
+    flex-shrink: 0;
 }
 
-.curriculum-media {
-    width: 100%;
+/* Accordion Body */
+.accordion-body {
+    padding: 0 0 30px 0;
+    animation: accordionSlide 0.3s ease-out;
+}
+
+@keyframes accordionSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.accordion-media {
+    margin-bottom: 20px;
     background: #f5f5f5;
-    border: 1.5px solid #000;
 }
 
-.curriculum-media img {
+.accordion-media img {
     width: 100%;
+    max-height: 500px;
+    object-fit: contain;
     display: block;
 }
 
-.curriculum-media iframe {
-    width: 100%;
-    aspect-ratio: 16/9;
-    display: block;
-}
-
-.curriculum-text {
-    padding: 20px 0;
-}
-
-.curriculum-description {
-    font-size: 1.1rem;
+.accordion-text {
     line-height: 1.8;
-    margin-bottom: 30px;
+    font-size: 1rem;
     color: #333;
 }
 
-.curriculum-details {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.accordion-text img {
+    max-width: 100%;
+    height: auto;
 }
 
-.curriculum-details li {
-    padding: 15px 0;
-    border-bottom: 1px dashed #ccc;
+/* ========================================
+   Admin Add Button
+   ======================================== */
+.admin-add-btn {
+    padding: 12px 24px;
+    background: #000;
+    color: #fff;
+    border: 1.5px solid #000;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.admin-add-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+.loading-message {
+    text-align: center;
+    padding: 40px;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
-    position: relative;
-    padding-left: 30px;
-}
-
-.curriculum-details li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
     color: #666;
 }
 
-.curriculum-details li:last-child {
-    border-bottom: none;
-}
-
 /* ========================================
-   Mobile: 카드 슬라이더
-   ======================================== */
-.curriculum-slider {
-    display: none;
-}
-
-.slider-tabs {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    margin-bottom: 30px;
-    -webkit-overflow-scrolling: touch;
-}
-
-.slider-tab {
-    flex-shrink: 0;
-    padding: 10px 20px;
-    border: 1.5px solid #000;
-    background: #fff;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.slider-tab.active {
-    background: #000;
-    color: #fff;
-}
-
-.slider-content {
-    border: 1.5px solid #000;
-    padding: 25px;
-}
-
-.slider-title {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 1.5rem;
-    font-weight: 900;
-    margin: 0 0 20px 0;
-    text-transform: uppercase;
-}
-
-.slider-media {
-    margin-bottom: 20px;
-    background: #f5f5f5;
-}
-
-.slider-media img,
-.slider-media iframe {
-    width: 100%;
-    display: block;
-}
-
-.slider-media iframe {
-    aspect-ratio: 16/9;
-}
-
-.slider-description {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-.slider-details {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.slider-details li {
-    padding: 10px 0;
-    border-bottom: 1px dotted #ccc;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9rem;
-}
-
-.slider-admin-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px dashed #ccc;
-}
-
-.slider-admin-actions button {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #000;
-    background: #fff;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.slider-admin-actions button.delete {
-    border-color: #c00;
-    color: #c00;
-}
-
-/* ========================================
-   Editor Form
+   Editor Form (unchanged)
    ======================================== */
 .curriculum-editor-form {
     display: flex;
@@ -284,12 +270,6 @@
     margin: 0 0 10px 0;
     font-size: 1.5rem;
     text-align: center;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 100px;
-    gap: 15px;
 }
 
 .curriculum-editor-form .form-group {
@@ -319,30 +299,15 @@
     background: #f9f9f9;
 }
 
-/* Loading */
-.loading-message {
-    text-align: center;
-    padding: 60px;
-    font-family: 'Courier New', Courier, monospace;
+.file-info {
+    font-size: 0.85rem;
     color: #666;
+    margin-top: 5px;
 }
 
-/* Admin Button */
-.admin-add-btn {
-    padding: 12px 24px;
-    background: #000;
-    color: #fff;
-    border: 1.5px solid #000;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.admin-add-btn:hover {
-    background: #fff;
+.file-info a {
     color: #000;
+    text-decoration: underline;
 }
 
 .form-actions {
@@ -385,14 +350,6 @@
    Responsive
    ======================================== */
 @media (max-width: 768px) {
-    .curriculum-magazine {
-        display: none;
-    }
-
-    .curriculum-slider {
-        display: block;
-    }
-
     .curriculum-v2-header {
         flex-direction: column;
         gap: 20px;
@@ -402,9 +359,23 @@
     .curriculum-v2-title {
         font-size: 2rem;
     }
+
+    .accordion-title {
+        font-size: 1rem;
+    }
+
+    .accordion-thumb {
+        display: none;
+    }
+
+    .accordion-header-left {
+        gap: 12px;
+    }
 }
 
-/* Confirm Modal */
+/* ========================================
+   Confirm Modal
+   ======================================== */
 .confirm-modal-overlay {
     position: fixed;
     top: 0;

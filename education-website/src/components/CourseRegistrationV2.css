@@ -1,4 +1,4 @@
-/* Course Registration V2 - Unified Style (공지사항 기준 스타일 토큰 적용) */
+/* Course Registration V2 - Accordion Layout */
 .cr-v2-page {
     width: 100%;
     min-height: 100vh;
@@ -16,72 +16,198 @@
     padding: 0 20px;
 }
 
+.cr-v2-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+}
+
+/* Page Title Block */
+.page-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .cr-v2-title {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 900;
     font-size: 3rem;
-    margin: 0 0 40px 0;
+    margin: 0;
     text-align: left;
     text-transform: uppercase;
     letter-spacing: -1px;
     color: #000;
+    line-height: 1.1;
+}
+
+.page-title-sub {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: #999;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.page-title-line {
+    width: 60px;
+    height: 3px;
+    background: #000;
+    margin-top: 8px;
+    position: relative;
+}
+
+.page-title-line::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 30px;
+    height: 1px;
+    background: #ccc;
 }
 
 .cr-v2-admin-actions {
-    margin-bottom: 30px;
+    margin-bottom: 0;
 }
 
-/* Grid Layout - 유지 */
-.cr-v2-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 30px;
+/* ========================================
+   Accordion
+   ======================================== */
+.cr-v2-accordion {
+    border-top: 2px solid #000;
 }
 
-/* Card Style - 공지사항 스타일 토큰 적용 */
-.cr-card-v2 {
-    border: 1.5px solid #000;
-    padding: 25px;
-    background: #fff;
-    transition: transform 0.2s, box-shadow 0.2s;
+.accordion-item {
+    border-bottom: 1px solid #ddd;
+    transition: border-color 0.3s;
 }
 
-.cr-card-v2:hover {
-    transform: translate(-3px, -3px);
-    box-shadow: 3px 3px 0 #000;
+.accordion-item.open {
+    border-bottom: 2px solid #000;
 }
 
-.cr-card-header {
+.accordion-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15px;
-    border-bottom: 1.5px solid #000;
-    padding-bottom: 10px;
-}
-
-.cr-card-title {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0;
-    text-transform: uppercase;
-    color: #000;
-}
-
-.cr-card-actions button {
-    background: none;
-    border: none;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.8rem;
+    align-items: center;
+    padding: 20px 0;
     cursor: pointer;
-    text-decoration: underline;
-    margin-left: 10px;
-    color: #000;
+    transition: background-color 0.2s;
+    gap: 20px;
 }
 
-.cr-card-actions button.delete {
+.accordion-header:hover {
+    background-color: #fafafa;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.accordion-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+}
+
+.accordion-num {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.accordion-name-group {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    min-width: 0;
+}
+
+.accordion-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.accordion-subject {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: #888;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.accordion-header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.accordion-admin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.accordion-admin-actions button {
+    background: none;
+    border: 1px solid #000;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.accordion-admin-actions button:hover {
+    background: #000;
+    color: #fff;
+}
+
+.accordion-admin-actions button.delete {
+    border-color: #c00;
     color: #c00;
+}
+
+.accordion-admin-actions button.delete:hover {
+    background: #c00;
+    color: #fff;
+}
+
+.accordion-toggle {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    width: 30px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Accordion Body */
+.accordion-body {
+    padding: 0 0 30px 0;
+    animation: accordionSlide 0.3s ease-out;
+}
+
+@keyframes accordionSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .cr-card-desc {
@@ -89,7 +215,6 @@
     line-height: 1.5;
     margin-bottom: 20px;
     color: #333;
-    min-height: 50px;
 }
 
 .cr-card-details {
@@ -122,7 +247,7 @@
     color: #000;
 }
 
-/* Buttons - 공지사항 스타일 */
+/* Buttons */
 .cr-v2-btn {
     display: inline-block;
     padding: 12px 24px;
@@ -163,7 +288,6 @@
 /* Loading & Empty States */
 .cr-v2-loading,
 .cr-v2-empty {
-    grid-column: 1 / -1;
     text-align: center;
     padding: 40px;
     font-family: 'Courier New', Courier, monospace;
@@ -207,12 +331,23 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .cr-v2-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+    }
+
     .cr-v2-title {
         font-size: 2rem;
     }
 
-    .cr-v2-grid {
-        grid-template-columns: 1fr;
+    .accordion-title {
+        font-size: 1rem;
+    }
+
+    .accordion-name-group {
+        flex-direction: column;
+        gap: 2px;
     }
 }
 

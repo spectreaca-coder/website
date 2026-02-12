@@ -12,6 +12,7 @@ const InstructorsV2 = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [expandedInstructor, setExpandedInstructor] = useState(null);
     const [editingInstructor, setEditingInstructor] = useState(null);
     const [messageModal, setMessageModal] = useState({ show: false, message: '', type: 'success' }); // 'success' or 'error'
     const [isImagePickModalOpen, setIsImagePickModalOpen] = useState(false);
@@ -190,9 +191,12 @@ const InstructorsV2 = () => {
 
             <main className="instructors-main">
                 <div className="instructors-content">
-                    {/* ... (Header & Buttons remain same) ... */}
                     <div className="instructors-header">
-                        <h1 className="instructors-title">강사진</h1>
+                        <div className="page-title-block">
+                            <h1 className="instructors-title">강사진</h1>
+                            <span className="page-title-sub">OUR INSTRUCTORS</span>
+                            <div className="page-title-line"></div>
+                        </div>
                         {isAdmin && (
                             <button className="add-btn" onClick={() => openEditor()}>
                                 + 강사 추가
@@ -205,34 +209,62 @@ const InstructorsV2 = () => {
                     ) : instructors.length === 0 ? (
                         <div className="empty">등록된 강사가 없습니다.</div>
                     ) : (
-                        <div className="instructors-grid">
-                            {instructors.map((instructor) => (
-                                <div key={instructor.id} className="instructor-card">
-                                    <div className="card-image">
-                                        {instructor.imageUrl ? (
-                                            <img src={instructor.imageUrl} alt={instructor.name} />
-                                        ) : (
-                                            <div className="placeholder">{instructor.name?.charAt(0) || '?'}</div>
-                                        )}
-                                    </div>
-                                    <div className="card-info">
-                                        <h2 className="card-name">{instructor.name}</h2>
-                                        <p className="card-subject">{instructor.subject}</p>
-                                        <p className="card-bio">{instructor.bio}</p>
-                                        {instructor.tags && instructor.tags.length > 0 && (
-                                            <div className="card-tags">
-                                                {instructor.tags.map((tag, i) => (
-                                                    <span key={i} className="tag">#{tag}</span>
-                                                ))}
+                        <div className="instructors-accordion">
+                            {instructors.map((instructor, index) => (
+                                <div
+                                    key={instructor.id}
+                                    className={`accordion-item ${expandedInstructor === instructor.id ? 'open' : ''}`}
+                                >
+                                    <div
+                                        className="accordion-header"
+                                        onClick={() => setExpandedInstructor(expandedInstructor === instructor.id ? null : instructor.id)}
+                                    >
+                                        <div className="accordion-header-left">
+                                            <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
+                                            <div className="accordion-name-group">
+                                                <h2 className="accordion-title">{instructor.name}</h2>
+                                                <span className="accordion-subject">{instructor.subject}</span>
                                             </div>
-                                        )}
-                                        {isAdmin && (
-                                            <div className="card-actions">
-                                                <button onClick={() => openEditor(instructor)}>수정</button>
-                                                <button className="delete" onClick={() => showDeleteConfirmModal(instructor.id)}>삭제</button>
-                                            </div>
-                                        )}
+                                        </div>
+                                        <div className="accordion-header-right">
+                                            {instructor.imageUrl && expandedInstructor !== instructor.id && (
+                                                <div className="accordion-thumb">
+                                                    <img src={instructor.imageUrl} alt={instructor.name} />
+                                                </div>
+                                            )}
+                                            {isAdmin && (
+                                                <div className="accordion-admin-actions">
+                                                    <button onClick={(e) => { e.stopPropagation(); openEditor(instructor); }}>수정</button>
+                                                    <button className="delete" onClick={(e) => { e.stopPropagation(); showDeleteConfirmModal(instructor.id); }}>삭제</button>
+                                                </div>
+                                            )}
+                                            <span className="accordion-toggle">
+                                                {expandedInstructor === instructor.id ? '−' : '+'}
+                                            </span>
+                                        </div>
                                     </div>
+
+                                    {expandedInstructor === instructor.id && (
+                                        <div className="accordion-body">
+                                            <div className="instructor-detail">
+                                                {instructor.imageUrl && (
+                                                    <div className="instructor-detail-image">
+                                                        <img src={instructor.imageUrl} alt={instructor.name} />
+                                                    </div>
+                                                )}
+                                                <div className="instructor-detail-info">
+                                                    <p className="instructor-detail-bio">{instructor.bio}</p>
+                                                    {instructor.tags && instructor.tags.length > 0 && (
+                                                        <div className="instructor-detail-tags">
+                                                            {instructor.tags.map((tag, i) => (
+                                                                <span key={i} className="tag">#{tag}</span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>

@@ -219,7 +219,11 @@ const NoticesV2 = () => {
             <main className="notices-v2-main">
                 <div className="notices-v2-content">
                     <div className="notices-v2-header">
-                        <h1 className="notices-v2-title reveal-on-scroll">공지사항</h1>
+                        <div className="page-title-block">
+                            <h1 className="notices-v2-title reveal-on-scroll">공지사항</h1>
+                            <span className="page-title-sub">NOTICE BOARD</span>
+                            <div className="page-title-line"></div>
+                        </div>
                         {isAdmin && (
                             <button className="admin-add-btn" onClick={() => openEditor()}>
                                 + 공지 추가

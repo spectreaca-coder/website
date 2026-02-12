@@ -19,8 +19,15 @@
 .notices-v2-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+    align-items: flex-end;
+    margin-bottom: 60px;
+}
+
+/* Page Title Block */
+.page-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .notices-v2-title {
@@ -31,6 +38,33 @@
     text-transform: uppercase;
     letter-spacing: -1px;
     color: #000;
+    line-height: 1.1;
+}
+
+.page-title-sub {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    color: #999;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.page-title-line {
+    width: 60px;
+    height: 3px;
+    background: #000;
+    margin-top: 8px;
+    position: relative;
+}
+
+.page-title-line::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 30px;
+    height: 1px;
+    background: #ccc;
 }
 
 /* List */

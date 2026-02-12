@@ -216,7 +216,11 @@ const CurriculumV2 = () => {
             <main className="curriculum-v2-main">
                 <div className="curriculum-v2-content">
                     <div className="curriculum-v2-header">
-                        <h1 className="curriculum-v2-title reveal-on-scroll">수업소개</h1>
+                        <div className="page-title-block">
+                            <h1 className="curriculum-v2-title reveal-on-scroll">수업소개</h1>
+                            <span className="page-title-sub">CURRICULUM</span>
+                            <div className="page-title-line"></div>
+                        </div>
                         {isAdmin && (
                             <button className="admin-add-btn" onClick={() => openEditor()}>
                                 + 항목 추가
@@ -227,77 +231,52 @@ const CurriculumV2 = () => {
                     {isLoading ? (
                         <div className="loading-message">Loading...</div>
                     ) : (
-                        <>
-                            {/* PC: 매거진 스타일 */}
-                            <div className="curriculum-magazine">
-                                {curriculum.map((item, index) => (
-                                    <section key={item.id} className="curriculum-section reveal-on-scroll">
-                                        <div className="curriculum-section-header">
-                                            {/* Week 표시 제거 */}
-                                            <h2 className="curriculum-section-title">{item.title}</h2>
-                                            {isAdmin && (
-                                                <div className="curriculum-admin-actions">
-                                                    <button onClick={() => openEditor(item)}>수정</button>
-                                                    <button onClick={() => showDeleteConfirm(item.id)} className="delete">삭제</button>
-                                                </div>
-                                            )}
+                        <div className="curriculum-accordion">
+                            {curriculum.map((item, index) => (
+                                <div
+                                    key={item.id}
+                                    className={`accordion-item reveal-on-scroll ${activeWeek === index ? 'open' : ''}`}
+                                    style={{ transitionDelay: `${index * 0.05}s` }}
+                                >
+                                    <div
+                                        className="accordion-header"
+                                        onClick={() => setActiveWeek(activeWeek === index ? -1 : index)}
+                                    >
+                                        <div className="accordion-header-left">
+                                            <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
+                                            <h2 className="accordion-title">{item.title}</h2>
                                         </div>
-
-                                        <div className="curriculum-section-content">
-                                            {item.mediaUrl && (
-                                                <div className="curriculum-media">
-                                                    {/* mediaUrl은 이제 대표 이미지입니다 */}
+                                        <div className="accordion-header-right">
+                                            {item.mediaUrl && activeWeek !== index && (
+                                                <div className="accordion-thumb">
                                                     <img src={item.mediaUrl} alt={item.title} />
                                                 </div>
                                             )}
-
-                                            <div className="curriculum-text">
-                                                <div className="curriculum-description html-content" dangerouslySetInnerHTML={{ __html: item.content }}></div>
-                                                {/* Details 목록 제거 */}
-                                            </div>
+                                            {isAdmin && (
+                                                <div className="accordion-admin-actions">
+                                                    <button onClick={(e) => { e.stopPropagation(); openEditor(item); }}>수정</button>
+                                                    <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(item.id); }} className="delete">삭제</button>
+                                                </div>
+                                            )}
+                                            <span className="accordion-toggle">
+                                                {activeWeek === index ? '−' : '+'}
+                                            </span>
                                         </div>
-                                    </section>
-                                ))}
-                            </div>
-
-                            {/* Mobile: 카드 슬라이더 */}
-                            <div className="curriculum-slider">
-                                <div className="slider-tabs">
-                                    {curriculum.map((item, index) => (
-                                        <button
-                                            key={item.id}
-                                            className={`slider-tab ${activeWeek === index ? 'active' : ''}`}
-                                            onClick={() => setActiveWeek(index)}
-                                        >
-                                            {item.title} {/* Week 대신 Title 표시 */}
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {curriculum[activeWeek] && (
-                                    <div className="slider-content">
-                                        <h2 className="slider-title">{curriculum[activeWeek].title}</h2>
-
-                                        {curriculum[activeWeek].mediaUrl && (
-                                            <div className="slider-media">
-                                                {/* 모바일에서도 대표 이미지로 처리 */}
-                                                <img src={curriculum[activeWeek].mediaUrl} alt={curriculum[activeWeek].title} />
-                                            </div>
-                                        )}
-
-                                        <div className="slider-description html-content" dangerouslySetInnerHTML={{ __html: curriculum[activeWeek].content }}></div>
-                                        {/* Details 목록 제거 */}
-
-                                        {isAdmin && (
-                                            <div className="slider-admin-actions">
-                                                <button onClick={() => openEditor(curriculum[activeWeek])}>수정</button>
-                                                <button onClick={() => showDeleteConfirm(curriculum[activeWeek].id)} className="delete">삭제</button>
-                                            </div>
-                                        )}
                                     </div>
-                                )}
-                            </div>
-                        </>
+
+                                    {activeWeek === index && (
+                                        <div className="accordion-body">
+                                            {item.mediaUrl && (
+                                                <div className="accordion-media">
+                                                    <img src={item.mediaUrl} alt={item.title} />
+                                                </div>
+                                            )}
+                                            <div className="accordion-text html-content" dangerouslySetInnerHTML={{ __html: item.content }}></div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </div>
             </main>

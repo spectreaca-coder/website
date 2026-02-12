@@ -253,51 +253,80 @@ const CourseRegistrationV2 = () => {
 
             <main className="cr-v2-main">
                 <div className="cr-v2-content">
-                    <h1 className="cr-v2-title reveal-on-scroll">수강신청</h1>
-
-                    {isAdmin && (
-                        <div className="cr-v2-admin-actions">
-                            <button onClick={() => { setEditingCourse(null); setIsCreateModalVisible(true); }} className="cr-v2-btn primary">
-                                + 수업 개설
-                            </button>
+                    <div className="cr-v2-header">
+                        <div className="page-title-block">
+                            <h1 className="cr-v2-title reveal-on-scroll">수강신청</h1>
+                            <span className="page-title-sub">COURSE REGISTRATION</span>
+                            <div className="page-title-line"></div>
                         </div>
-                    )}
 
-                    <div className="cr-v2-grid">
+                        {isAdmin && (
+                            <div className="cr-v2-admin-actions">
+                                <button onClick={() => { setEditingCourse(null); setIsCreateModalVisible(true); }} className="cr-v2-btn primary">
+                                    + 수업 개설
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="cr-v2-accordion">
                         {isLoading ? (
                             <div className="cr-v2-loading">수업 목록을 불러오는 중...</div>
                         ) : courses.length > 0 ? (
                             courses.map((course, index) => (
-                                <div key={course.id} className="cr-card-v2 reveal-on-scroll" style={{ transitionDelay: `${index * 0.1}s` }}>
-                                    <div className="cr-card-header">
-                                        <h3 className="cr-card-title">{course.title}</h3>
-                                        {isAdmin && (
-                                            <div className="cr-card-actions">
-                                                <button onClick={() => handleEditClick(course)}>수정</button>
-                                                <button onClick={() => showDeleteConfirm(course.id)} className="delete">삭제</button>
+                                <div
+                                    key={course.id}
+                                    className={`accordion-item reveal-on-scroll ${selectedCourse?.id === course.id && !isApplyModalVisible ? 'open' : ''}`}
+                                    style={{ transitionDelay: `${index * 0.05}s` }}
+                                >
+                                    <div
+                                        className="accordion-header"
+                                        onClick={() => setSelectedCourse(selectedCourse?.id === course.id && !isApplyModalVisible ? null : course)}
+                                    >
+                                        <div className="accordion-header-left">
+                                            <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
+                                            <div className="accordion-name-group">
+                                                <h2 className="accordion-title">{course.title}</h2>
+                                                <span className="accordion-subject">{course.day} {course.time}</span>
                                             </div>
-                                        )}
+                                        </div>
+                                        <div className="accordion-header-right">
+                                            {isAdmin && (
+                                                <div className="accordion-admin-actions">
+                                                    <button onClick={(e) => { e.stopPropagation(); handleEditClick(course); }}>수정</button>
+                                                    <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(course.id); }} className="delete">삭제</button>
+                                                </div>
+                                            )}
+                                            <span className="accordion-toggle">
+                                                {selectedCourse?.id === course.id && !isApplyModalVisible ? '−' : '+'}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <p className="cr-card-desc">{course.description}</p>
-                                    <div className="cr-card-details">
-                                        <div className="cr-detail-row">
-                                            <span className="label">강사</span>
-                                            <span className="value">{course.teacher}</span>
-                                        </div>
-                                        <div className="cr-detail-row">
-                                            <span className="label">시간표</span>
-                                            <span className="value">{course.day} {course.time}</span>
-                                        </div>
-                                        {isAdmin && (
-                                            <div className="cr-detail-row">
-                                                <span className="label">정원</span>
-                                                <span className="value">{course.capacity || 20}</span>
+
+                                    {selectedCourse?.id === course.id && !isApplyModalVisible && (
+                                        <div className="accordion-body">
+                                            <p className="cr-card-desc">{course.description}</p>
+                                            <div className="cr-card-details">
+                                                <div className="cr-detail-row">
+                                                    <span className="label">강사</span>
+                                                    <span className="value">{course.teacher}</span>
+                                                </div>
+                                                <div className="cr-detail-row">
+                                                    <span className="label">시간표</span>
+                                                    <span className="value">{course.day} {course.time}</span>
+                                                </div>
+                                                {isAdmin && (
+                                                    <div className="cr-detail-row">
+                                                        <span className="label">정원</span>
+                                                        <span className="value">{course.capacity || 20}</span>
+                                                    </div>
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                    <button className="cr-v2-btn secondary full-width" onClick={() => handleApplyClick(course)}>
-                                        신청하기
-                                    </button>
+                                            <button className="cr-v2-btn secondary full-width" onClick={() => handleApplyClick(course)}>
+                                                신청하기
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         ) : (
