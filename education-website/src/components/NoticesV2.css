@@ -221,21 +221,36 @@
 .form-actions {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
     margin-top: 10px;
 }
 
 .form-actions button {
+    flex: 1;
     padding: 12px 24px;
     border: 1.5px solid #000;
     font-weight: bold;
     cursor: pointer;
-    background: #fff;
+    font-size: 0.95rem;
+    text-align: center;
+    transition: all 0.2s;
 }
 
-.form-actions button.primary {
+.form-actions .cancel-btn {
+    background: #fff;
+    color: #000;
+}
+
+.form-actions .cancel-btn:hover {
+    background: #f0f0f0;
+}
+
+.form-actions .save-btn {
     background: #000;
     color: #fff;
+}
+
+.form-actions .save-btn:hover {
+    background: #333;
 }
 
 /* Responsive */

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import './NoticesV2.css';
 import FooterV2 from './FooterV2';
 import useScrollReveal from '../hooks/useScrollReveal';
@@ -8,8 +8,13 @@ import { db, storage } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+// Register custom font sizes
+const Size = Quill.import('attributors/style/size');
+Size.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'];
+Quill.register(Size, true);
 
 const NoticesV2 = () => {
     const [notices, setNotices] = useState([]);
@@ -30,22 +35,58 @@ const NoticesV2 = () => {
         mediaFile: null
     });
 
-    // ReactQuill Modules
-    const modules = {
-        toolbar: [
-            [{ 'header': [1, 2, false] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image', 'video'], // Added video support
-            ['clean']
-        ],
+    // Quill ref for custom image handler
+    const quillRef = useRef(null);
+
+    // Custom image handler - uploads to Firebase Storage instead of base64
+    const imageHandler = () => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (!file) return;
+
+            try {
+                const storageRef = ref(storage, `notices/editor/${Date.now()}_${file.name}`);
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+
+                const quill = quillRef.current?.getEditor();
+                if (quill) {
+                    const range = quill.getSelection(true);
+                    quill.insertEmbed(range.index, 'image', url);
+                }
+            } catch (error) {
+                console.error('Image upload failed:', error);
+                alert('이미지 업로드에 실패했습니다.');
+            }
+        };
     };
 
+    // ReactQuill Modules - must use useMemo to prevent re-render loops
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'] }],
+                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                ['link', 'image', 'video'],
+                ['clean']
+            ],
+            handlers: {
+                image: imageHandler
+            }
+        },
+    }), []);
+
     const formats = [
-        'header',
+        'size',
         'bold', 'italic', 'underline', 'strike', 'blockquote',
         'list', 'bullet', 'indent',
-        'link', 'image', 'video' // Added video format
+        'link', 'image', 'video'
     ];
 
     // 관리자 상태 확인
@@ -221,11 +262,9 @@ const NoticesV2 = () => {
                                         <div className="notices-v2-details">
                                             {notice.mediaUrl && (
                                                 <div className="notices-media">
-                                                    {/* mediaUrl은 이제 항상 대표 이미지로 간주 */}
                                                     <img src={notice.mediaUrl} alt={notice.title} />
                                                 </div>
                                             )}
-                                            {/* Render HTML Content */}
                                             <div className="notices-content html-content" dangerouslySetInnerHTML={{ __html: notice.content }}></div>
                                         </div>
                                     )}
@@ -238,7 +277,7 @@ const NoticesV2 = () => {
 
             {/* Editor Modal */}
             {isEditorOpen && (
-                <Modal onClose={() => setIsEditorOpen(false)}>
+                <Modal onClose={() => setIsEditorOpen(false)} disableOutsideClick={true}>
                     <form onSubmit={handleSave} className="notices-editor-form">
                         <h2>{editingNotice ? '공지사항 수정' : '새 공지사항'}</h2>
 
@@ -255,8 +294,8 @@ const NoticesV2 = () => {
 
                         <div className="form-group">
                             <label>내용</label>
-                            {/* React Quill Editor */}
                             <ReactQuill
+                                ref={quillRef}
                                 theme="snow"
                                 modules={modules}
                                 formats={formats}
