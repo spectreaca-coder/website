@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import './CurriculumV2.css';
 import FooterV2 from './FooterV2';
 import useScrollReveal from '../hooks/useScrollReveal';
@@ -36,16 +36,52 @@ const CurriculumV2 = () => {
         order: 0
     });
 
-    // ReactQuill Modules
-    const modules = {
-        toolbar: [
-            [{ 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image', 'video'],
-            ['clean']
-        ],
+    // Quill ref for custom image handler
+    const quillRef = useRef(null);
+
+    // Custom image handler - uploads to Firebase Storage instead of base64
+    const imageHandler = () => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (!file) return;
+
+            try {
+                const storageRef = ref(storage, `curriculum/editor/${Date.now()}_${file.name}`);
+                await uploadBytes(storageRef, file);
+                const url = await getDownloadURL(storageRef);
+
+                const quill = quillRef.current?.getEditor();
+                if (quill) {
+                    const range = quill.getSelection(true);
+                    quill.insertEmbed(range.index, 'image', url);
+                }
+            } catch (error) {
+                console.error('Image upload failed:', error);
+                alert('이미지 업로드에 실패했습니다.');
+            }
+        };
     };
+
+    // ReactQuill Modules - must use useMemo to prevent re-render loops
+    const modules = useMemo(() => ({
+        toolbar: {
+            container: [
+                [{ 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'] }],
+                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                ['link', 'image', 'video'],
+                ['clean']
+            ],
+            handlers: {
+                image: imageHandler
+            }
+        },
+    }), []);
 
     const formats = [
         'size',
@@ -296,6 +332,7 @@ const CurriculumV2 = () => {
                             <label>설명</label>
                             {/* React Quill Editor */}
                             <ReactQuill
+                                ref={quillRef}
                                 theme="snow"
                                 modules={modules}
                                 formats={formats}
