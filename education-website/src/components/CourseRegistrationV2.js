@@ -283,9 +283,18 @@ const CourseRegistrationV2 = () => {
                     </div>
 
                     {/* Tag Filter Buttons */}
+                    {/* Tag Filter Buttons */}
                     {!isLoading && courses.length > 0 && (() => {
                         const allTags = [...new Set(courses.flatMap(c => c.tags || []))];
-                        if (allTags.length === 0) return null;
+                        if (allTags.length === 0) {
+                            return (
+                                <div className="tag-filter-bar">
+                                    <span style={{ fontSize: '0.85rem', color: '#999', padding: '8px 0', fontFamily: 'Courier New' }}>
+                                        * 등록된 태그가 없습니다. 강의를 수정하여 태그를 추가하세요.
+                                    </span>
+                                </div>
+                            );
+                        }
                         return (
                             <div className="tag-filter-bar">
                                 <button
