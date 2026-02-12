@@ -7,6 +7,12 @@ service firebase.storage {
       allow write: if true;
     }
     
+    // instructors 폴더 - 강사 프로필 사진 업로드 허용
+    match /instructors/{allPaths=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
     // 기타 파일은 기본 거부
     match /{allPaths=**} {
       allow read: if true;
