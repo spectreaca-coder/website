@@ -348,11 +348,11 @@
 .form-actions {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
     margin-top: 10px;
 }
 
 .form-actions button {
+    flex: 1;
     padding: 12px 30px;
     border: 1.5px solid #000;
     font-weight: bold;
@@ -360,6 +360,7 @@
     font-size: 0.95rem;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     transition: all 0.2s;
+    text-align: center;
 }
 
 .form-actions .cancel-btn {

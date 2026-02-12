@@ -249,16 +249,19 @@
 .form-buttons {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
     margin-top: 10px;
 }
 
 .form-buttons button {
+    flex: 1;
     padding: 12px 24px;
     border: 2px solid #000;
     font-weight: bold;
     cursor: pointer;
     background: #fff;
+    font-size: 0.95rem;
+    text-align: center;
+    transition: all 0.2s;
 }
 
 .form-buttons button.primary {
