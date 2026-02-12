@@ -19,6 +19,7 @@ const InstructorsV2 = () => {
     const [isImagePickModalOpen, setIsImagePickModalOpen] = useState(false);
 
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
+    const [isSaving, setIsSaving] = useState(false);
     const fileInputRef = useRef(null);
 
     // Helper to replace alert
@@ -128,6 +129,7 @@ const InstructorsV2 = () => {
     // 저장
     const handleSave = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
         let imageUrl = formData.imageUrl;
 
         if (formData.imageFile) {
@@ -137,6 +139,7 @@ const InstructorsV2 = () => {
                 await uploadBytes(storageRef, formData.imageFile);
                 imageUrl = await getDownloadURL(storageRef);
             } catch (error) {
+                setIsSaving(false);
                 showMessage('이미지 업로드에 실패했습니다.', 'error');
                 return;
             }
@@ -165,6 +168,8 @@ const InstructorsV2 = () => {
         } catch (error) {
             console.error('저장 실패:', error);
             showMessage('저장에 실패했습니다.', 'error');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -176,12 +181,15 @@ const InstructorsV2 = () => {
     const confirmDelete = async () => {
         const id = deleteConfirm.id;
         setDeleteConfirm({ show: false, id: null });
+        setIsSaving(true);
         try {
             await deleteDoc(doc(db, 'instructors', id));
             showMessage('강사가 삭제되었습니다.');
         } catch (error) {
             console.error('삭제 실패:', error);
             showMessage('삭제에 실패했습니다.', 'error');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -189,6 +197,14 @@ const InstructorsV2 = () => {
         <div className="instructors-page">
             <div className="noise-overlay-v2"></div>
             <HeaderV2 />
+
+            {/* Saving overlay */}
+            {isSaving && (
+                <div className="saving-overlay">
+                    <div className="saving-bar"><div className="saving-bar-inner"></div></div>
+                    <span className="saving-text">저장 중...</span>
+                </div>
+            )}
 
             <main className="instructors-main">
                 <div className="instructors-content">
@@ -235,60 +251,39 @@ const InstructorsV2 = () => {
                     ) : instructors.length === 0 ? (
                         <div className="empty">등록된 강사가 없습니다.</div>
                     ) : (
-                        <div className="instructors-accordion">
+                        <div className="instructors-card-grid">
                             {instructors
                                 .filter(instructor => !activeTag || (instructor.tags && instructor.tags.includes(activeTag)))
                                 .map((instructor, index) => (
                                     <div
                                         key={instructor.id}
-                                        className={`accordion-item ${expandedInstructor === instructor.id ? 'open' : ''}`}
+                                        className="instructor-card reveal-on-scroll"
+                                        style={{ transitionDelay: `${index * 0.08}s` }}
                                     >
-                                        <div
-                                            className="accordion-header"
-                                            onClick={() => setExpandedInstructor(expandedInstructor === instructor.id ? null : instructor.id)}
-                                        >
-                                            <div className="accordion-header-left">
-                                                <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
-                                                <div className="accordion-name-group">
-                                                    <h2 className="accordion-title">{instructor.name}</h2>
-                                                    <span className="accordion-subject">{instructor.subject}</span>
-                                                </div>
-                                            </div>
-                                            <div className="accordion-header-right">
-                                                {isAdmin && (
-                                                    <div className="accordion-admin-actions">
-                                                        <button onClick={(e) => { e.stopPropagation(); openEditor(instructor); }}>수정</button>
-                                                        <button className="delete" onClick={(e) => { e.stopPropagation(); showDeleteConfirmModal(instructor.id); }}>삭제</button>
-                                                    </div>
-                                                )}
-                                                <span className="accordion-toggle">
-                                                    {expandedInstructor === instructor.id ? '−' : '+'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Main image always visible */}
+                                        <div className="instructor-card-tape"></div>
                                         {instructor.imageUrl && (
-                                            <div
-                                                className={`accordion-main-image ${expandedInstructor === instructor.id ? 'expanded' : ''}`}
-                                                onClick={() => setExpandedInstructor(expandedInstructor === instructor.id ? null : instructor.id)}
-                                            >
+                                            <div className="instructor-card-image">
                                                 <img src={instructor.imageUrl} alt={instructor.name} />
                                             </div>
                                         )}
-
-                                        {expandedInstructor === instructor.id && (
-                                            <div className="accordion-body">
-                                                <div className="instructor-detail-info">
-                                                    <p className="instructor-detail-bio">{instructor.bio}</p>
-                                                    {instructor.tags && instructor.tags.length > 0 && (
-                                                        <div className="instructor-detail-tags">
-                                                            {instructor.tags.map((tag, i) => (
-                                                                <span key={i} className="tag">#{tag}</span>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
+                                        <div className="instructor-card-header">
+                                            <span className="instructor-card-badge">{instructor.subject}</span>
+                                            <h3 className="instructor-card-name">{instructor.name}</h3>
+                                        </div>
+                                        <div className="instructor-card-body">
+                                            <p className="instructor-card-bio">{instructor.bio}</p>
+                                        </div>
+                                        {instructor.tags && instructor.tags.length > 0 && (
+                                            <div className="instructor-card-tags">
+                                                {instructor.tags.map((tag, i) => (
+                                                    <span key={i} className="tag">#{tag}</span>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {isAdmin && (
+                                            <div className="instructor-card-admin">
+                                                <button onClick={() => openEditor(instructor)}>수정</button>
+                                                <button className="delete" onClick={() => showDeleteConfirmModal(instructor.id)}>삭제</button>
                                             </div>
                                         )}
                                     </div>

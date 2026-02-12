@@ -23,6 +23,9 @@ const CourseRegistrationV2 = () => {
     const [newDay, setNewDay] = useState('');
     const [newTime, setNewTime] = useState('');
     const [newCapacity, setNewCapacity] = useState('20');
+    const [newTags, setNewTags] = useState(''); // 태그 상태 추가
+    const [activeTag, setActiveTag] = useState(null); // 태그 필터 상태
+    const [isSaving, setIsSaving] = useState(false); // 저장/삭제 로딩바 상태
     const [studentName, setStudentName] = useState('');
     const [studentGrade, setStudentGrade] = useState('');
     const [studentPhone, setStudentPhone] = useState('');
@@ -88,7 +91,7 @@ const CourseRegistrationV2 = () => {
     };
 
     const clearForm = () => {
-        setNewTitle(''); setNewDesc(''); setNewTeacher(''); setNewDay(''); setNewTime(''); setNewCapacity('20');
+        setNewTitle(''); setNewDesc(''); setNewTeacher(''); setNewDay(''); setNewTime(''); setNewCapacity('20'); setNewTags('');
         setEditingCourse(null);
         setIsCreateModalVisible(false);
     };
@@ -101,6 +104,7 @@ const CourseRegistrationV2 = () => {
         setNewDay(course.day);
         setNewTime(course.time);
         setNewCapacity(course.capacity ? course.capacity.toString() : '20');
+        setNewTags(course.tags ? course.tags.join(', ') : '');
         setIsCreateModalVisible(true);
     };
 
@@ -111,6 +115,7 @@ const CourseRegistrationV2 = () => {
     const confirmDelete = async () => {
         const id = deleteConfirm.id;
         setDeleteConfirm({ show: false, id: null });
+        setIsSaving(true);
 
         try {
             await deleteDoc(doc(db, 'courses', id));
@@ -118,6 +123,8 @@ const CourseRegistrationV2 = () => {
         } catch (error) {
             console.error('수업 삭제 실패:', error);
             alert('수업 삭제에 실패했습니다.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -134,35 +141,33 @@ const CourseRegistrationV2 = () => {
             return;
         }
 
+        setIsSaving(true);
+        const courseData = {
+            title: newTitle,
+            description: newDesc,
+            teacher: newTeacher,
+            day: newDay,
+            time: newTime,
+            capacity,
+            tags: newTags.split(',').map(t => t.trim()).filter(t => t),
+            updatedAt: new Date().toISOString()
+        };
+
         try {
             if (editingCourse) {
-                await updateDoc(doc(db, 'courses', editingCourse.id), {
-                    title: newTitle,
-                    description: newDesc,
-                    teacher: newTeacher,
-                    day: newDay,
-                    time: newTime,
-                    capacity,
-                    updatedAt: new Date().toISOString()
-                });
+                await updateDoc(doc(db, 'courses', editingCourse.id), courseData);
                 alert('수업 정보가 수정되었습니다.');
             } else {
-                await addDoc(collection(db, 'courses'), {
-                    title: newTitle,
-                    description: newDesc,
-                    teacher: newTeacher,
-                    day: newDay,
-                    time: newTime,
-                    capacity,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                });
+                courseData.createdAt = new Date().toISOString();
+                await addDoc(collection(db, 'courses'), courseData);
                 alert('새 수업이 개설되었습니다.');
             }
             clearForm();
         } catch (error) {
             console.error('수업 저장 실패:', error);
             alert('수업 저장에 실패했습니다.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -249,6 +254,14 @@ const CourseRegistrationV2 = () => {
         <div className="cr-v2-page">
             <div className="noise-overlay-v2"></div>
 
+            {/* Saving overlay */}
+            {isSaving && (
+                <div className="saving-overlay">
+                    <div className="saving-bar"><div className="saving-bar-inner"></div></div>
+                    <span className="saving-text">저장 중...</span>
+                </div>
+            )}
+
             <HeaderV2 />
 
             <main className="cr-v2-main">
@@ -269,66 +282,100 @@ const CourseRegistrationV2 = () => {
                         )}
                     </div>
 
+                    {/* Tag Filter Buttons */}
+                    {!isLoading && courses.length > 0 && (() => {
+                        const allTags = [...new Set(courses.flatMap(c => c.tags || []))];
+                        if (allTags.length === 0) return null;
+                        return (
+                            <div className="tag-filter-bar">
+                                <button
+                                    className={`tag-filter-btn ${!activeTag ? 'active' : ''}`}
+                                    onClick={() => setActiveTag(null)}
+                                >
+                                    전체
+                                </button>
+                                {allTags.map(tag => (
+                                    <button
+                                        key={tag}
+                                        className={`tag-filter-btn ${activeTag === tag ? 'active' : ''}`}
+                                        onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                                    >
+                                        #{tag}
+                                    </button>
+                                ))}
+                            </div>
+                        );
+                    })()}
+
                     <div className="cr-v2-accordion">
                         {isLoading ? (
                             <div className="cr-v2-loading">수업 목록을 불러오는 중...</div>
                         ) : courses.length > 0 ? (
-                            courses.map((course, index) => (
-                                <div
-                                    key={course.id}
-                                    className={`accordion-item reveal-on-scroll ${selectedCourse?.id === course.id && !isApplyModalVisible ? 'open' : ''}`}
-                                    style={{ transitionDelay: `${index * 0.05}s` }}
-                                >
+                            courses
+                                .filter(course => !activeTag || (course.tags && course.tags.includes(activeTag)))
+                                .map((course, index) => (
                                     <div
-                                        className="accordion-header"
-                                        onClick={() => setSelectedCourse(selectedCourse?.id === course.id && !isApplyModalVisible ? null : course)}
+                                        key={course.id}
+                                        className={`accordion-item reveal-on-scroll ${selectedCourse?.id === course.id && !isApplyModalVisible ? 'open' : ''}`}
+                                        style={{ transitionDelay: `${index * 0.05}s` }}
                                     >
-                                        <div className="accordion-header-left">
-                                            <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
-                                            <div className="accordion-name-group">
-                                                <h2 className="accordion-title">{course.title}</h2>
-                                                <span className="accordion-subject">{course.day} {course.time}</span>
+                                        <div
+                                            className="accordion-header"
+                                            onClick={() => setSelectedCourse(selectedCourse?.id === course.id && !isApplyModalVisible ? null : course)}
+                                        >
+                                            <div className="accordion-header-left">
+                                                <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
+                                                <div className="accordion-name-group">
+                                                    <h2 className="accordion-title">{course.title}</h2>
+                                                    <span className="accordion-subject">{course.day} {course.time}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="accordion-header-right">
-                                            {isAdmin && (
-                                                <div className="accordion-admin-actions">
-                                                    <button onClick={(e) => { e.stopPropagation(); handleEditClick(course); }}>수정</button>
-                                                    <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(course.id); }} className="delete">삭제</button>
-                                                </div>
-                                            )}
-                                            <span className="accordion-toggle">
-                                                {selectedCourse?.id === course.id && !isApplyModalVisible ? '−' : '+'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {selectedCourse?.id === course.id && !isApplyModalVisible && (
-                                        <div className="accordion-body">
-                                            <p className="cr-card-desc">{course.description}</p>
-                                            <div className="cr-card-details">
-                                                <div className="cr-detail-row">
-                                                    <span className="label">강사</span>
-                                                    <span className="value">{course.teacher}</span>
-                                                </div>
-                                                <div className="cr-detail-row">
-                                                    <span className="label">시간표</span>
-                                                    <span className="value">{course.day} {course.time}</span>
-                                                </div>
+                                            <div className="accordion-header-right">
                                                 {isAdmin && (
-                                                    <div className="cr-detail-row">
-                                                        <span className="label">정원</span>
-                                                        <span className="value">{course.capacity || 20}</span>
+                                                    <div className="accordion-admin-actions">
+                                                        <button onClick={(e) => { e.stopPropagation(); handleEditClick(course); }}>수정</button>
+                                                        <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(course.id); }} className="delete">삭제</button>
                                                     </div>
                                                 )}
+                                                <span className="accordion-toggle">
+                                                    {selectedCourse?.id === course.id && !isApplyModalVisible ? '−' : '+'}
+                                                </span>
                                             </div>
-                                            <button className="cr-v2-btn secondary full-width" onClick={() => handleApplyClick(course)}>
-                                                신청하기
-                                            </button>
                                         </div>
-                                    )}
-                                </div>
-                            ))
+
+                                        {selectedCourse?.id === course.id && !isApplyModalVisible && (
+                                            <div className="accordion-body">
+                                                <p className="cr-card-desc">{course.description}</p>
+                                                <div className="cr-card-details">
+                                                    <div className="cr-detail-row">
+                                                        <span className="label">강사</span>
+                                                        <span className="value">{course.teacher}</span>
+                                                    </div>
+                                                    <div className="cr-detail-row">
+                                                        <span className="label">시간표</span>
+                                                        <span className="value">{course.day} {course.time}</span>
+                                                    </div>
+                                                    {isAdmin && (
+                                                        <div className="cr-detail-row">
+                                                            <span className="label">정원</span>
+                                                            <span className="value">{course.capacity || 20}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                {course.tags && course.tags.length > 0 && (
+                                                    <div className="cr-tags" style={{ marginTop: '15px', display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                                                        {course.tags.map((tag, i) => (
+                                                            <span key={i} className="tag" style={{ fontSize: '0.75rem', padding: '3px 8px', background: '#f5f5f5', border: '1px solid #eee' }}>#{tag}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                <button className="cr-v2-btn secondary full-width" onClick={() => handleApplyClick(course)}>
+                                                    신청하기
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))
                         ) : (
                             <div className="cr-v2-empty">
                                 <p>현재 개설된 수업이 없습니다.</p>
@@ -352,6 +399,7 @@ const CourseRegistrationV2 = () => {
                         <input type="text" placeholder="요일 (예: 월, 수)" value={newDay} onChange={e => setNewDay(e.target.value)} required />
                         <input type="text" placeholder="시간 (예: 19:00 - 22:00)" value={newTime} onChange={e => setNewTime(e.target.value)} required />
                         <input type="number" placeholder="정원" value={newCapacity} onChange={e => setNewCapacity(e.target.value)} min="1" required />
+                        <input type="text" placeholder="태그 (쉼표로 구분)" value={newTags} onChange={e => setNewTags(e.target.value)} />
                         <button type="submit" className="cr-v2-btn primary full-width">{editingCourse ? '수정하기' : '개설하기'}</button>
                     </form>
                 </Modal>

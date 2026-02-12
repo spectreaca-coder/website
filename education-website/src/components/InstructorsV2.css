@@ -1,4 +1,4 @@
-/* Instructors V2 - Accordion Layout with Tag Filter */
+/* Instructors V2 - Card Grid Layout (Student Reviews style) */
 .instructors-page {
     width: 100%;
     min-height: 100vh;
@@ -123,201 +123,194 @@
 }
 
 /* ========================================
-   Accordion
+   Loading Bar (CRUD operations)
    ======================================== */
-.instructors-accordion {
-    border-top: 2px solid #000;
+.saving-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
 }
 
-.accordion-item {
-    border-bottom: 1px solid #ddd;
-    transition: border-color 0.3s;
+.saving-bar {
+    width: 200px;
+    height: 4px;
+    background: #eee;
+    overflow: hidden;
+    margin-bottom: 15px;
 }
 
-.accordion-item.open {
+.saving-bar-inner {
+    width: 40%;
+    height: 100%;
+    background: #000;
+    animation: savingSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes savingSlide {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(400%);
+    }
+}
+
+.saving-text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+/* ========================================
+   Card Grid (Student Reviews style)
+   ======================================== */
+.instructors-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 40px;
+}
+
+.instructor-card {
+    border: 2px solid #000;
+    background: #fff;
+    position: relative;
+    box-shadow: 8px 8px 0px #000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.instructor-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0px var(--sw-primary, #000);
+}
+
+/* Tape Effect */
+.instructor-card-tape {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(1.5deg);
+    width: 100px;
+    height: 22px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.instructor-card-image {
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
     border-bottom: 2px solid #000;
 }
 
-.accordion-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    gap: 20px;
+.instructor-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.accordion-header:hover {
-    background-color: #fafafa;
-    padding-left: 10px;
-    padding-right: 10px;
+.instructor-card-header {
+    padding: 20px 25px 15px;
+    border-bottom: 1px dashed #ccc;
+    text-align: center;
 }
 
-.accordion-header-left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex: 1;
-    min-width: 0;
-}
-
-.accordion-num {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9rem;
-    color: #999;
-    flex-shrink: 0;
-}
-
-.accordion-name-group {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    min-width: 0;
-}
-
-.accordion-title {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: 700;
-    font-size: 1.3rem;
-    margin: 0;
-    color: #000;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.accordion-subject {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.85rem;
-    color: #888;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.accordion-header-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-shrink: 0;
-}
-
-.accordion-admin-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.accordion-admin-actions button {
-    background: none;
-    border: 1px solid #000;
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-.accordion-admin-actions button:hover {
+.instructor-card-badge {
+    display: inline-block;
     background: #000;
     color: #fff;
-}
-
-.accordion-admin-actions button.delete {
-    border-color: #c00;
-    color: #c00;
-}
-
-.accordion-admin-actions button.delete:hover {
-    background: #c00;
-    color: #fff;
-}
-
-.accordion-toggle {
-    font-size: 1.5rem;
+    padding: 4px 10px;
+    font-family: 'Helvetica Neue', sans-serif;
     font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.instructor-card-name {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin: 0;
     color: #000;
-    width: 30px;
-    text-align: center;
-    flex-shrink: 0;
+    line-height: 1.2;
 }
 
-/* Accordion Main Image (always visible) */
-.accordion-main-image {
-    max-height: 200px;
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    background: #f5f5f5;
-    transition: max-height 0.4s ease;
+.instructor-card-body {
+    padding: 15px 25px;
+    flex-grow: 1;
 }
 
-.accordion-main-image::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: linear-gradient(transparent, rgba(255, 255, 255, 0.9));
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-
-.accordion-main-image.expanded {
-    max-height: 600px;
-}
-
-.accordion-main-image.expanded::after {
-    opacity: 0;
-}
-
-.accordion-main-image img {
-    width: 100%;
-    display: block;
-    object-fit: cover;
-}
-
-/* Accordion Body */
-.accordion-body {
-    padding: 0 0 30px 0;
-    animation: accordionSlide 0.3s ease-out;
-}
-
-@keyframes accordionSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.instructor-detail-info {
-    padding: 0;
-}
-
-.instructor-detail-bio {
-    font-size: 1rem;
-    line-height: 1.8;
+.instructor-card-bio {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
     color: #333;
-    margin: 15px 0;
+    margin: 0;
 }
 
-.instructor-detail-tags {
+.instructor-card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
+    padding: 0 25px 15px;
 }
 
 .tag {
     font-family: 'Courier New', Courier, monospace;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #666;
     background: #f5f5f5;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border: 1px solid #eee;
+}
+
+.instructor-card-admin {
+    display: flex;
+    gap: 8px;
+    padding: 10px 25px 15px;
+    border-top: 1px solid #eee;
+    justify-content: flex-end;
+}
+
+.instructor-card-admin button {
+    background: none;
+    border: 1px solid #000;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    transition: all 0.2s;
+}
+
+.instructor-card-admin button:hover {
+    background: #000;
+    color: #fff;
+}
+
+.instructor-card-admin button.delete {
+    border-color: #c00;
+    color: #c00;
+}
+
+.instructor-card-admin button.delete:hover {
+    background: #c00;
+    color: #fff;
 }
 
 /* ========================================
@@ -426,21 +419,13 @@
         font-size: 2rem;
     }
 
-    .accordion-title {
-        font-size: 1rem;
+    .instructors-card-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
     }
 
-    .accordion-name-group {
-        flex-direction: column;
-        gap: 2px;
-    }
-
-    .accordion-main-image {
-        max-height: 150px;
-    }
-
-    .accordion-main-image.expanded {
-        max-height: 400px;
+    .instructor-card-image {
+        max-height: 250px;
     }
 
     .tag-filter-bar {

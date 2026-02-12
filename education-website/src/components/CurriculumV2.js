@@ -23,6 +23,8 @@ const CurriculumV2 = () => {
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [activeWeek, setActiveWeek] = useState(-1);
+    const [activeTag, setActiveTag] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
 
     // 삭제 확인 모달 상태
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
@@ -33,6 +35,7 @@ const CurriculumV2 = () => {
         content: '',
         mediaUrl: '',
         mediaFile: null,
+        tags: '',
         order: 0
     });
 
@@ -133,11 +136,12 @@ const CurriculumV2 = () => {
                 content: item.content || '',
                 mediaUrl: item.mediaUrl || '',
                 mediaFile: null,
+                tags: (item.tags || []).join(', '),
                 order: item.order || 0
             });
         } else {
             setEditingItem(null);
-            setFormData({ title: '', content: '', mediaUrl: '', mediaFile: null, order: curriculum.length + 1 });
+            setFormData({ title: '', content: '', mediaUrl: '', mediaFile: null, tags: '', order: curriculum.length + 1 });
         }
         setIsEditorOpen(true);
     };
@@ -152,6 +156,7 @@ const CurriculumV2 = () => {
     // 저장
     const handleSave = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
 
         try {
             let downloadUrl = formData.mediaUrl;
@@ -167,6 +172,7 @@ const CurriculumV2 = () => {
                 title: formData.title,
                 content: formData.content, // HTML Content
                 mediaUrl: downloadUrl, // mediaUrl is now just the representative image
+                tags: formData.tags.split(',').map(t => t.trim()).filter(t => t),
                 order: parseInt(formData.order) || 0,
                 updatedAt: new Date().toISOString()
             };
@@ -183,6 +189,8 @@ const CurriculumV2 = () => {
         } catch (error) {
             console.error('저장 실패:', error);
             alert('저장에 실패했습니다.');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -195,6 +203,7 @@ const CurriculumV2 = () => {
     const confirmDelete = async () => {
         const id = deleteConfirm.id;
         setDeleteConfirm({ show: false, id: null });
+        setIsSaving(true);
 
         try {
             await deleteDoc(doc(db, 'curriculum', id));
@@ -202,6 +211,8 @@ const CurriculumV2 = () => {
         } catch (error) {
             console.error('삭제 실패:', error);
             alert('삭제에 실패했습니다: ' + error.message);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -212,6 +223,14 @@ const CurriculumV2 = () => {
             <div className="noise-overlay-v2"></div>
 
             <HeaderV2 />
+
+            {/* Saving overlay */}
+            {isSaving && (
+                <div className="saving-overlay">
+                    <div className="saving-bar"><div className="saving-bar-inner"></div></div>
+                    <span className="saving-text">저장 중...</span>
+                </div>
+            )}
 
             <main className="curriculum-v2-main">
                 <div className="curriculum-v2-content">
@@ -228,54 +247,81 @@ const CurriculumV2 = () => {
                         )}
                     </div>
 
+                    {/* Tag Filter Buttons */}
+                    {!isLoading && curriculum.length > 0 && (() => {
+                        const allTags = [...new Set(curriculum.flatMap(i => i.tags || []))];
+                        if (allTags.length === 0) return null;
+                        return (
+                            <div className="tag-filter-bar">
+                                <button
+                                    className={`tag-filter-btn ${!activeTag ? 'active' : ''}`}
+                                    onClick={() => setActiveTag(null)}
+                                >
+                                    전체
+                                </button>
+                                {allTags.map(tag => (
+                                    <button
+                                        key={tag}
+                                        className={`tag-filter-btn ${activeTag === tag ? 'active' : ''}`}
+                                        onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                                    >
+                                        #{tag}
+                                    </button>
+                                ))}
+                            </div>
+                        );
+                    })()}
+
                     {isLoading ? (
                         <div className="loading-message">Loading...</div>
                     ) : (
                         <div className="curriculum-accordion">
-                            {curriculum.map((item, index) => (
-                                <div
-                                    key={item.id}
-                                    className={`accordion-item reveal-on-scroll ${activeWeek === index ? 'open' : ''}`}
-                                    style={{ transitionDelay: `${index * 0.05}s` }}
-                                >
+                            {curriculum
+                                .filter(item => !activeTag || (item.tags && item.tags.includes(activeTag)))
+                                .map((item, index) => (
                                     <div
-                                        className="accordion-header"
-                                        onClick={() => setActiveWeek(activeWeek === index ? -1 : index)}
+                                        key={item.id}
+                                        className={`accordion-item reveal-on-scroll ${activeWeek === index ? 'open' : ''}`}
+                                        style={{ transitionDelay: `${index * 0.05}s` }}
                                     >
-                                        <div className="accordion-header-left">
-                                            <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
-                                            <h2 className="accordion-title">{item.title}</h2>
-                                        </div>
-                                        <div className="accordion-header-right">
-                                            {isAdmin && (
-                                                <div className="accordion-admin-actions">
-                                                    <button onClick={(e) => { e.stopPropagation(); openEditor(item); }}>수정</button>
-                                                    <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(item.id); }} className="delete">삭제</button>
-                                                </div>
-                                            )}
-                                            <span className="accordion-toggle">
-                                                {activeWeek === index ? '−' : '+'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Main image always visible */}
-                                    {item.mediaUrl && (
                                         <div
-                                            className={`accordion-main-image ${activeWeek === index ? 'expanded' : ''}`}
+                                            className="accordion-header"
                                             onClick={() => setActiveWeek(activeWeek === index ? -1 : index)}
                                         >
-                                            <img src={item.mediaUrl} alt={item.title} />
+                                            <div className="accordion-header-left">
+                                                <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
+                                                <h2 className="accordion-title">{item.title}</h2>
+                                            </div>
+                                            <div className="accordion-header-right">
+                                                {isAdmin && (
+                                                    <div className="accordion-admin-actions">
+                                                        <button onClick={(e) => { e.stopPropagation(); openEditor(item); }}>수정</button>
+                                                        <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(item.id); }} className="delete">삭제</button>
+                                                    </div>
+                                                )}
+                                                <span className="accordion-toggle">
+                                                    {activeWeek === index ? '−' : '+'}
+                                                </span>
+                                            </div>
                                         </div>
-                                    )}
 
-                                    {activeWeek === index && (
-                                        <div className="accordion-body">
-                                            <div className="accordion-text html-content" dangerouslySetInnerHTML={{ __html: item.content }}></div>
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
+                                        {/* Main image always visible */}
+                                        {item.mediaUrl && (
+                                            <div
+                                                className={`accordion-main-image ${activeWeek === index ? 'expanded' : ''}`}
+                                                onClick={() => setActiveWeek(activeWeek === index ? -1 : index)}
+                                            >
+                                                <img src={item.mediaUrl} alt={item.title} />
+                                            </div>
+                                        )}
+
+                                        {activeWeek === index && (
+                                            <div className="accordion-body">
+                                                <div className="accordion-text html-content" dangerouslySetInnerHTML={{ __html: item.content }}></div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                         </div>
                     )}
                 </div>
@@ -331,6 +377,16 @@ const CurriculumV2 = () => {
                             {formData.mediaUrl && !formData.mediaFile && (
                                 <p className="file-info">현재 이미지: <a href={formData.mediaUrl} target="_blank" rel="noopener noreferrer">보기</a></p>
                             )}
+                        </div>
+
+                        <div className="form-group">
+                            <label>태그 (쉼표로 구분)</label>
+                            <input
+                                type="text"
+                                value={formData.tags}
+                                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                                placeholder="수학, 기초, 심화"
+                            />
                         </div>
 
                         <div className="form-actions">
