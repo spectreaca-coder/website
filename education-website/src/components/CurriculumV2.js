@@ -8,8 +8,13 @@ import { db, storage } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-import ReactQuill from 'react-quill';
+import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+// Register custom font sizes
+const Size = Quill.import('attributors/style/size');
+Size.whitelist = ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'];
+Quill.register(Size, true);
 
 const CurriculumV2 = () => {
     const [curriculum, setCurriculum] = useState([]);
@@ -34,19 +39,19 @@ const CurriculumV2 = () => {
     // ReactQuill Modules
     const modules = {
         toolbar: [
-            [{ 'header': [1, 2, false] }],
+            [{ 'size': ['10px', '12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px'] }],
             ['bold', 'italic', 'underline', 'strike', 'blockquote'],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image', 'video'], // Added video support
+            ['link', 'image', 'video'],
             ['clean']
         ],
     };
 
     const formats = [
-        'header',
+        'size',
         'bold', 'italic', 'underline', 'strike', 'blockquote',
         'list', 'bullet', 'indent',
-        'link', 'image', 'video' // Added video format
+        'link', 'image', 'video'
     ];
 
     // 관리자 상태 확인
@@ -288,7 +293,7 @@ const CurriculumV2 = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>설명 (Rich Text - Video 삽입 가능)</label>
+                            <label>설명</label>
                             {/* React Quill Editor */}
                             <ReactQuill
                                 theme="snow"
