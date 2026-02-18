@@ -5,7 +5,6 @@ import { db } from '../firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import FooterV2 from './FooterV2';
 import useScrollReveal from '../hooks/useScrollReveal';
-import { Link } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import HeaderV2 from './HeaderV2';
 
