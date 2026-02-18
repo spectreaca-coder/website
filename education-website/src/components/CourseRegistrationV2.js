@@ -79,10 +79,15 @@ const CourseRegistrationV2 = () => {
         if (!GOOGLE_SCRIPT_URL) return;
 
         try {
+            const formData = new URLSearchParams();
+            for (const key in applicationData) {
+                formData.append(key, applicationData[key]);
+            }
+
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify(applicationData)
+                body: formData
             });
         } catch (error) {
             console.error('Google Sheets 전송 실패:', error);
