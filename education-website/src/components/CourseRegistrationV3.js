@@ -16,10 +16,54 @@ const CourseRegistrationV3 = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const sendToGoogleSheets = async (applicationData) => {
+        const GOOGLE_SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
+        console.log('🔗 [Debug V3] Current Script URL:', GOOGLE_SCRIPT_URL);
+
+        if (!GOOGLE_SCRIPT_URL) {
+            console.error('❌ [Debug V3] Google Script URL is missing!');
+            return;
+        }
+
+        try {
+            const formData = new URLSearchParams();
+            for (const key in applicationData) {
+                formData.append(key, applicationData[key]);
+            }
+
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+            console.log('✅ [Debug V3] Google Sheets 전송 시도 완료');
+        } catch (error) {
+            console.error('❌ [Debug V3] Google Sheets 전송 실패:', error);
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert(`Application Submitted for ${formData.name}!\n(This is a V3 Demo - Logic ported from V1)`);
-        // In real implementation, this would call the same Firebase/API function as V1
+
+        const applicationData = {
+            studentName: formData.name,
+            studentGrade: 'V3 입학신청',
+            studentPhone: formData.phone,
+            parentPhone: 'N/A (V3)',
+            courseTitle: formData.course,
+            courseTeacher: 'V3 인스트럭터',
+            courseDay: 'N/A',
+            courseTime: 'N/A',
+            status: 'confirmed',
+            courseId: 'v3_' + formData.course
+        };
+
+        try {
+            await sendToGoogleSheets(applicationData);
+            alert(`Application Submitted for ${formData.name}!\n곧 연락드리겠습니다.`);
+        } catch (err) {
+            alert('전송 중 에러가 발생했습니다.');
+        }
     };
 
     const inputStyle = {

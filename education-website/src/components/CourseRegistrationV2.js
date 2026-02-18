@@ -74,9 +74,52 @@ const CourseRegistrationV2 = () => {
 
     useScrollReveal('.reveal-on-scroll', 0.1, [courses]);
 
+    const handleSubmitCourse = async (e) => {
+        e.preventDefault();
+        if (!newTitle || !newDesc || !newTeacher || !newDay || !newTime || !newCapacity) {
+            showToast('모든 항목을 입력해주세요.', 'error');
+            return;
+        }
+
+        const capacity = parseInt(newCapacity);
+        if (isNaN(capacity) || capacity <= 0) {
+            showToast('정원은 1 이상의 숫자여야 합니다.', 'error');
+            return;
+        }
+
+        setIsSaving(true);
+        const courseData = {
+            title: newTitle,
+            description: newDesc,
+            teacher: newTeacher,
+            day: newDay,
+            time: newTime,
+            capacity,
+            tags: newTags.split(',').map(t => t.trim()).filter(t => t),
+            updatedAt: new Date().toISOString()
+        };
+
+        try {
+            if (editingCourse) {
+                await updateDoc(doc(db, 'courses', editingCourse.id), courseData);
+                showToast('수업 정보가 수정되었습니다.', 'success');
+            } else {
+                courseData.createdAt = new Date().toISOString();
+                await addDoc(collection(db, 'courses'), courseData);
+                showToast('새 수업이 개설되었습니다.', 'success');
+            }
+            clearForm();
+        } catch (error) {
+            console.error('수업 저장 실패:', error);
+            showToast('수업 저장에 실패했습니다.', 'error');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const sendToGoogleSheets = async (applicationData) => {
         const GOOGLE_SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
-        console.log('🔗 [Debug] Current Script URL:', GOOGLE_SCRIPT_URL);
+        console.log('🔗 [Debug V2] Current Script URL:', GOOGLE_SCRIPT_URL);
 
         if (!GOOGLE_SCRIPT_URL) {
             console.error('❌ Google Script URL is missing!');
@@ -137,48 +180,6 @@ const CourseRegistrationV2 = () => {
         }
     };
 
-    const handleSubmitCourse = async (e) => {
-        e.preventDefault();
-        if (!newTitle || !newDesc || !newTeacher || !newDay || !newTime || !newCapacity) {
-            showToast('모든 항목을 입력해주세요.', 'error');
-            return;
-        }
-
-        const capacity = parseInt(newCapacity);
-        if (isNaN(capacity) || capacity <= 0) {
-            showToast('정원은 1 이상의 숫자여야 합니다.', 'error');
-            return;
-        }
-
-        setIsSaving(true);
-        const courseData = {
-            title: newTitle,
-            description: newDesc,
-            teacher: newTeacher,
-            day: newDay,
-            time: newTime,
-            capacity,
-            tags: newTags.split(',').map(t => t.trim()).filter(t => t),
-            updatedAt: new Date().toISOString()
-        };
-
-        try {
-            if (editingCourse) {
-                await updateDoc(doc(db, 'courses', editingCourse.id), courseData);
-                showToast('수업 정보가 수정되었습니다.', 'success');
-            } else {
-                courseData.createdAt = new Date().toISOString();
-                await addDoc(collection(db, 'courses'), courseData);
-                showToast('새 수업이 개설되었습니다.', 'success');
-            }
-            clearForm();
-        } catch (error) {
-            console.error('수업 저장 실패:', error);
-            showToast('수업 저장에 실패했습니다.', 'error');
-        } finally {
-            setIsSaving(false);
-        }
-    };
 
     const handleApplyClick = (course) => {
         setSelectedCourse(course);
