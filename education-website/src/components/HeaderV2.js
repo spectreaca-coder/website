@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './HomePageV2.css';
 import logo from '../assets/logo.png';
 import AdminLoginModal from './AdminLoginModal';
+import useToast from '../hooks/useToast';
 
 const HeaderV2 = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -11,48 +12,67 @@ const HeaderV2 = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+    const { toast, showToast } = useToast();
 
     // 로고 탭 카운터
     const tapCountRef = useRef(0);
     const tapTimeoutRef = useRef(null);
 
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
+    const openMobileMenu = () => {
+        setIsMobileMenuOpen(true);
+        document.body.style.overflow = 'hidden'; // scroll lock
     };
+
+    const closeMobileMenu = () => {
+        setIsMobileMenuOpen(false);
+        document.body.style.overflow = ''; // scroll unlock
+    };
+
+    const toggleMobileMenu = () => {
+        if (isMobileMenuOpen) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    };
+
+    // ESC 키로 모바일 메뉴 닫기
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' && isMobileMenuOpen) {
+                closeMobileMenu();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isMobileMenuOpen]);
+
+    // 컴포넌트 언마운트 시 scroll lock 해제
+    useEffect(() => {
+        return () => { document.body.style.overflow = ''; };
+    }, []);
 
     // 로고 클릭 핸들러 (3탭 감지)
     const handleLogoClick = (e) => {
         e.preventDefault();
-
         tapCountRef.current += 1;
 
-        // 기존 타임아웃 클리어
-        if (tapTimeoutRef.current) {
-            clearTimeout(tapTimeoutRef.current);
-        }
+        if (tapTimeoutRef.current) clearTimeout(tapTimeoutRef.current);
 
-        // 1초 내에 3번 탭하면 처리
         if (tapCountRef.current >= 3) {
             tapCountRef.current = 0;
-
             if (isAdmin) {
-                // 로그아웃
                 sessionStorage.removeItem('isAdmin');
                 setIsAdmin(false);
-                alert('관리자 모드가 해제되었습니다.');
-                navigate('/'); // Refresh or stay
+                showToast('관리자 모드가 해제되었습니다.', 'info');
+                navigate('/');
             } else {
-                // 로그인 모달 표시
                 setShowAdminModal(true);
             }
         } else {
-            // 1초/0.5초 후 카운터 리셋
             tapTimeoutRef.current = setTimeout(() => {
-                // 1탭이면 홈으로 이동 (Reload 방지)
                 if (tapCountRef.current === 1) {
-                    if (location.pathname !== '/') {
-                        navigate('/');
-                    }
+                    if (location.pathname !== '/') navigate('/');
                 }
                 tapCountRef.current = 0;
             }, 500);
@@ -61,7 +81,7 @@ const HeaderV2 = () => {
 
     const handleAdminLogin = () => {
         setIsAdmin(true);
-        alert('관리자 모드가 활성화되었습니다.');
+        showToast('관리자 모드가 활성화되었습니다.', 'success');
     };
 
     // 세션 스토리지에서 관리자 상태 확인
@@ -72,22 +92,25 @@ const HeaderV2 = () => {
 
     // Scroll Effect
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-        };
+        const handleScroll = () => setScrolled(window.scrollY > 50);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Helper to check active link
     const isActive = (path) => location.pathname === path;
     const isHomePage = location.pathname === '/';
 
     return (
         <>
+            {toast}
             <header className={`sw-header-v2 ${scrolled ? 'scrolled' : ''} ${!isHomePage ? 'not-home' : ''}`}>
                 {/* Mobile Menu Button (Hamburger) */}
-                <button className="mobile-menu-btn-v2" onClick={toggleMobileMenu}>
+                <button
+                    className={`mobile-menu-btn-v2 ${isMobileMenuOpen ? 'open' : ''}`}
+                    onClick={toggleMobileMenu}
+                    aria-label={isMobileMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
+                    aria-expanded={isMobileMenuOpen}
+                >
                     <span></span>
                     <span></span>
                     <span></span>
@@ -109,11 +132,25 @@ const HeaderV2 = () => {
                 </nav>
 
                 {/* Mobile Nav Overlay */}
-                <div className={`mobile-nav-overlay-v2 ${isMobileMenuOpen ? 'open' : ''}`}>
-                    <Link to="/instructors" className="mobile-nav-link-v2" onClick={toggleMobileMenu}>강사진</Link>
-                    <Link to="/curriculum" className="mobile-nav-link-v2" onClick={toggleMobileMenu}>수업소개</Link>
-                    <Link to="/notices" className="mobile-nav-link-v2" onClick={toggleMobileMenu}>공지사항</Link>
-                    <Link to="/register" className="mobile-nav-link-v2" style={{ color: 'var(--sw-primary)' }} onClick={toggleMobileMenu}>수강신청</Link>
+                {/* Backdrop - click to close */}
+                <div
+                    className={`mobile-nav-backdrop ${isMobileMenuOpen ? 'open' : ''}`}
+                    onClick={closeMobileMenu}
+                    aria-hidden="true"
+                />
+                <div className={`mobile-nav-overlay-v2 ${isMobileMenuOpen ? 'open' : ''}`} role="dialog" aria-modal="true">
+                    {/* 닫기 버튼 */}
+                    <button
+                        className="mobile-nav-close-btn"
+                        onClick={closeMobileMenu}
+                        aria-label="메뉴 닫기"
+                    >
+                        ✕
+                    </button>
+                    <Link to="/instructors" className="mobile-nav-link-v2" onClick={closeMobileMenu}>강사진</Link>
+                    <Link to="/curriculum" className="mobile-nav-link-v2" onClick={closeMobileMenu}>수업소개</Link>
+                    <Link to="/notices" className="mobile-nav-link-v2" onClick={closeMobileMenu}>공지사항</Link>
+                    <Link to="/register" className="mobile-nav-link-v2" style={{ color: 'var(--sw-primary)' }} onClick={closeMobileMenu}>수강신청</Link>
                 </div>
             </header>
 

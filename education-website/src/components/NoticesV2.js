@@ -4,6 +4,7 @@ import FooterV2 from './FooterV2';
 import useScrollReveal from '../hooks/useScrollReveal';
 import HeaderV2 from './HeaderV2';
 import Modal from './Modal';
+import useToast from '../hooks/useToast';
 import { db, storage } from '../firebase';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -23,6 +24,8 @@ const NoticesV2 = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [editingNotice, setEditingNotice] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const { toast, showToast } = useToast();
 
     // 삭제 확인 모달 상태
     const [deleteConfirm, setDeleteConfirm] = useState({ show: false, id: null });
@@ -153,6 +156,7 @@ const NoticesV2 = () => {
     // 저장
     const handleSave = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
 
         try {
             let downloadUrl = formData.mediaUrl;
@@ -173,17 +177,19 @@ const NoticesV2 = () => {
 
             if (editingNotice) {
                 await updateDoc(doc(db, 'notices', editingNotice.id), noticeData);
-                alert('공지사항이 수정되었습니다.');
+                showToast('공지사항이 수정되었습니다.');
             } else {
                 noticeData.createdAt = new Date().toISOString();
                 noticeData.date = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\. /g, '.').replace('.', '');
                 await addDoc(collection(db, 'notices'), noticeData);
-                alert('새 공지사항이 등록되었습니다.');
+                showToast('새 공지사항이 등록되었습니다.');
             }
             setIsEditorOpen(false);
         } catch (error) {
             console.error('저장 실패:', error);
-            alert('저장에 실패했습니다: ' + error.message);
+            showToast('저장에 실패했습니다: ' + error.message, 'error');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -198,13 +204,16 @@ const NoticesV2 = () => {
     const confirmDelete = async () => {
         const id = deleteConfirm.id;
         setDeleteConfirm({ show: false, id: null });
+        setIsSaving(true);
 
         try {
             await deleteDoc(doc(db, 'notices', id));
-            alert('공지사항이 삭제되었습니다.');
+            showToast('공지사항이 삭제되었습니다.');
         } catch (error) {
             console.error('삭제 실패:', error);
-            alert('삭제에 실패했습니다: ' + error.message);
+            showToast('삭제에 실패했습니다: ' + error.message, 'error');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -212,9 +221,18 @@ const NoticesV2 = () => {
 
     return (
         <div className="notices-v2-page">
+            {toast}
             <div className="noise-overlay-v2"></div>
 
             <HeaderV2 />
+
+            {/* Saving overlay */}
+            {isSaving && (
+                <div className="saving-overlay">
+                    <div className="saving-bar"><div className="saving-bar-inner"></div></div>
+                    <span className="saving-text">저장 중...</span>
+                </div>
+            )}
 
             <main className="notices-v2-main">
                 <div className="notices-v2-content">
@@ -232,7 +250,7 @@ const NoticesV2 = () => {
                     </div>
 
                     {isLoading ? (
-                        <div className="loading-message">Loading...</div>
+                        <div className="loading-message">로딩 중...</div>
                     ) : (
                         <div className="notices-v2-list">
                             {notices.map((notice, index) => (

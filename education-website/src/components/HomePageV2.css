@@ -205,6 +205,59 @@ a:hover:not(.sw-nav-link-v2):not(.mobile-nav-link-v2):not(.footer-v2-column a):n
     display: block;
 }
 
+/* Mobile nav backdrop (click to close) */
+.mobile-nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-nav-backdrop.open {
+    display: block;
+    opacity: 1;
+}
+
+/* Mobile nav close button */
+.mobile-nav-close-btn {
+    align-self: flex-end;
+    background: none;
+    border: 2px solid var(--sw-black);
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    cursor: pointer;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+
+.mobile-nav-close-btn:hover {
+    background: var(--sw-black);
+    color: var(--sw-white);
+}
+
+/* Hamburger → X animation */
+.mobile-menu-btn-v2.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.mobile-menu-btn-v2.open span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.mobile-menu-btn-v2.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+
 /* Hero Section */
 .hero-section-v2 {
     position: relative;

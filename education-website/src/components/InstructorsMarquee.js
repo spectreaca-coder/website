@@ -123,7 +123,7 @@ const InstructorsMarquee = () => {
                                 <div className="instructor-marquee-tape"></div>
                                 {instructor.imageUrl && (
                                     <div className="instructor-marquee-image">
-                                        <img src={instructor.imageUrl} alt={instructor.name} draggable={false} />
+                                        <img src={instructor.imageUrl} alt={instructor.name} draggable={false} loading="lazy" decoding="async" />
                                     </div>
                                 )}
                                 <div className="instructor-marquee-header-inner">

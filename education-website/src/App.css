@@ -7,8 +7,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #e9ecef; /* Slightly darker grey background */
-  color: #333; /* Default dark text color */
+  background-color: #e9ecef;
+  /* Slightly darker grey background */
+  color: #333;
+  /* Default dark text color */
 }
 
 .App {
@@ -19,18 +21,21 @@ body {
 
 .app-main {
   flex: 1;
-  padding-top: 70px; /* Offset for fixed header on non-home pages */
+  padding-top: 70px;
+  /* Offset for fixed header on non-home pages */
 }
 
 .app-main.home-main {
-  padding-top: 0; /* No offset for homepage to allow content to go behind header */
+  padding-top: 0;
+  /* No offset for homepage to allow content to go behind header */
 }
 
 /* Re-adding the shared page container style */
 .page-container {
   max-width: 1200px;
   margin: 2rem auto;
-  padding: 0 2rem; /* Horizontal padding */
+  padding: 0 2rem;
+  /* Horizontal padding */
 }
 
 /* Mobile Responsive Design */
@@ -41,7 +46,8 @@ body {
   }
 
   .app-main {
-    padding-top: 56px; /* Adjusted for mobile header with hamburger menu */
+    padding-top: 56px;
+    /* Adjusted for mobile header with hamburger menu */
   }
 }
 
@@ -52,6 +58,20 @@ body {
   }
 
   .app-main {
-    padding-top: 54px; /* Adjusted for smaller mobile header */
+    padding-top: 54px;
+    /* Adjusted for smaller mobile header */
+  }
+}
+
+/* Toast notification animation */
+@keyframes toastFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }

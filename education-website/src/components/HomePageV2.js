@@ -539,7 +539,12 @@ const HomePageV2 = () => {
                                 <Link to="/notices" className="notice-link-v2">
                                     <span className="notice-title-text-v2">{notice.title}</span>
                                     <span className="notice-date-v2">
-                                        {notice.date || new Date(notice.createdAt).toLocaleDateString('ko-KR')}
+                                        {notice.date ||
+                                            (notice.createdAt?.toDate
+                                                ? notice.createdAt.toDate().toLocaleDateString('ko-KR')
+                                                : new Date(notice.createdAt).toLocaleDateString('ko-KR')
+                                            )
+                                        }
                                     </span>
                                 </Link>
                             </li>
@@ -548,7 +553,7 @@ const HomePageV2 = () => {
                 ) : (
                     <p style={{ textAlign: 'center', fontFamily: 'Courier New', marginTop: '20px' }}>최근 공지사항이 없습니다.</p>
                 )}
-                <div style={{ marginTop: '20px', textAlign: 'right' }}>
+                <div style={{ marginTop: '20px', textAlign: 'left' }}>
                     <Link to="/notices" style={{ fontWeight: 'bold', textDecoration: 'underline', fontFamily: 'Helvetica Neue', fontSize: '1.2rem' }}>전체 보기 →</Link>
                 </div>
             </section>

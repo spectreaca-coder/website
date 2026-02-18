@@ -262,7 +262,7 @@ const InstructorsV2 = () => {
                                         <div className="instructor-card-tape"></div>
                                         {instructor.imageUrl && (
                                             <div className="instructor-card-image">
-                                                <img src={instructor.imageUrl} alt={instructor.name} />
+                                                <img src={instructor.imageUrl} alt={instructor.name} loading="lazy" decoding="async" />
                                             </div>
                                         )}
                                         <div className="instructor-card-header">
