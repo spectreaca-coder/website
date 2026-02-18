@@ -12,7 +12,6 @@ const InstructorsV2 = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAdmin, setIsAdmin] = useState(false);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
-    const [expandedInstructor, setExpandedInstructor] = useState(null);
     const [activeTag, setActiveTag] = useState(null);
     const [editingInstructor, setEditingInstructor] = useState(null);
     const [messageModal, setMessageModal] = useState({ show: false, message: '', type: 'success' }); // 'success' or 'error'
