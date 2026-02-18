@@ -525,9 +525,6 @@ const HomePageV2 = () => {
             <DirectorNoteV2 />
             <div className="section-divider-v2"></div>
             <StudentReviewsV2 />
-            <div className="section-divider-v2"></div>
-            <InstructorsMarquee />
-            <div className="section-divider-v2"></div>
 
             {/* Notices */}
             <section className="notices-section-v2" style={{ padding: '50px 20px', maxWidth: '1000px', margin: '0 auto' }}>

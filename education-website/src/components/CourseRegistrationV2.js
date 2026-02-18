@@ -316,7 +316,7 @@ const CourseRegistrationV2 = () => {
                         );
                     })()}
 
-                    <div className="cr-v2-accordion">
+                    <div className="cr-v2-card-grid">
                         {isLoading ? (
                             <div className="cr-v2-loading">수업 목록을 불러오는 중...</div>
                         ) : courses.length > 0 ? (
@@ -325,64 +325,41 @@ const CourseRegistrationV2 = () => {
                                 .map((course, index) => (
                                     <div
                                         key={course.id}
-                                        className={`accordion-item reveal-on-scroll ${selectedCourse?.id === course.id && !isApplyModalVisible ? 'open' : ''}`}
-                                        style={{ transitionDelay: `${index * 0.05}s` }}
+                                        className="cr-course-card reveal-on-scroll"
+                                        style={{ transitionDelay: `${index * 0.06}s` }}
                                     >
-                                        <div
-                                            className="accordion-header"
-                                            onClick={() => setSelectedCourse(selectedCourse?.id === course.id && !isApplyModalVisible ? null : course)}
-                                        >
-                                            <div className="accordion-header-left">
-                                                <span className="accordion-num">{String(index + 1).padStart(2, '0')}</span>
-                                                <div className="accordion-name-group">
-                                                    <h2 className="accordion-title">{course.title}</h2>
-                                                    <span className="accordion-subject">{course.day} {course.time}</span>
-                                                </div>
-                                            </div>
-                                            <div className="accordion-header-right">
-                                                {isAdmin && (
-                                                    <div className="accordion-admin-actions">
-                                                        <button onClick={(e) => { e.stopPropagation(); handleEditClick(course); }}>수정</button>
-                                                        <button onClick={(e) => { e.stopPropagation(); showDeleteConfirm(course.id); }} className="delete">삭제</button>
-                                                    </div>
-                                                )}
-                                                <span className="accordion-toggle">
-                                                    {selectedCourse?.id === course.id && !isApplyModalVisible ? '−' : '+'}
-                                                </span>
-                                            </div>
+                                        <div className="cr-course-card-tape"></div>
+                                        <div className="cr-course-card-header">
+                                            <span className="cr-course-card-badge">{course.teacher}</span>
+                                            <h2 className="cr-course-card-title">{course.title}</h2>
+                                            <span className="cr-course-card-schedule">
+                                                {course.day} {course.time}
+                                            </span>
                                         </div>
-
-                                        {selectedCourse?.id === course.id && !isApplyModalVisible && (
-                                            <div className="accordion-body">
-                                                <p className="cr-card-desc">{course.description}</p>
-                                                <div className="cr-card-details">
-                                                    <div className="cr-detail-row">
-                                                        <span className="label">강사</span>
-                                                        <span className="value">{course.teacher}</span>
-                                                    </div>
-                                                    <div className="cr-detail-row">
-                                                        <span className="label">시간표</span>
-                                                        <span className="value">{course.day} {course.time}</span>
-                                                    </div>
-                                                    {isAdmin && (
-                                                        <div className="cr-detail-row">
-                                                            <span className="label">정원</span>
-                                                            <span className="value">{course.capacity || 20}</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                {course.tags && course.tags.length > 0 && (
-                                                    <div className="cr-tags" style={{ marginTop: '15px', display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                                                        {course.tags.map((tag, i) => (
-                                                            <span key={i} className="tag" style={{ fontSize: '0.75rem', padding: '3px 8px', background: '#f5f5f5', border: '1px solid #eee' }}>#{tag}</span>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                                <button className="cr-v2-btn secondary full-width" onClick={() => handleApplyClick(course)}>
-                                                    신청하기
-                                                </button>
+                                        <div className="cr-course-card-body">
+                                            <p className="cr-course-card-desc">{course.description}</p>
+                                        </div>
+                                        {course.tags && course.tags.length > 0 && (
+                                            <div className="cr-course-card-tags">
+                                                {course.tags.map((tag, i) => (
+                                                    <span key={i} className="tag">#{tag}</span>
+                                                ))}
                                             </div>
                                         )}
+                                        {isAdmin && (
+                                            <div className="cr-course-card-admin">
+                                                <button onClick={() => handleEditClick(course)}>수정</button>
+                                                <button className="delete" onClick={() => showDeleteConfirm(course.id)}>삭제</button>
+                                            </div>
+                                        )}
+                                        <div className="cr-course-card-footer">
+                                            <button
+                                                className="cr-v2-btn primary full-width"
+                                                onClick={() => handleApplyClick(course)}
+                                            >
+                                                수강신청
+                                            </button>
+                                        </div>
                                     </div>
                                 ))
                         ) : (

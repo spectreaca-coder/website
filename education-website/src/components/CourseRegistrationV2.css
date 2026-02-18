@@ -505,6 +505,148 @@
 }
 
 /* ========================================
+   Course Card Grid (Instructor-style)
+   ======================================== */
+.cr-v2-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 40px;
+}
+
+.cr-course-card {
+    border: 2px solid #000;
+    background: #fff;
+    position: relative;
+    box-shadow: 8px 8px 0px #000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.cr-course-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0px #14248A;
+}
+
+/* Tape Effect */
+.cr-course-card-tape {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%) rotate(1.5deg);
+    width: 100px;
+    height: 22px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.cr-course-card-header {
+    padding: 28px 25px 18px;
+    border-bottom: 1px dashed #ccc;
+    text-align: center;
+}
+
+.cr-course-card-badge {
+    display: inline-block;
+    background: #14248A;
+    color: #fff;
+    padding: 4px 12px;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.cr-course-card-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 1.35rem;
+    margin: 0 0 8px;
+    color: #000;
+    line-height: 1.25;
+}
+
+.cr-course-card-schedule {
+    display: inline-block;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
+    color: #666;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    padding: 3px 10px;
+    letter-spacing: 0.04em;
+}
+
+.cr-course-card-body {
+    padding: 18px 25px;
+    flex-grow: 1;
+}
+
+.cr-course-card-desc {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: #333;
+    margin: 0;
+}
+
+.cr-course-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 25px 16px;
+}
+
+.cr-course-card-admin {
+    display: flex;
+    gap: 8px;
+    padding: 0 25px 12px;
+}
+
+.cr-course-card-admin button {
+    padding: 6px 14px;
+    border: 1.5px solid #000;
+    background: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.cr-course-card-admin button:hover {
+    background: #f0f0f0;
+}
+
+.cr-course-card-admin button.delete {
+    border-color: #c00;
+    color: #c00;
+}
+
+.cr-course-card-admin button.delete:hover {
+    background: #fff0f0;
+}
+
+.cr-course-card-footer {
+    padding: 0 25px 25px;
+    margin-top: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cr-v2-card-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+
+/* ========================================
    Grade Selector Button Group
    ======================================== */
 .grade-selector-v2 {
