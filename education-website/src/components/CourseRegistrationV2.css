@@ -1,10 +1,121 @@
-/* Course Registration V2 - Accordion Layout */
+/* Course Registration V2 - Card Grid Layout */
 .cr-v2-page {
     width: 100%;
     min-height: 100vh;
     background-color: #fff;
 }
 
+/* ========================================
+   Main Container
+   ======================================== */
+.cr-v2-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 140px 40px 100px;
+}
+
+@media (max-width: 768px) {
+    .cr-v2-container {
+        padding: 110px 20px 80px;
+    }
+}
+
+/* ========================================
+   Page Header
+   ======================================== */
+.cr-v2-header {
+    margin-bottom: 60px;
+    text-align: left;
+}
+
+.cr-v2-header-badge {
+    display: inline-block;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    padding: 4px 12px;
+    margin-bottom: 16px;
+}
+
+.cr-v2-title {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin: 0 0 12px;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.cr-v2-subtitle {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    color: #555;
+    margin: 0;
+}
+
+/* ========================================
+   Controls (Tag filter + Admin button)
+   ======================================== */
+.cr-v2-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #000;
+}
+
+.cr-v2-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-btn {
+    padding: 7px 16px;
+    border: 1.5px solid #000;
+    background: #fff;
+    color: #000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+}
+
+.tag-btn:hover {
+    background: #f0f0f0;
+}
+
+.tag-btn.active {
+    background: #000;
+    color: #fff;
+}
+
+.btn-admin-add {
+    white-space: nowrap;
+}
+
+/* ========================================
+   Loading / Empty States
+   ======================================== */
+.cr-v2-loading,
+.cr-v2-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #666;
+}
+
+/* Legacy selectors kept for compatibility */
 .cr-v2-main {
     padding-top: 120px;
     padding-bottom: 80px;
@@ -14,13 +125,6 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-}
-
-.cr-v2-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 60px;
 }
 
 /* Page Title Block */
