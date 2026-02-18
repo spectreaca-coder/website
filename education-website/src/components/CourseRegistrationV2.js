@@ -206,7 +206,7 @@ const CourseRegistrationV2 = () => {
             const savedApplications = applicationsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             const isDuplicate = savedApplications.some(
-                app => app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
+                app => app.studentName === studentName && app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
             );
             if (isDuplicate) {
                 showToast('이미 해당 수업에 신청하셨습니다.', 'error');

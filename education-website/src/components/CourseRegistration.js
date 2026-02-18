@@ -186,7 +186,7 @@ const CourseRegistration = () => {
 
       // 중복 신청 체크
       const isDuplicate = savedApplications.some(
-        app => app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
+        app => app.studentName === studentName && app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
       );
       if (isDuplicate) {
         alert('이미 해당 수업에 신청하셨습니다.');
