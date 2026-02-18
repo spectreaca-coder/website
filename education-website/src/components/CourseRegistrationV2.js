@@ -371,7 +371,7 @@ const CourseRegistrationV2 = () => {
                         <div className="grade-selector-v2">
                             <label>학년 선택</label>
                             <div className="grade-btn-group">
-                                {['초등', '중1', '중2', '중3', '고1', '고2', '고3'].map(grade => (
+                                {['초등', '중1', '중2', '중3', '고1', '고2', '고3', 'N수'].map(grade => (
                                     <button
                                         key={grade}
                                         type="button"

@@ -834,3 +834,133 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* ========================================
+   Modal Form Styles (Apply / Admin Create)
+   ======================================== */
+.cr-v2-apply-info {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    background: #f5f5f5;
+    border: 1.5px solid #000;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.cr-v2-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cr-v2-form input,
+.cr-v2-form textarea,
+.cr-v2-form select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #000;
+    background: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    color: #000;
+    box-sizing: border-box;
+    outline: none;
+    transition: background 0.15s;
+}
+
+.cr-v2-form input:focus,
+.cr-v2-form textarea:focus {
+    background: #f9f9f9;
+}
+
+.cr-v2-form input::placeholder,
+.cr-v2-form textarea::placeholder {
+    color: #aaa;
+}
+
+.cr-v2-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 480px) {
+    .form-row-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Grade button group inside modal */
+.grade-selector-v2 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 2px solid #000;
+    background: #fafafa;
+}
+
+.grade-selector-v2 label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.grade-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Primary / Secondary Buttons */
+.cr-v2-btn {
+    padding: 13px 24px;
+    border: 2px solid #000;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 4px 4px 0 #000;
+}
+
+.cr-v2-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+}
+
+.cr-v2-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cr-v2-btn.primary {
+    background: #000;
+    color: #fff;
+}
+
+.cr-v2-btn.primary:hover:not(:disabled) {
+    background: #14248A;
+    border-color: #14248A;
+    box-shadow: 6px 6px 0 #14248A;
+}
+
+.cr-v2-btn.secondary {
+    background: #fff;
+    color: #000;
+}
+
+.cr-v2-btn.full-width {
+    width: 100%;
+}
