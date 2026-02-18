@@ -6,11 +6,25 @@ import HeaderV2 from './HeaderV2';
 import Modal from './Modal';
 import useToast from '../hooks/useToast';
 import { db, storage } from '../firebase';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+
+// Safe date formatter: handles Firestore Timestamp, ISO string, and plain Date
+// Output format: 2026.02.18
+const formatDate = (value) => {
+    if (!value) return '';
+    try {
+        const d = value?.toDate ? value.toDate() : new Date(value);
+        if (isNaN(d)) return '';
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}.${m}.${day}`;
+    } catch { return ''; }
+};
 
 // Register custom font sizes
 const Size = Quill.import('attributors/style/size');
@@ -179,8 +193,8 @@ const NoticesV2 = () => {
                 await updateDoc(doc(db, 'notices', editingNotice.id), noticeData);
                 showToast('공지사항이 수정되었습니다.');
             } else {
-                noticeData.createdAt = new Date().toISOString();
-                noticeData.date = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\. /g, '.').replace('.', '');
+                // createdAt은 Firestore serverTimestamp 사용 → 자동으로 정확한 시간 저장
+                noticeData.createdAt = serverTimestamp();
                 await addDoc(collection(db, 'notices'), noticeData);
                 showToast('새 공지사항이 등록되었습니다.');
             }
@@ -264,7 +278,7 @@ const NoticesV2 = () => {
                                         onClick={() => toggleNotice(notice.id)}
                                     >
                                         <div className="notices-v2-item-left">
-                                            <span className="notices-v2-date">{notice.date}</span>
+                                            <span className="notices-v2-date">{formatDate(notice.createdAt)}</span>
                                             <h3 className="notices-v2-item-title">{notice.title}</h3>
                                         </div>
                                         <div className="notices-v2-item-right">
