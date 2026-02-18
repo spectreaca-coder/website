@@ -5,10 +5,13 @@ import { db } from '../firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import FooterV2 from './FooterV2';
 import useScrollReveal from '../hooks/useScrollReveal';
+import { Link } from 'react-router-dom';
+import { useToast } from '../context/ToastContext';
 import HeaderV2 from './HeaderV2';
 
 const CourseRegistrationV2 = () => {
     const [isAdmin, setIsAdmin] = useState(false);
+    const { showToast } = useToast();
     const [courses, setCourses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -23,9 +26,9 @@ const CourseRegistrationV2 = () => {
     const [newDay, setNewDay] = useState('');
     const [newTime, setNewTime] = useState('');
     const [newCapacity, setNewCapacity] = useState('20');
-    const [newTags, setNewTags] = useState(''); // 태그 상태 추가
-    const [activeTag, setActiveTag] = useState(null); // 태그 필터 상태
-    const [isSaving, setIsSaving] = useState(false); // 저장/삭제 로딩바 상태
+    const [newTags, setNewTags] = useState('');
+    const [activeTag, setActiveTag] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
     const [studentName, setStudentName] = useState('');
     const [studentGrade, setStudentGrade] = useState('');
     const [studentPhone, setStudentPhone] = useState('');
@@ -119,10 +122,10 @@ const CourseRegistrationV2 = () => {
 
         try {
             await deleteDoc(doc(db, 'courses', id));
-            alert('수업이 삭제되었습니다.');
+            showToast('수업이 삭제되었습니다.', 'success');
         } catch (error) {
             console.error('수업 삭제 실패:', error);
-            alert('수업 삭제에 실패했습니다.');
+            showToast('수업 삭제에 실패했습니다.', 'error');
         } finally {
             setIsSaving(false);
         }
@@ -131,13 +134,13 @@ const CourseRegistrationV2 = () => {
     const handleSubmitCourse = async (e) => {
         e.preventDefault();
         if (!newTitle || !newDesc || !newTeacher || !newDay || !newTime || !newCapacity) {
-            alert('모든 항목을 입력해주세요.');
+            showToast('모든 항목을 입력해주세요.', 'error');
             return;
         }
 
         const capacity = parseInt(newCapacity);
         if (isNaN(capacity) || capacity <= 0) {
-            alert('정원은 1 이상의 숫자여야 합니다.');
+            showToast('정원은 1 이상의 숫자여야 합니다.', 'error');
             return;
         }
 
@@ -156,16 +159,16 @@ const CourseRegistrationV2 = () => {
         try {
             if (editingCourse) {
                 await updateDoc(doc(db, 'courses', editingCourse.id), courseData);
-                alert('수업 정보가 수정되었습니다.');
+                showToast('수업 정보가 수정되었습니다.', 'success');
             } else {
                 courseData.createdAt = new Date().toISOString();
                 await addDoc(collection(db, 'courses'), courseData);
-                alert('새 수업이 개설되었습니다.');
+                showToast('새 수업이 개설되었습니다.', 'success');
             }
             clearForm();
         } catch (error) {
             console.error('수업 저장 실패:', error);
-            alert('수업 저장에 실패했습니다.');
+            showToast('수업 저장에 실패했습니다.', 'error');
         } finally {
             setIsSaving(false);
         }
@@ -180,13 +183,13 @@ const CourseRegistrationV2 = () => {
         e.preventDefault();
 
         if (!studentName || !studentGrade || !studentPhone || !parentPhone) {
-            alert('모든 항목을 입력해주세요.');
+            showToast('모든 항목을 입력해주세요.', 'error');
             return;
         }
 
         const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
         if (!phoneRegex.test(studentPhone) || !phoneRegex.test(parentPhone)) {
-            alert('전화번호 형식이 올바르지 않습니다.');
+            showToast('전화번호 형식이 올바르지 않습니다.', 'error');
             return;
         }
 
@@ -199,7 +202,7 @@ const CourseRegistrationV2 = () => {
                 app => app.studentPhone === studentPhone && app.courseId === selectedCourse.id && app.status !== 'waiting'
             );
             if (isDuplicate) {
-                alert('이미 해당 수업에 신청하셨습니다.');
+                showToast('이미 해당 수업에 신청하셨습니다.', 'error');
                 return;
             }
 
@@ -231,9 +234,9 @@ const CourseRegistrationV2 = () => {
             await sendToGoogleSheets(newApplication);
 
             if (isWaitlisted) {
-                alert('현재 수강 신청자 수가 초과되어 등록 대기 상태입니다.\n공석 발생 시 바로 연락드리겠습니다.');
+                showToast('현재 정원 초과로 대기 접수되었습니다. 공석 발생 시 연락드리겠습니다.', 'info');
             } else {
-                alert(`'${selectedCourse.title}' 수업에 대한 수강신청이 완료되었습니다.\n곧 해당 전화번호로 연락이 갈 것입니다.`);
+                showToast(`'${selectedCourse.title}' 수강신청이 완료되었습니다!`, 'success');
             }
 
             setStudentName('');
@@ -244,209 +247,169 @@ const CourseRegistrationV2 = () => {
             setSelectedCourse(null);
         } catch (error) {
             console.error('수강 신청 실패:', error);
-            alert('수강 신청에 실패했습니다. 다시 시도해주세요.');
+            showToast('수강 신청에 실패했습니다. 다시 시도해주세요.', 'error');
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    const allTags = Array.from(new Set(courses.flatMap(c => c.tags || [])));
+
     return (
         <div className="cr-v2-page">
             <div className="noise-overlay-v2"></div>
 
-            {/* Saving overlay */}
             {isSaving && (
                 <div className="saving-overlay">
                     <div className="saving-bar"><div className="saving-bar-inner"></div></div>
-                    <span className="saving-text">저장 중...</span>
                 </div>
             )}
 
             <HeaderV2 />
 
-            <main className="cr-v2-main">
-                <div className="cr-v2-content">
-                    <div className="cr-v2-header">
-                        <div className="page-title-block">
-                            <h1 className="cr-v2-title reveal-on-scroll">수강신청</h1>
-                            <span className="page-title-sub">COURSE REGISTRATION</span>
-                            <div className="page-title-line"></div>
-                        </div>
+            <div className="cr-v2-container">
+                <header className="cr-v2-header reveal-on-scroll">
+                    <div className="cr-v2-header-badge">ENROLLMENT</div>
+                    <h1 className="cr-v2-title">Course Registration</h1>
+                    <p className="cr-v2-subtitle">원하는 수업을 확인하고 지금 바로 신청하세요.</p>
+                </header>
 
-                        {isAdmin && (
-                            <div className="cr-v2-admin-actions">
-                                <button onClick={() => { setEditingCourse(null); setIsCreateModalVisible(true); }} className="cr-v2-btn primary">
-                                    + 수업 개설
-                                </button>
-                            </div>
-                        )}
+                <div className="cr-v2-controls reveal-on-scroll">
+                    <div className="cr-v2-tags">
+                        <button
+                            className={`tag-btn ${activeTag === null ? 'active' : ''}`}
+                            onClick={() => setActiveTag(null)}
+                        >
+                            #전체보기
+                        </button>
+                        {allTags.map(tag => (
+                            <button
+                                key={tag}
+                                className={`tag-btn ${activeTag === tag ? 'active' : ''}`}
+                                onClick={() => setActiveTag(tag)}
+                            >
+                                #{tag}
+                            </button>
+                        ))}
                     </div>
 
-                    {/* Tag Filter Buttons */}
-                    {/* Tag Filter Buttons */}
-                    {!isLoading && courses.length > 0 && (() => {
-                        const allTags = [...new Set(courses.flatMap(c => c.tags || []))];
-                        if (allTags.length === 0) {
-                            return (
-                                <div className="tag-filter-bar">
-                                    <span style={{ fontSize: '0.85rem', color: '#999', padding: '8px 0', fontFamily: 'Courier New' }}>
-                                        * 등록된 태그가 없습니다. 강의를 수정하여 태그를 추가하세요.
-                                    </span>
-                                </div>
-                            );
-                        }
-                        return (
-                            <div className="tag-filter-bar">
-                                <button
-                                    className={`tag-filter-btn ${!activeTag ? 'active' : ''}`}
-                                    onClick={() => setActiveTag(null)}
+                    {isAdmin && (
+                        <button className="cr-v2-btn primary btn-admin-add" onClick={() => setIsCreateModalVisible(true)}>
+                            새 수업 개설
+                        </button>
+                    )}
+                </div>
+
+                <div className="cr-v2-card-grid">
+                    {isLoading ? (
+                        <div className="cr-v2-loading">수업 목록을 불러오는 중...</div>
+                    ) : courses.length > 0 ? (
+                        courses
+                            .filter(course => !activeTag || (course.tags && course.tags.includes(activeTag)))
+                            .map((course, index) => (
+                                <div
+                                    key={course.id}
+                                    className="cr-course-card reveal-on-scroll"
+                                    style={{ transitionDelay: `${index * 0.06}s` }}
                                 >
-                                    전체
-                                </button>
-                                {allTags.map(tag => (
+                                    <div className="cr-course-card-tape"></div>
+                                    <div className="cr-course-card-header">
+                                        <span className="cr-course-card-badge">{course.teacher}</span>
+                                        <h2 className="cr-course-card-title">{course.title}</h2>
+                                        <span className="cr-course-card-schedule">
+                                            {course.day} {course.time}
+                                        </span>
+                                    </div>
+                                    <div className="cr-course-card-body">
+                                        <p className="cr-course-card-desc">{course.description}</p>
+                                    </div>
+
+                                    {course.tags && course.tags.length > 0 && (
+                                        <div className="cr-course-card-tags">
+                                            {course.tags.map((tag, i) => (
+                                                <span key={i} className="tag">#{tag}</span>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {isAdmin && (
+                                        <div className="cr-course-card-admin">
+                                            <button onClick={() => handleEditClick(course)}>수정</button>
+                                            <button className="delete" onClick={() => showDeleteConfirm(course.id)}>삭제</button>
+                                        </div>
+                                    )}
+
+                                    <div className="cr-course-card-footer">
+                                        <button
+                                            className="cr-v2-btn primary full-width"
+                                            onClick={() => handleApplyClick(course)}
+                                        >
+                                            수강신청
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                    ) : (
+                        <div className="cr-v2-empty">
+                            <p>현재 개설된 수업이 없습니다.</p>
+                            <button onClick={() => window.location.reload()} className="cr-v2-btn secondary">
+                                다시 시도
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* 수강신청 모달 */}
+            {isApplyModalVisible && (
+                <Modal onClose={() => setIsApplyModalVisible(false)} title="수강 신청">
+                    <div className="cr-v2-apply-info">
+                        <strong>신청 수업:</strong> {selectedCourse?.title} ({selectedCourse?.teacher})
+                    </div>
+                    <form className="cr-v2-form" onSubmit={handleApplicationSubmit}>
+                        <input type="text" placeholder="학생 성함" value={studentName} onChange={e => setStudentName(e.target.value)} required disabled={isSubmitting} />
+
+                        <div className="grade-selector-v2">
+                            <label>학년 선택</label>
+                            <div className="grade-btn-group">
+                                {['초등', '중1', '중2', '중3', '고1', '고2', '고3'].map(grade => (
                                     <button
-                                        key={tag}
-                                        className={`tag-filter-btn ${activeTag === tag ? 'active' : ''}`}
-                                        onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                                        key={grade}
+                                        type="button"
+                                        className={`grade-btn ${studentGrade === grade ? 'active' : ''}`}
+                                        onClick={() => setStudentGrade(grade)}
+                                        disabled={isSubmitting}
                                     >
-                                        #{tag}
+                                        {grade}
                                     </button>
                                 ))}
                             </div>
-                        );
-                    })()}
-
-                    <div className="cr-v2-card-grid">
-                        {isLoading ? (
-                            <div className="cr-v2-loading">수업 목록을 불러오는 중...</div>
-                        ) : courses.length > 0 ? (
-                            courses
-                                .filter(course => !activeTag || (course.tags && course.tags.includes(activeTag)))
-                                .map((course, index) => (
-                                    <div
-                                        key={course.id}
-                                        className="cr-course-card reveal-on-scroll"
-                                        style={{ transitionDelay: `${index * 0.06}s` }}
-                                    >
-                                        <div className="cr-course-card-tape"></div>
-                                        <div className="cr-course-card-header">
-                                            <span className="cr-course-card-badge">{course.teacher}</span>
-                                            <h2 className="cr-course-card-title">{course.title}</h2>
-                                            <span className="cr-course-card-schedule">
-                                                {course.day} {course.time}
-                                            </span>
-                                        </div>
-                                        <div className="cr-course-card-body">
-                                            <p className="cr-course-card-desc">{course.description}</p>
-                                        </div>
-                                        {course.tags && course.tags.length > 0 && (
-                                            <div className="cr-course-card-tags">
-                                                {course.tags.map((tag, i) => (
-                                                    <span key={i} className="tag">#{tag}</span>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {isAdmin && (
-                                            <div className="cr-course-card-admin">
-                                                <button onClick={() => handleEditClick(course)}>수정</button>
-                                                <button className="delete" onClick={() => showDeleteConfirm(course.id)}>삭제</button>
-                                            </div>
-                                        )}
-                                        <div className="cr-course-card-footer">
-                                            <button
-                                                className="cr-v2-btn primary full-width"
-                                                onClick={() => handleApplyClick(course)}
-                                            >
-                                                수강신청
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))
-                        ) : (
-                            <div className="cr-v2-empty">
-                                <p>현재 개설된 수업이 없습니다.</p>
-                                <button onClick={() => window.location.reload()} className="cr-v2-btn secondary">
-                                    다시 시도
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </main>
-
-            {/* Modals */}
-            {isCreateModalVisible && (
-                <Modal onClose={clearForm}>
-                    <form onSubmit={handleSubmitCourse} className="cr-form-v2">
-                        <h2>{editingCourse ? '수업 수정' : '새 수업 개설'}</h2>
-                        <input type="text" placeholder="수업명" value={newTitle} onChange={e => setNewTitle(e.target.value)} required />
-                        <textarea placeholder="설명" value={newDesc} onChange={e => setNewDesc(e.target.value)} required></textarea>
-                        <input type="text" placeholder="강사명" value={newTeacher} onChange={e => setNewTeacher(e.target.value)} required />
-                        <input type="text" placeholder="요일 (예: 월, 수)" value={newDay} onChange={e => setNewDay(e.target.value)} required />
-                        <input type="text" placeholder="시간 (예: 19:00 - 22:00)" value={newTime} onChange={e => setNewTime(e.target.value)} required />
-                        <input type="number" placeholder="정원" value={newCapacity} onChange={e => setNewCapacity(e.target.value)} min="1" required />
-                        <input type="text" placeholder="태그 (쉼표로 구분)" value={newTags} onChange={e => setNewTags(e.target.value)} />
-                        <button type="submit" className="cr-v2-btn primary full-width">{editingCourse ? '수정하기' : '개설하기'}</button>
-                    </form>
-                </Modal>
-            )}
-
-            {isApplyModalVisible && selectedCourse && (
-                <Modal onClose={() => setIsApplyModalVisible(false)}>
-                    <form onSubmit={handleApplicationSubmit} className="cr-form-v2">
-                        <h2>{selectedCourse.title} 신청</h2>
-                        <input type="text" placeholder="학생 이름" value={studentName} onChange={e => setStudentName(e.target.value)} required disabled={isSubmitting} />
-                        <div className="grade-selector-v2">
-                            <span className="grade-selector-label">학년 선택</span>
-                            <div className="grade-group">
-                                <span className="grade-group-label">중학교</span>
-                                <div className="grade-btn-row">
-                                    {['중1', '중2', '중3'].map(g => (
-                                        <button
-                                            key={g}
-                                            type="button"
-                                            className={`grade-btn${studentGrade === g ? ' active' : ''}`}
-                                            onClick={() => setStudentGrade(g)}
-                                            disabled={isSubmitting}
-                                        >
-                                            {g}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="grade-group">
-                                <span className="grade-group-label">고등학교</span>
-                                <div className="grade-btn-row">
-                                    {['고1', '고2', '고3'].map(g => (
-                                        <button
-                                            key={g}
-                                            type="button"
-                                            className={`grade-btn${studentGrade === g ? ' active' : ''}`}
-                                            onClick={() => setStudentGrade(g)}
-                                            disabled={isSubmitting}
-                                        >
-                                            {g}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="grade-group">
-                                <div className="grade-btn-row">
-                                    <button
-                                        type="button"
-                                        className={`grade-btn wide${studentGrade === 'N수' ? ' active' : ''}`}
-                                        onClick={() => setStudentGrade('N수')}
-                                        disabled={isSubmitting}
-                                    >
-                                        N수생
-                                    </button>
-                                </div>
-                            </div>
                         </div>
+
                         <input type="tel" placeholder="학생 전화번호" value={studentPhone} onChange={e => setStudentPhone(e.target.value)} required disabled={isSubmitting} />
                         <input type="tel" placeholder="학부모 전화번호" value={parentPhone} onChange={e => setParentPhone(e.target.value)} required disabled={isSubmitting} />
                         <button type="submit" disabled={isSubmitting} className="cr-v2-btn primary full-width">
                             {isSubmitting ? '처리 중...' : '신청하기'}
+                        </button>
+                    </form>
+                </Modal>
+            )}
+
+            {/* 새 수업/수정 모달 (관리자 전용) */}
+            {isCreateModalVisible && (
+                <Modal onClose={clearForm} title={editingCourse ? '수업 정보 수정' : '새 수업 개설'}>
+                    <form className="cr-v2-form" onSubmit={handleSubmitCourse}>
+                        <input type="text" placeholder="강좌명" value={newTitle} onChange={e => setNewTitle(e.target.value)} required />
+                        <textarea placeholder="강좌 설명" value={newDesc} onChange={e => setNewDesc(e.target.value)} required />
+                        <input type="text" placeholder="담당 강사" value={newTeacher} onChange={e => setNewTeacher(e.target.value)} required />
+                        <div className="form-row-2">
+                            <input type="text" placeholder="수업 요일 (예: 월·목)" value={newDay} onChange={e => setNewDay(e.target.value)} required />
+                            <input type="text" placeholder="수업 시간 (예: 19:30-22:00)" value={newTime} onChange={e => setNewTime(e.target.value)} required />
+                        </div>
+                        <input type="number" placeholder="수강 정원" value={newCapacity} onChange={e => setNewCapacity(e.target.value)} required />
+                        <input type="text" placeholder="태그 (쉼표로 구분: 예: 수학, 고등부)" value={newTags} onChange={e => setNewTags(e.target.value)} />
+                        <button type="submit" className="cr-v2-btn primary full-width">
+                            {editingCourse ? '수정 완료' : '수업 개설'}
                         </button>
                     </form>
                 </Modal>

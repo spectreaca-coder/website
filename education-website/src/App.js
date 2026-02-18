@@ -19,6 +19,7 @@ import CurriculumV2 from './components/CurriculumV2';
 import CourseRegistrationV2 from './components/CourseRegistrationV2';
 import NoticesV2 from './components/NoticesV2';
 import './App.css';
+import { ToastProvider } from './context/ToastContext';
 
 function AppContent() {
   const location = useLocation();
@@ -79,9 +80,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ToastProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ToastProvider>
   );
 }
 
