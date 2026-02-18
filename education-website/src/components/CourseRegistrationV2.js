@@ -231,7 +231,10 @@ const CourseRegistrationV2 = () => {
                 appliedDate: new Date().toLocaleString('ko-KR')
             };
 
-            await addDoc(collection(db, 'applications'), newApplication);
+            const docRef = await addDoc(collection(db, 'applications'), newApplication);
+            console.log('✅ [Firestore] 수강신청 저장 성공! Doc ID:', docRef.id);
+
+            console.log('📝 [Google Sheets] 전송 시작...');
             await sendToGoogleSheets(newApplication);
 
             if (isWaitlisted) {
@@ -247,8 +250,8 @@ const CourseRegistrationV2 = () => {
             setIsApplyModalVisible(false);
             setSelectedCourse(null);
         } catch (error) {
-            console.error('수강 신청 실패:', error);
-            showToast('수강 신청에 실패했습니다. 다시 시도해주세요.', 'error');
+            console.error('❌ [Error] 수강 신청 실패:', error);
+            showToast('수강 신청에 실패했습니다. 관리자에게 문의해주세요.', 'error');
         } finally {
             setIsSubmitting(false);
         }
