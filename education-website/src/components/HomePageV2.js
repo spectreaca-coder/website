@@ -29,6 +29,19 @@ const LOCAL_IMAGES = [
     // 6번 heroBgNew3, 7번 heroBgNew4 제외
 ];
 
+// Safely format a Firestore Timestamp or ISO string to YYYY.MM.DD
+const formatDate = (value) => {
+    if (!value) return '';
+    try {
+        const d = value?.toDate ? value.toDate() : new Date(value);
+        if (isNaN(d)) return '';
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}.${m}.${day}`;
+    } catch { return ''; }
+};
+
 const HomePageV2 = () => {
     // 하이브리드 로딩
     const [heroImages, setHeroImages] = useState(LOCAL_IMAGES.map(img => img.url));
@@ -536,12 +549,7 @@ const HomePageV2 = () => {
                                 <Link to="/notices" className="notice-link-v2">
                                     <span className="notice-title-text-v2">{notice.title}</span>
                                     <span className="notice-date-v2">
-                                        {notice.date ||
-                                            (notice.createdAt?.toDate
-                                                ? notice.createdAt.toDate().toLocaleDateString('ko-KR')
-                                                : new Date(notice.createdAt).toLocaleDateString('ko-KR')
-                                            )
-                                        }
+                                        {formatDate(notice.createdAt)}
                                     </span>
                                 </Link>
                             </li>
