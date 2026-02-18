@@ -76,7 +76,12 @@ const CourseRegistrationV2 = () => {
 
     const sendToGoogleSheets = async (applicationData) => {
         const GOOGLE_SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
-        if (!GOOGLE_SCRIPT_URL) return;
+        console.log('🔗 [Debug] Current Script URL:', GOOGLE_SCRIPT_URL);
+
+        if (!GOOGLE_SCRIPT_URL) {
+            console.error('❌ Google Script URL is missing!');
+            return;
+        }
 
         try {
             const formData = new URLSearchParams();
