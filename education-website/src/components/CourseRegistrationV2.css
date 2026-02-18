@@ -503,3 +503,88 @@
 .confirm-modal-actions .delete-btn:hover {
     background: #900;
 }
+
+/* ========================================
+   Grade Selector Button Group
+   ======================================== */
+.grade-selector-v2 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 2px solid #000;
+    background: #fafafa;
+}
+
+.grade-selector-label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.grade-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.grade-group-label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #999;
+    min-width: 52px;
+    letter-spacing: 0.04em;
+}
+
+.grade-btn-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.grade-btn {
+    padding: 8px 18px;
+    border: 2px solid #000;
+    background: #fff;
+    color: #000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s, transform 0.1s;
+    letter-spacing: 0.04em;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.grade-btn:hover:not(:disabled) {
+    background: #f0f0f0;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #000;
+}
+
+.grade-btn.active {
+    background: #14248A;
+    color: #fff;
+    border-color: #14248A;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.grade-btn.active:hover:not(:disabled) {
+    background: #0d1a6b;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #000;
+}
+
+.grade-btn.wide {
+    padding: 8px 32px;
+}
+
+.grade-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

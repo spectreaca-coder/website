@@ -419,16 +419,53 @@ const CourseRegistrationV2 = () => {
                     <form onSubmit={handleApplicationSubmit} className="cr-form-v2">
                         <h2>{selectedCourse.title} 신청</h2>
                         <input type="text" placeholder="학생 이름" value={studentName} onChange={e => setStudentName(e.target.value)} required disabled={isSubmitting} />
-                        <select value={studentGrade} onChange={e => setStudentGrade(e.target.value)} required disabled={isSubmitting}>
-                            <option value="" disabled>학년 선택</option>
-                            <option value="중1">중학교 1학년</option>
-                            <option value="중2">중학교 2학년</option>
-                            <option value="중3">중학교 3학년</option>
-                            <option value="고1">고등학교 1학년</option>
-                            <option value="고2">고등학교 2학년</option>
-                            <option value="고3">고등학교 3학년</option>
-                            <option value="N수">N수생</option>
-                        </select>
+                        <div className="grade-selector-v2">
+                            <span className="grade-selector-label">학년 선택</span>
+                            <div className="grade-group">
+                                <span className="grade-group-label">중학교</span>
+                                <div className="grade-btn-row">
+                                    {['중1', '중2', '중3'].map(g => (
+                                        <button
+                                            key={g}
+                                            type="button"
+                                            className={`grade-btn${studentGrade === g ? ' active' : ''}`}
+                                            onClick={() => setStudentGrade(g)}
+                                            disabled={isSubmitting}
+                                        >
+                                            {g}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="grade-group">
+                                <span className="grade-group-label">고등학교</span>
+                                <div className="grade-btn-row">
+                                    {['고1', '고2', '고3'].map(g => (
+                                        <button
+                                            key={g}
+                                            type="button"
+                                            className={`grade-btn${studentGrade === g ? ' active' : ''}`}
+                                            onClick={() => setStudentGrade(g)}
+                                            disabled={isSubmitting}
+                                        >
+                                            {g}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="grade-group">
+                                <div className="grade-btn-row">
+                                    <button
+                                        type="button"
+                                        className={`grade-btn wide${studentGrade === 'N수' ? ' active' : ''}`}
+                                        onClick={() => setStudentGrade('N수')}
+                                        disabled={isSubmitting}
+                                    >
+                                        N수생
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <input type="tel" placeholder="학생 전화번호" value={studentPhone} onChange={e => setStudentPhone(e.target.value)} required disabled={isSubmitting} />
                         <input type="tel" placeholder="학부모 전화번호" value={parentPhone} onChange={e => setParentPhone(e.target.value)} required disabled={isSubmitting} />
                         <button type="submit" disabled={isSubmitting} className="cr-v2-btn primary full-width">
