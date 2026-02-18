@@ -118,11 +118,16 @@ const CourseRegistrationV2 = () => {
     };
 
     const sendToGoogleSheets = async (applicationData) => {
+        // Vercel에서 REACT_APP_ 접두사를 붙인 환경변수는 빌드 시점에 주입되어야 합니다.
         const GOOGLE_SCRIPT_URL = process.env.REACT_APP_GOOGLE_SCRIPT_URL;
-        console.log('🔗 [Debug V2] Current Script URL:', GOOGLE_SCRIPT_URL);
 
-        if (!GOOGLE_SCRIPT_URL) {
-            console.error('❌ Google Script URL is missing!');
+        console.log('🔗 [Debug V2] Current Script URL:', GOOGLE_SCRIPT_URL);
+        console.log('ℹ️ [Debug V2] URL Type:', typeof GOOGLE_SCRIPT_URL);
+        console.log('ℹ️ [Debug V2] URL Length:', GOOGLE_SCRIPT_URL ? GOOGLE_SCRIPT_URL.length : 0);
+
+        if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL === 'undefined') {
+            console.error('❌ [Debug V2] CRITICAL: Google Script URL is missing or undefined in this build!');
+            console.error('💡 TIP: Vercel Dashboard -> Settings -> Environment Variables에서 REACT_APP_GOOGLE_SCRIPT_URL 설정을 다시 확인하고 [Redeploy]를 진행해주세요.');
             return;
         }
 
@@ -132,13 +137,15 @@ const CourseRegistrationV2 = () => {
                 formData.append(key, applicationData[key]);
             }
 
+            console.log('📝 [Debug V2] Sending data to:', GOOGLE_SCRIPT_URL);
             await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: formData
             });
+            console.log('✅ [Debug V2] Data sent successfully (no-cors)');
         } catch (error) {
-            console.error('Google Sheets 전송 실패:', error);
+            console.error('❌ [Debug V2] Fetch error:', error);
         }
     };
 
