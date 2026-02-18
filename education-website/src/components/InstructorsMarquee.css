@@ -1,0 +1,194 @@
+/* Instructors Marquee Section - mirrors StudentReviewsV2 style */
+
+.instructors-marquee-section {
+    padding: 80px 0;
+    background-color: var(--sw-white);
+    border-bottom: var(--sw-border);
+    overflow: hidden;
+}
+
+.instructors-marquee-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.instructors-marquee-title {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem;
+    text-align: center;
+    margin: 0 0 60px 0;
+    letter-spacing: -1px;
+    text-transform: uppercase;
+    color: var(--sw-black);
+}
+
+/* Marquee Wrapper with edge fade */
+.instructors-marquee-wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+/* Track */
+.instructors-track-marquee {
+    display: flex;
+    gap: 40px;
+    width: max-content;
+    padding: 20px 0;
+    will-change: transform;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.instructors-track-marquee.draggable:active {
+    cursor: grabbing;
+}
+
+/* Individual Slide */
+.instructor-slide {
+    flex: 0 0 auto;
+    width: 340px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Card */
+.instructor-marquee-card {
+    width: 100%;
+    border: 2px solid var(--sw-black);
+    padding: 30px;
+    position: relative;
+    background: var(--sw-white);
+    box-shadow: 10px 10px 0px var(--sw-black);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.instructor-marquee-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 13px 13px 0px var(--sw-primary);
+}
+
+/* Tape Effect */
+.instructor-marquee-tape {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1.2deg);
+    width: 100px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+/* Profile Image */
+.instructor-marquee-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 2px solid var(--sw-black);
+}
+
+.instructor-marquee-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+    pointer-events: none;
+}
+
+/* Header: badge + name */
+.instructor-marquee-header-inner {
+    border-bottom: 2px solid var(--sw-black);
+    padding-bottom: 14px;
+    text-align: center;
+}
+
+.instructor-marquee-badge {
+    display: inline-block;
+    background: var(--sw-black);
+    color: var(--sw-white);
+    padding: 4px 10px;
+    font-family: 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.instructor-marquee-name {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin: 0;
+    color: var(--sw-black);
+    line-height: 1.2;
+}
+
+/* Bio */
+.instructor-marquee-body {
+    flex-grow: 1;
+}
+
+.instructor-marquee-bio {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--sw-black);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Tags */
+.instructor-marquee-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: 1px dashed #ccc;
+    padding-top: 12px;
+}
+
+.instructor-marquee-tag {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    color: #555;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .instructors-marquee-title {
+        font-size: 1.8rem;
+    }
+
+    .instructor-slide {
+        width: 80vw;
+    }
+
+    .instructor-marquee-card {
+        padding: 20px;
+    }
+
+    .instructor-marquee-name {
+        font-size: 1.2rem;
+    }
+}

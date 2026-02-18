@@ -14,6 +14,7 @@ import heroBgNew2 from '../assets/hero-bg-new-2.png';
 // import heroBgNew4 from '../assets/hero-bg-new-4.jpg';  <-- 삭제됨
 import DirectorNoteV2 from './DirectorNoteV2';
 import StudentReviewsV2 from './StudentReviewsV2';
+import InstructorsMarquee from './InstructorsMarquee';
 import { db, storage } from '../firebase';
 import { collection, query, orderBy, limit, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, writeBatch, getDocs, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -524,6 +525,8 @@ const HomePageV2 = () => {
             <DirectorNoteV2 />
             <div className="section-divider-v2"></div>
             <StudentReviewsV2 />
+            <div className="section-divider-v2"></div>
+            <InstructorsMarquee />
             <div className="section-divider-v2"></div>
 
             {/* Notices */}
